@@ -1,0 +1,56 @@
+{
+  "name": "Template Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "GitHub.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "usernamehw.errorlens",
+        "Gruntfuggly.todo-tree",
+        "christian-kohler.path-intellisense",
+        "ms-azuretools.vscode-docker",
+        "DavidAnson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        // Rust
+        "fill-labs.dependi",
+        // .NET
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.vscodeintellicode-csharp"
+      ]
+    }
+  },
+  "forwardPorts": [],
+  "features": {
+    "ghcr.io/devcontainers-extra/features/starship": {},
+    "ghcr.io/devcontainers/features/github-cli": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker": {
+      "moby": false
+    },
+    // AWS
+    "ghcr.io/devcontainers/features/aws-cli": {},
+    // Node.js
+    "ghcr.io/devcontainers/features/node": {},
+    // Rust
+    "ghcr.io/devcontainers/features/rust": {},
+    // .NET
+    "ghcr.io/devcontainers/features/dotnet": {},
+    // Terraform
+    "ghcr.io/devcontainers/features/terraform": {},
+    "./features/cargo-toolchain": {},
+    "./features/uv": {}
+  },
+  "remoteEnv": {
+    "AWS_PROFILE": "examples"
+  },
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.aws/,target=/home/vscode/.aws/"
+  ],
+  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
+}

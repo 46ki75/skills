@@ -1,0 +1,7 @@
+{
+  "id": "cargo-toolchain",
+  "name": "cargo-toolchain",
+  "description": "install cargo-binstall, cargo-lambda and just",
+  "version": "1.0.0",
+  "installsAfter": ["ghcr.io/devcontainers/features/rust"]
+}
