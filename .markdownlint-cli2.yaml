@@ -7,3 +7,5 @@ config:
     siblings_only: true
   MD029:
     style: ordered
+ignores:
+  - "**/node_modules/**"
