@@ -1,6 +1,10 @@
 ---
 name: mermaid
 description: Create diagrams and visualizations using Mermaid syntax. Use when users request flowcharts, sequence diagrams, class diagrams, state diagrams, entity relationship diagrams, Gantt charts, pie charts, mindmaps, timelines, user journey maps, Git graphs, quadrant charts, or requirement diagrams. Also use when users want to visualize processes, workflows, systems, data structures, or relationships.
+license: MIT
+metadata:
+  author: "Ikuma Yamashita"
+  version: "1.0"
 ---
 
 # Mermaid Diagram Creation

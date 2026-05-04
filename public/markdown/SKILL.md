@@ -2,6 +2,10 @@
 name: markdown
 description: >
   Markdown linting and automated fixing using markdownlint-cli2. Use when Claude needs to: (1) Check markdown files for style issues, (2) Fix markdown formatting problems, (3) Ensure markdown follows best practices, (4) Validate markdown documents, or (5) Apply consistent markdown styling
+license: MIT
+metadata:
+  author: "Ikuma Yamashita"
+  version: "1.0"
 ---
 
 # Markdown Lint

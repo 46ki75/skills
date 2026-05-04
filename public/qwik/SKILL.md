@@ -14,6 +14,10 @@ description: >
   question that mentions Qwik, Qwik City, QRL, routeLoader$, routeAction$,
   useVisibleTask$, noSerialize, or the resumable architecture, even if the
   question seems simple.
+license: MIT
+metadata:
+  author: "Ikuma Yamashita"
+  version: "1.0"
 ---
 
 # Qwik & Qwik City Skill
@@ -23,10 +27,10 @@ goal is to help users write correct, idiomatic, and performant Qwik code.
 
 ## Quick orientation
 
-| Package | Import | Purpose |
-| --- | --- | --- |
-| `@builder.io/qwik` | `component$`, `useSignal`, `useStore`, `useTask$`, `useVisibleTask$`, `useResource$`, `useComputed$`, `useContext`, `useContextProvider`, `createContextId`, `$`, `noSerialize` | Core framework |
-| `@builder.io/qwik-city` | `routeLoader$`, `routeAction$`, `Form`, `Link`, `useLocation`, `useNavigate`, `RequestHandler` | Meta-framework / routing |
+| Package                 | Import                                                                                                                                                                          | Purpose                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `@builder.io/qwik`      | `component$`, `useSignal`, `useStore`, `useTask$`, `useVisibleTask$`, `useResource$`, `useComputed$`, `useContext`, `useContextProvider`, `createContextId`, `$`, `noSerialize` | Core framework           |
+| `@builder.io/qwik-city` | `routeLoader$`, `routeAction$`, `Form`, `Link`, `useLocation`, `useNavigate`, `RequestHandler`                                                                                  | Meta-framework / routing |
 
 ## Core concepts you must always apply
 
@@ -67,21 +71,23 @@ separate lazy-loadable chunk. Rules:
 ```tsx
 // Fine-grained reactive value
 const count = useSignal(0);
-count.value++;            // triggers only components that read count.value
+count.value++; // triggers only components that read count.value
 
 // Deep reactive object — tracks nested mutations by default
-const state = useStore({ user: { name: 'Alice' }, items: [] });
-state.user.name = 'Bob'; // triggers re-render of consumers
+const state = useStore({ user: { name: "Alice" }, items: [] });
+state.user.name = "Bob"; // triggers re-render of consumers
 
 // Derived/computed — synchronous, memoised
 const upper = useComputed$(() => name.value.toUpperCase());
 
 // Async computed — fetch or other async work
 const data = useResource$<T>(async ({ track, cleanup }) => {
-  track(() => id.value);            // re-run when id changes
+  track(() => id.value); // re-run when id changes
   const ctrl = new AbortController();
   cleanup(() => ctrl.abort());
-  return fetch(`/api/item/${id.value}`, { signal: ctrl.signal }).then(r => r.json());
+  return fetch(`/api/item/${id.value}`, { signal: ctrl.signal }).then((r) =>
+    r.json(),
+  );
 });
 // Render with <Resource value={data} onPending=... onResolved=... />
 ```
@@ -98,11 +104,11 @@ useTask$ -> RENDER -> useVisibleTask$
      SERVER or BROWSER   BROWSER only
 ```
 
-| Hook | When it runs | Use it for |
-| --- | --- | --- |
-| `useTask$` | Before first render (server or browser); re-runs when tracked state changes | Async init, side effects that should run on server AND client |
-| `useVisibleTask$` | After render, browser only, when element becomes visible | DOM manipulation, third-party libs, subscriptions |
-| `useResource$` | Before render, async, non-blocking | Async data that should not block rendering |
+| Hook              | When it runs                                                                | Use it for                                                    |
+| ----------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `useTask$`        | Before first render (server or browser); re-runs when tracked state changes | Async init, side effects that should run on server AND client |
+| `useVisibleTask$` | After render, browser only, when element becomes visible                    | DOM manipulation, third-party libs, subscriptions             |
+| `useResource$`    | Before render, async, non-blocking                                          | Async data that should not block rendering                    |
 
 `useTask$` blocks rendering until its promise resolves. Use it for critical
 data. `useResource$` does not block — the component renders immediately with the
@@ -116,10 +122,10 @@ you genuinely need to branch.
 
 ```tsx
 // 1. Declare a typed context ID (module scope — not inside a component)
-export const ThemeCtx = createContextId<Signal<string>>('app.theme');
+export const ThemeCtx = createContextId<Signal<string>>("app.theme");
 
 // 2. Provide it in an ancestor
-useContextProvider(ThemeCtx, useSignal('dark'));
+useContextProvider(ThemeCtx, useSignal("dark"));
 
 // 3. Consume in any descendant
 const theme = useContext(ThemeCtx);
@@ -170,12 +176,12 @@ The right way to load server data that is needed before the page renders:
 // src/routes/product/[id]/index.tsx
 export const useProduct = routeLoader$(async ({ params, fail }) => {
   const product = await db.products.find(params.id);
-  if (!product) return fail(404, { message: 'Not found' });
+  if (!product) return fail(404, { message: "Not found" });
   return product;
 });
 
 export default component$(() => {
-  const product = useProduct();   // Signal<Product>
+  const product = useProduct(); // Signal<Product>
   return <h1>{product.value.name}</h1>;
 });
 ```
@@ -192,14 +198,14 @@ export default component$(() => {
 Handle mutations (POST forms, API calls):
 
 ```tsx
-import { routeAction$, zod$, z } from '@builder.io/qwik-city';
+import { routeAction$, zod$, z } from "@builder.io/qwik-city";
 
 export const useCreateItem = routeAction$(
   async (data, { redirect }) => {
     await db.items.create(data);
-    throw redirect(302, '/items');
+    throw redirect(302, "/items");
   },
-  zod$({ name: z.string().min(1), qty: z.number() })
+  zod$({ name: z.string().min(1), qty: z.number() }),
 );
 
 export default component$(() => {
@@ -221,8 +227,8 @@ Export `onRequest` / `onGet` / `onPost` (etc.) from any `layout.tsx` or
 
 ```tsx
 export const onRequest: RequestHandler = async ({ next, cookie, redirect }) => {
-  const token = cookie.get('session')?.value;
-  if (!token) throw redirect(302, '/login');
+  const token = cookie.get("session")?.value;
+  if (!token) throw redirect(302, "/login");
   await next();
 };
 ```
@@ -246,17 +252,17 @@ export const onGet: RequestHandler = async ({ json }) => {
 
 If the user is coming from React, this table is often the most useful thing to show first:
 
-| React pattern | Qwik equivalent | Notes |
-| --- | --- | --- |
-| `useEffect(() => {}, [])` | `useVisibleTask$(() => {})` | Browser-only, after render |
-| `useEffect(() => {}, [dep])` | `useVisibleTask$(({ track }) => { track(() => sig.value); ... })` | Re-runs when tracked signal changes |
-| `useEffect(() => { return () => cleanup(); })` | `useVisibleTask$(({ cleanup }) => { cleanup(() => ...); })` | |
-| `useRef<T>(null)` | `useSignal<T>()` + `ref={myRef}` | |
-| `useState(v)` | `useSignal(v)` — read/write via `.value` | |
-| `useState({ a, b, c })` | `useStore({ a, b, c })` — deep reactive proxy | |
-| `useMemo(() => expr, deps)` | `useComputed$(() => expr)` — auto-tracks | |
-| Storing a class instance in state | `noSerialize(instance)` stored in `useStore<{ x: NoSerialize<T> }>` | |
-| Context (`createContext` + `Provider`) | `createContextId` + `useContextProvider` + `useContext` | |
+| React pattern                                  | Qwik equivalent                                                     | Notes                               |
+| ---------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------- |
+| `useEffect(() => {}, [])`                      | `useVisibleTask$(() => {})`                                         | Browser-only, after render          |
+| `useEffect(() => {}, [dep])`                   | `useVisibleTask$(({ track }) => { track(() => sig.value); ... })`   | Re-runs when tracked signal changes |
+| `useEffect(() => { return () => cleanup(); })` | `useVisibleTask$(({ cleanup }) => { cleanup(() => ...); })`         |                                     |
+| `useRef<T>(null)`                              | `useSignal<T>()` + `ref={myRef}`                                    |                                     |
+| `useState(v)`                                  | `useSignal(v)` — read/write via `.value`                            |                                     |
+| `useState({ a, b, c })`                        | `useStore({ a, b, c })` — deep reactive proxy                       |                                     |
+| `useMemo(() => expr, deps)`                    | `useComputed$(() => expr)` — auto-tracks                            |                                     |
+| Storing a class instance in state              | `noSerialize(instance)` stored in `useStore<{ x: NoSerialize<T> }>` |                                     |
+| Context (`createContext` + `Provider`)         | `createContextId` + `useContextProvider` + `useContext`             |                                     |
 
 ### Non-serializable values — the critical pattern React developers miss
 
@@ -310,8 +316,8 @@ re-create it in `useVisibleTask$`.
 ### `bind:value` two-way binding
 
 ```tsx
-const name = useSignal('');
-<input bind:value={name} />   // equivalent to value={name.value} + onInput$
+const name = useSignal("");
+<input bind:value={name} />; // equivalent to value={name.value} + onInput$
 ```
 
 ### `useVisibleTask$` for DOM/browser-only work
@@ -351,74 +357,74 @@ useVisibleTask$(() => {
 
 ### Cookbook recipes (read for specific "how do I" patterns)
 
-When the user asks *how to implement* a specific common pattern, read the
+When the user asks _how to implement_ a specific common pattern, read the
 matching file from `references/cookbook/`:
 
-| Pattern | File |
-| --------- | ------ |
-| Algolia / search | `cookbook/algolia-search.md` |
-| Composing middleware | `cookbook/combine-request-handlers.md` |
-| Debounce input | `cookbook/debouncer.md` |
-| Image load detection | `cookbook/detect-img-onload.md` |
-| Drag and drop | `cookbook/drag-and-drop.md` |
-| Fonts / FOIT / CLS | `cookbook/fonts.md` |
-| `import.meta.glob` | `cookbook/glob-import.md` |
-| iOS media / audio playback | `cookbook/media-controller.md` |
-| Active nav link | `cookbook/nav-link.md` |
-| Docker deployment | `cookbook/node-docker-deploy.md` |
-| Modals / tooltips / portals | `cookbook/portals.md` |
+| Pattern                      | File                                     |
+| ---------------------------- | ---------------------------------------- |
+| Algolia / search             | `cookbook/algolia-search.md`             |
+| Composing middleware         | `cookbook/combine-request-handlers.md`   |
+| Debounce input               | `cookbook/debouncer.md`                  |
+| Image load detection         | `cookbook/detect-img-onload.md`          |
+| Drag and drop                | `cookbook/drag-and-drop.md`              |
+| Fonts / FOIT / CLS           | `cookbook/fonts.md`                      |
+| `import.meta.glob`           | `cookbook/glob-import.md`                |
+| iOS media / audio playback   | `cookbook/media-controller.md`           |
+| Active nav link              | `cookbook/nav-link.md`                   |
+| Docker deployment            | `cookbook/node-docker-deploy.md`         |
+| Modals / tooltips / portals  | `cookbook/portals.md`                    |
 | Streaming / deferred loaders | `cookbook/streaming-deferred-loaders.md` |
-| `sync$` / `preventDefault` | `cookbook/sync-events.md` |
-| Dark/light theme toggle | `cookbook/theme-management.md` |
-| View Transitions API | `cookbook/view-transition.md` |
+| `sync$` / `preventDefault`   | `cookbook/sync-events.md`                |
+| Dark/light theme toggle      | `cookbook/theme-management.md`           |
+| View Transitions API         | `cookbook/view-transition.md`            |
 
 ### Integrations (read when user asks about a specific tool or library)
 
 When the user is setting up or asking about a specific third-party tool, read
 the matching file from `references/integrations/`:
 
-| Tool / Library | File |
-| ---------------- | ------ |
-| React (`qwikify$`) | `integrations/react.md` |
-| Auth.js / NextAuth | `integrations/authjs.md` |
-| Tailwind CSS v4 | `integrations/tailwind.md` |
-| Tailwind CSS v3 | `integrations/tailwind-v3.md` |
-| Vitest (unit tests) | `integrations/vitest.md` |
-| Playwright (E2E) | `integrations/playwright.md` |
-| Cypress | `integrations/cypress.md` |
-| i18n / translations | `integrations/i18n.md` |
-| Drizzle ORM | `integrations/drizzle.md` |
-| Prisma ORM | `integrations/prisma.md` |
-| Supabase | `integrations/supabase.md` |
-| Turso / libSQL | `integrations/turso.md` |
-| Modular Forms | `integrations/modular-forms.md` |
-| Image optimization | `integrations/image-optimization.md` |
-| Icons | `integrations/icons.md` |
-| Partytown | `integrations/partytown.md` |
-| Panda CSS | `integrations/panda-css.md` |
-| PostCSS | `integrations/postcss.md` |
+| Tool / Library         | File                                     |
+| ---------------------- | ---------------------------------------- |
+| React (`qwikify$`)     | `integrations/react.md`                  |
+| Auth.js / NextAuth     | `integrations/authjs.md`                 |
+| Tailwind CSS v4        | `integrations/tailwind.md`               |
+| Tailwind CSS v3        | `integrations/tailwind-v3.md`            |
+| Vitest (unit tests)    | `integrations/vitest.md`                 |
+| Playwright (E2E)       | `integrations/playwright.md`             |
+| Cypress                | `integrations/cypress.md`                |
+| i18n / translations    | `integrations/i18n.md`                   |
+| Drizzle ORM            | `integrations/drizzle.md`                |
+| Prisma ORM             | `integrations/prisma.md`                 |
+| Supabase               | `integrations/supabase.md`               |
+| Turso / libSQL         | `integrations/turso.md`                  |
+| Modular Forms          | `integrations/modular-forms.md`          |
+| Image optimization     | `integrations/image-optimization.md`     |
+| Icons                  | `integrations/icons.md`                  |
+| Partytown              | `integrations/partytown.md`              |
+| Panda CSS              | `integrations/panda-css.md`              |
+| PostCSS                | `integrations/postcss.md`                |
 | styled-vanilla-extract | `integrations/styled-vanilla-extract.md` |
-| Bootstrap | `integrations/bootstrap.md` |
-| Storybook | `integrations/storybook.md` |
-| Nx monorepo | `integrations/nx.md` |
-| OG image generation | `integrations/og-img.md` |
-| Orama search | `integrations/orama.md` |
-| Leaflet maps | `integrations/leaflet-map.md` |
-| Builder.io CMS | `integrations/builderio.md` |
-| Astro | `integrations/astro.md` |
-| Tauri desktop app | `integrations/tauri.md` |
+| Bootstrap              | `integrations/bootstrap.md`              |
+| Storybook              | `integrations/storybook.md`              |
+| Nx monorepo            | `integrations/nx.md`                     |
+| OG image generation    | `integrations/og-img.md`                 |
+| Orama search           | `integrations/orama.md`                  |
+| Leaflet maps           | `integrations/leaflet-map.md`            |
+| Builder.io CMS         | `integrations/builderio.md`              |
+| Astro                  | `integrations/astro.md`                  |
+| Tauri desktop app      | `integrations/tauri.md`                  |
 
 ### Labs / experimental (read for cutting-edge or experimental APIs)
 
 When the user asks about experimental Qwik features, read the matching file
 from `references/labs/`:
 
-| Feature | File |
-| --------- | ------ |
-| Qwik Insights (real-user analytics) | `labs/insights.md` |
-| Qwik Devtools / `qwik/json` parsing | `labs/devtools.md` |
-| Typed routes | `labs/typed-routes.md` |
-| `usePreventNavigate$` | `labs/use-prevent-navigate.md` |
+| Feature                             | File                           |
+| ----------------------------------- | ------------------------------ |
+| Qwik Insights (real-user analytics) | `labs/insights.md`             |
+| Qwik Devtools / `qwik/json` parsing | `labs/devtools.md`             |
+| Typed routes                        | `labs/typed-routes.md`         |
+| `usePreventNavigate$`               | `labs/use-prevent-navigate.md` |
 
 ### Full documentation index
 
