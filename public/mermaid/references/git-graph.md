@@ -22,6 +22,7 @@ Always start with the `gitGraph` keyword. The diagram initializes with a `main` 
 ## Core Commands
 
 ### commit
+
 Register a commit on the current branch.
 
 ```mermaid
@@ -32,6 +33,7 @@ gitGraph
 ```
 
 **Attributes:**
+
 - `id: "custom_id"` - Custom commit identifier
 - `type: NORMAL|REVERSE|HIGHLIGHT` - Visual representation
   - `NORMAL`: Solid circle (default)
@@ -40,6 +42,7 @@ gitGraph
 - `tag: "tag_name"` - Add release/version tag
 
 **Examples:**
+
 ```mermaid
 gitGraph
    commit id: "Alpha"
@@ -48,6 +51,7 @@ gitGraph
 ```
 
 ### branch
+
 Create and switch to a new branch (sets it as current).
 
 ```mermaid
@@ -59,14 +63,17 @@ gitGraph
 ```
 
 **Usage:**
+
 - `branch develop`
 - `branch "cherry-pick"` (use quotes for names that could be keywords)
 - Branch name must be unique
 
 **Order control:**
+
 - `branch develop order: 2` - Control visual branch ordering (lower = left, higher = right)
 
 ### checkout / switch
+
 Switch to an existing branch (sets it as current). Both keywords are interchangeable.
 
 ```mermaid
@@ -79,6 +86,7 @@ gitGraph
 ```
 
 ### merge
+
 Merge a branch into the current branch. Creates a merge commit (filled double circle).
 
 ```mermaid
@@ -92,11 +100,13 @@ gitGraph
 ```
 
 **Attributes:**
+
 - `id: "merge_id"` - Custom merge commit ID
 - `tag: "tag_name"` - Tag for merge commit
 - `type: NORMAL|REVERSE|HIGHLIGHT` - Override merge commit shape
 
 **Example:**
+
 ```mermaid
 gitGraph
    commit id: "1"
@@ -108,14 +118,17 @@ gitGraph
 ```
 
 ### cherry-pick
+
 Apply a commit from another branch to the current branch.
 
 **Syntax:**
+
 - `cherry-pick id:"commit_id"` - Cherry-pick specific commit
 - `cherry-pick tag:"tag_name"` - Cherry-pick tagged commit
 - Supports same attributes as commit: `id`, `type`, `tag`, `parent`
 
 **Parent specification:**
+
 ```mermaid
 gitGraph
    commit id: "A"
@@ -128,6 +141,7 @@ gitGraph
 ## Advanced Features
 
 ### Commit Ordering and Parents
+
 Control commit positioning using `parent` attribute:
 
 ```mermaid
@@ -139,6 +153,7 @@ gitGraph
 ```
 
 ### Branch Ordering
+
 Control visual branch layout:
 
 ```mermaid
@@ -149,6 +164,7 @@ gitGraph
 ```
 
 ### Multiple Parents (Merge Commits)
+
 Specify multiple parents for complex merges:
 
 ```mermaid
@@ -164,6 +180,7 @@ gitGraph
 ## Theming and Customization
 
 ### Branch Colors
+
 Customize using `git0` through `git7` theme variables (supports up to 8 branches, then cycles):
 
 ```mermaid
@@ -182,6 +199,7 @@ gitGraph
 ```
 
 ### Branch Label Colors
+
 Use `gitBranchLabel0` through `gitBranchLabel7`:
 
 ```mermaid
@@ -197,17 +215,20 @@ gitGraph
 ```
 
 ### Commit Styling
+
 - `commitLabelColor` - Commit label text color
 - `commitLabelBackground` - Commit label background
 - `commitLabelFontSize` - Font size (e.g., `'16px'`)
 
 ### Tag Styling
+
 - `tagLabelColor` - Tag text color
 - `tagLabelBackground` - Tag background color
 - `tagLabelBorder` - Tag border color
 - `tagLabelFontSize` - Font size (e.g., `'16px'`)
 
 ### Highlight Commit Colors
+
 Use `gitInv0` through `gitInv7` for branch-specific highlight commits:
 
 ```mermaid
@@ -223,6 +244,7 @@ gitGraph
 ## Common Patterns
 
 ### Git Flow
+
 ```mermaid
 gitGraph
    commit
@@ -240,6 +262,7 @@ gitGraph
 ```
 
 ### Hotfix Workflow
+
 ```mermaid
 gitGraph
    commit
@@ -254,6 +277,7 @@ gitGraph
 ```
 
 ### Feature Branches
+
 ```mermaid
 gitGraph
    commit

@@ -15,7 +15,7 @@ Installs `@builder.io/sdk-qwik`, creates a sample component and a catchall route
 1. Create a free [Builder.io account](https://builder.io/signup).
 2. Add your public API key to `.env`:
 
-   ```
+   ```bash
    BUILDER_PUBLIC_API_KEY=your_api_key_here
    ```
 

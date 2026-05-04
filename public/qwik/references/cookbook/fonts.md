@@ -5,7 +5,7 @@
 ## Performance concepts
 
 | Term | Meaning |
-|------|---------|
+| ------ | --------- |
 | **FOIT** | Flash Of Invisible Text — text hidden until font loads |
 | **FOUT** | Flash Of Unstyled Text — system font shown, then swapped |
 | `font-display: swap` | Show fallback immediately, swap when custom font is ready |
@@ -45,7 +45,9 @@ No download required. Tailwind CSS provides `font-sans`, `font-serif`, `font-mon
 
 ## Fallback font matching (reduce CLS)
 
-Use [screenspan.net/fallback](https://screenspan.net/fallback) or the [Fontaine Vite plugin](https://github.com/unjs/fontaine) to auto-generate `size-adjust`, `ascent-override`, and `descent-override` values that minimize layout shift.
+Use [screenspan.net/fallback](https://screenspan.net/fallback) or the
+[Fontaine Vite plugin](https://github.com/unjs/fontaine) to auto-generate `size-adjust`,
+`ascent-override`, and `descent-override` values that minimize layout shift.
 
 ## CSS tips
 

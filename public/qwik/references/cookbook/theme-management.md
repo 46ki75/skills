@@ -61,7 +61,7 @@ export const ThemeToggle = component$(() => (
 ## CSP options
 
 | Option | Security | Notes |
-|--------|----------|-------|
+| -------- | ---------- | ------- |
 | `'unsafe-inline'` in `script-src` | ⚠️ Lower | Simplest for static sites |
 | SHA-256 hash of the inline script | ✅ Better | Calculate with `openssl dgst -sha256` |
 | Nonces | ✅ Best | SSR only, not SSG |

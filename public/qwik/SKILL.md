@@ -24,7 +24,7 @@ goal is to help users write correct, idiomatic, and performant Qwik code.
 ## Quick orientation
 
 | Package | Import | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `@builder.io/qwik` | `component$`, `useSignal`, `useStore`, `useTask$`, `useVisibleTask$`, `useResource$`, `useComputed$`, `useContext`, `useContextProvider`, `createContextId`, `$`, `noSerialize` | Core framework |
 | `@builder.io/qwik-city` | `routeLoader$`, `routeAction$`, `Form`, `Link`, `useLocation`, `useNavigate`, `RequestHandler` | Meta-framework / routing |
 
@@ -92,14 +92,14 @@ simpler and auto-tracks.
 
 ### 4 – Tasks and the lifecycle
 
-```
+```text
 useTask$ -> RENDER -> useVisibleTask$
            |                |
      SERVER or BROWSER   BROWSER only
 ```
 
 | Hook | When it runs | Use it for |
-|---|---|---|
+| --- | --- | --- |
 | `useTask$` | Before first render (server or browser); re-runs when tracked state changes | Async init, side effects that should run on server AND client |
 | `useVisibleTask$` | After render, browser only, when element becomes visible | DOM manipulation, third-party libs, subscriptions |
 | `useResource$` | Before render, async, non-blocking | Async data that should not block rendering |
@@ -145,7 +145,7 @@ Key points:
 
 ### File-based routing
 
-```
+```text
 src/routes/
 ├── layout.tsx          ← wraps all child routes
 ├── index.tsx           ← page: /
@@ -247,16 +247,16 @@ export const onGet: RequestHandler = async ({ json }) => {
 If the user is coming from React, this table is often the most useful thing to show first:
 
 | React pattern | Qwik equivalent | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `useEffect(() => {}, [])` | `useVisibleTask$(() => {})` | Browser-only, after render |
 | `useEffect(() => {}, [dep])` | `useVisibleTask$(({ track }) => { track(() => sig.value); ... })` | Re-runs when tracked signal changes |
-| `useEffect(() => { return () => cleanup(); })` | `useVisibleTask$(({ cleanup }) => { cleanup(() => ...); })` |
-| `useRef<T>(null)` | `useSignal<T>()` + `ref={myRef}` |
-| `useState(v)` | `useSignal(v)` — read/write via `.value` |
-| `useState({ a, b, c })` | `useStore({ a, b, c })` — deep reactive proxy |
-| `useMemo(() => expr, deps)` | `useComputed$(() => expr)` — auto-tracks |
-| Storing a class instance in state | `noSerialize(instance)` stored in `useStore<{ x: NoSerialize<T> }>` |
-| Context (`createContext` + `Provider`) | `createContextId` + `useContextProvider` + `useContext` |
+| `useEffect(() => { return () => cleanup(); })` | `useVisibleTask$(({ cleanup }) => { cleanup(() => ...); })` | |
+| `useRef<T>(null)` | `useSignal<T>()` + `ref={myRef}` | |
+| `useState(v)` | `useSignal(v)` — read/write via `.value` | |
+| `useState({ a, b, c })` | `useStore({ a, b, c })` — deep reactive proxy | |
+| `useMemo(() => expr, deps)` | `useComputed$(() => expr)` — auto-tracks | |
+| Storing a class instance in state | `noSerialize(instance)` stored in `useStore<{ x: NoSerialize<T> }>` | |
+| Context (`createContext` + `Provider`) | `createContextId` + `useContextProvider` + `useContext` | |
 
 ### Non-serializable values — the critical pattern React developers miss
 
@@ -355,7 +355,7 @@ When the user asks *how to implement* a specific common pattern, read the
 matching file from `references/cookbook/`:
 
 | Pattern | File |
-|---------|------|
+| --------- | ------ |
 | Algolia / search | `cookbook/algolia-search.md` |
 | Composing middleware | `cookbook/combine-request-handlers.md` |
 | Debounce input | `cookbook/debouncer.md` |
@@ -378,7 +378,7 @@ When the user is setting up or asking about a specific third-party tool, read
 the matching file from `references/integrations/`:
 
 | Tool / Library | File |
-|----------------|------|
+| ---------------- | ------ |
 | React (`qwikify$`) | `integrations/react.md` |
 | Auth.js / NextAuth | `integrations/authjs.md` |
 | Tailwind CSS v4 | `integrations/tailwind.md` |
@@ -414,7 +414,7 @@ When the user asks about experimental Qwik features, read the matching file
 from `references/labs/`:
 
 | Feature | File |
-|---------|------|
+| --------- | ------ |
 | Qwik Insights (real-user analytics) | `labs/insights.md` |
 | Qwik Devtools / `qwik/json` parsing | `labs/devtools.md` |
 | Typed routes | `labs/typed-routes.md` |

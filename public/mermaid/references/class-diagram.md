@@ -12,6 +12,7 @@ classDiagram
 ```
 
 **Three compartments:**
+
 - Top: Class name (bold, centered, capitalized)
 - Middle: Attributes (left-aligned, lowercase first letter)
 - Bottom: Operations/methods (left-aligned, lowercase first letter)
@@ -21,12 +22,14 @@ classDiagram
 ### Two Approaches
 
 **Explicit declaration:**
+
 ```mermaid
 classDiagram
     class Animal
 ```
 
 **Via relationship (defines both classes):**
+
 ```mermaid
 classDiagram
     Vehicle <|-- Car
@@ -35,6 +38,7 @@ classDiagram
 ### Class Labels
 
 **Bracket notation for special characters:**
+
 ```mermaid
 classDiagram
     class Animal["Animal with a label"]
@@ -42,6 +46,7 @@ classDiagram
 ```
 
 **Backtick notation for escaping:**
+
 ```mermaid
 classDiagram
     class `Animal Class!`
@@ -53,6 +58,7 @@ classDiagram
 ### Two Definition Styles
 
 **Colon notation (one member per line):**
+
 ```mermaid
 classDiagram
     BankAccount : +String owner
@@ -62,6 +68,7 @@ classDiagram
 ```
 
 **Bracket notation (grouped members):**
+
 ```mermaid
 classDiagram
     class BankAccount{
@@ -112,10 +119,12 @@ Prefix members with visibility modifiers:
 - `~` Package/Internal
 
 **Method classifiers (suffix after `()` or return type):**
+
 - `*` Abstract: `someMethod()*` or `someMethod() int*`
 - `$` Static: `someMethod()$` or `someMethod() String$`
 
 **Field classifiers (suffix):**
+
 - `$` Static: `String field$`
 
 ## Relationships
@@ -136,6 +145,7 @@ Prefix members with visibility modifiers:
 | `..`    | Link (Dashed) |
 
 **Arrows work in both directions:**
+
 ```mermaid
 classDiagram
     classA --|> classB : Inheritance
@@ -145,6 +155,7 @@ classDiagram
 ### Labels
 
 Add labels with `:LabelText`:
+
 ```mermaid
 classDiagram
     classA <|-- classB : implements
@@ -160,6 +171,7 @@ classDiagram
 ```
 
 **Relation Types:**
+
 - `<|` Inheritance
 - `*` Composition
 - `o` Aggregation
@@ -168,6 +180,7 @@ classDiagram
 - `|>` Realization
 
 **Link Types:**
+
 - `--` Solid
 - `..` Dashed
 
@@ -194,6 +207,7 @@ classDiagram
 ```
 
 **Common notations:**
+
 - `1` - Exactly one
 - `0..1` - Zero or one
 - `1..*` - One or more
@@ -205,12 +219,14 @@ classDiagram
 ## Annotations
 
 **Supported annotations:**
+
 - `<<Interface>>` - Interface class
 - `<<Abstract>>` - Abstract class
 - `<<Service>>` - Service class
 - `<<Enumeration>>` - Enumeration
 
 Add inside class definition:
+
 ```mermaid
 classDiagram
     class Shape{
@@ -229,6 +245,7 @@ classDiagram
 ## Comments
 
 Use `%%` at line start (entire line ignored):
+
 ```mermaid
 classDiagram
     %% This is a comment
@@ -240,6 +257,7 @@ classDiagram
 ## Direction
 
 Set diagram orientation:
+
 ```mermaid
 classDiagram
     direction RL
@@ -251,12 +269,14 @@ classDiagram
 ## Notes
 
 **General note:**
+
 ```mermaid
 classDiagram
     note "This is a general note"
 ```
 
 **Class-specific note:**
+
 ```mermaid
 classDiagram
     note for MyClass "Line 1\nLine 2"
@@ -268,6 +288,7 @@ classDiagram
 Add after all classes declared (requires `securityLevel='loose'`):
 
 **Link:**
+
 ```mermaid
 classDiagram
     link ClassName "url" "tooltip"
@@ -275,6 +296,7 @@ classDiagram
 ```
 
 **Callback:**
+
 ```mermaid
 classDiagram
     callback ClassName "callbackFunction" "tooltip"
@@ -296,21 +318,25 @@ classDiagram
 ### Style Classes
 
 **Define class:**
-```
+
+```text
 classDef className fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
 **Apply to node:**
-```
+
+```text
 cssClass "nodeId" className;
 ```
 
 **Apply to multiple:**
-```
+
+```text
 cssClass "nodeId1,nodeId2" className;
 ```
 
 **Shorthand with `:::`:**
+
 ```mermaid
 classDiagram
     class Animal:::someclass
@@ -318,6 +344,7 @@ classDiagram
 ```
 
 Or with body:
+
 ```mermaid
 classDiagram
     class Animal:::someclass {
@@ -329,7 +356,8 @@ classDiagram
 ### Default Class
 
 Applied to all nodes (override with specific styles):
-```
+
+```text
 classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 

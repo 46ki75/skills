@@ -77,7 +77,7 @@ export const onRequest: RequestHandler = (event) => {
 ## REST endpoints (auto-generated)
 
 | Endpoint | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | `GET /auth/signin` | Built-in sign-in page |
 | `POST /auth/signin/:provider` | Start OAuth flow |
 | `GET/POST /auth/callback/:provider` | OAuth callback |
@@ -102,7 +102,7 @@ Auth routes changed: `/api/auth/` → `/auth/`.
 
 Set these env vars so Node knows its own origin:
 
-```
+```bash
 ORIGIN=https://your-app.example.com
 PROTOCOL_HEADER=X-Forwarded-Proto
 HOST_HEADER=X-Forwarded-Host

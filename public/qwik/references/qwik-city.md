@@ -7,7 +7,7 @@ deployment adapters
 
 ## Project structure
 
-```
+```text
 src/
 └── routes/
     ├── layout.tsx          # Root layout (wraps all pages)
@@ -93,7 +93,7 @@ export default component$(() => {
 ### RequestEvent properties
 
 | Property | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `params` | `Record<string, string>` | URL dynamic segments |
 | `url` | `URL` | Full request URL |
 | `method` | `string` | HTTP verb |
@@ -205,7 +205,7 @@ export const onRequest: RequestHandler = async ({ next, cookie, redirect }) => {
 ### Key `RequestEvent` response methods
 
 | Method | Description |
-|---|---|
+| --- | --- |
 | `json(status, data)` | Send JSON response |
 | `text(status, str)` | Send plain-text response |
 | `html(status, str)` | Send HTML response |
@@ -277,7 +277,7 @@ Layouts nest automatically by directory depth. Every layout must render
 
 ### Named layouts
 
-```
+```text
 src/routes/
 ├── (auth)/
 │   ├── layout.tsx       # Layout for the auth group
@@ -392,7 +392,7 @@ throw event.error(404, 'Not found');
 Add with `pnpm run qwik add <adapter>`:
 
 | Target | Adapter |
-|---|---|
+| --- | --- |
 | Cloudflare Pages | `cloudflare-pages` |
 | Cloudflare Workers | `cloudflare-workers` |
 | Vercel Edge | `vercel-edge` |
@@ -444,7 +444,7 @@ import MyComponent from '~/components/MyComponent';
 ## Useful hooks summary
 
 | Hook | Package | Description |
-|---|---|---|
+| --- | --- | --- |
 | `useLocation()` | qwik-city | Current URL, params, navigation state |
 | `useNavigate()` | qwik-city | Programmatic SPA navigation |
 | `useDocumentHead()` | qwik-city | Access current `<head>` data |
@@ -628,7 +628,7 @@ Create `src/routes/404.tsx` for a site-wide custom 404 page. Add
 
 A directory wrapped in parentheses is excluded from the URL:
 
-```
+```text
 src/routes/(account)/profile/index.tsx  =>  /profile  (not /account/profile)
 ```
 
@@ -636,7 +636,7 @@ Used to share a layout without adding a URL segment.
 
 ### Named layouts `layout-name.tsx` + `index@name.tsx`
 
-```
+```text
 layout-narrow.tsx      # named layout
 contact/index@narrow.tsx  # uses layout-narrow.tsx
 ```
@@ -654,7 +654,7 @@ the right place for global auth checks, logging, etc.
 `RequestEvent` is available in all request handlers. Key fields:
 
 | Field | Type | Description |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `request` | `Request` | Native fetch `Request` |
 | `url` | `URL` | Parsed URL |
 | `params` | `Record<string, string>` | Route params |

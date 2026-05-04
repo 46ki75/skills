@@ -12,7 +12,7 @@ Qwik processes events asynchronously, which breaks several drag-and-drop APIs:
 ## Solutions
 
 | Technique | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | `preventdefault:dragover` / `preventdefault:drop` attributes | Prevent default without JS |
 | `sync$()` | Synchronous portion of event handler |
 | `$()` chained after `sync$()` | Async portion that can read Qwik state |

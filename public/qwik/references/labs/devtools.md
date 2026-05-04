@@ -25,7 +25,7 @@ Qwik serializes application state into `<script type="qwik/json">`. The format i
 ### Output structure
 
 | Key | Meaning |
-|-----|---------|
+| ----- | --------- |
 | `objs` | All serialized objects |
 | `ctx` | `QContext` objects (component state + tasks) |
 | `refs` | `QRef` objects (element listeners + captured vars) |
@@ -33,7 +33,9 @@ Qwik serializes application state into `<script type="qwik/json">`. The format i
 
 ### `__backRef`
 
-Every serialized object includes `__backRef` pointing to the object that causes it to be retained. Trace `__backRef` chains back to `QContext` or `QRef` roots to understand *why* a given object is being serialized.
+Every serialized object includes `__backRef` pointing to the object that causes it to be retained.
+Trace `__backRef` chains back to `QContext` or `QRef` roots to understand *why* a given object is
+being serialized.
 
 ## Key points
 
