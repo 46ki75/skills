@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "feat-pagination",
+  "prompt": "I just added pagination support to the /users API endpoint. It accepts `page` and `limit` query params and returns a `meta` object with total count. Can you write a commit message for this?",
+  "assertions": [
+    "The commit message header starts with 'feat'",
+    "The commit message header uses imperative mood (e.g. 'add', not 'added' or 'adds')",
+    "The commit message header is 72 characters or fewer",
+    "The commit message header first word after the colon+space is lowercase",
+    "The commit message header does not end with a period"
+  ]
+}

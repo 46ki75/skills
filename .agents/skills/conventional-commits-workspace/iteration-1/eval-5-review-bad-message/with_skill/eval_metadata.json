@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "review-bad-message",
+  "prompt": "Is this commit message ok? 'Updated the login page to fix issues with the forgot password flow and also added some tests'",
+  "assertions": [
+    "The response identifies that the message is missing a type prefix (feat/fix/etc.)",
+    "The response identifies that the description uses past tense ('Updated') instead of imperative mood",
+    "The response provides at least one corrected commit message with a proper type prefix",
+    "The corrected commit message(s) in the response use imperative mood",
+    "The response notes that the message mixes multiple concerns (bug fix + tests) and suggests splitting OR uses the dominant type correctly"
+  ]
+}

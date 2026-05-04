@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "The commit message header starts with 'fix'",
+      "passed": true,
+      "evidence": "Header is 'fix: use milliseconds for password reset link expiry calculation' — starts with 'fix'."
+    },
+    {
+      "text": "The commit message header uses imperative mood (e.g. 'use', 'fix', not 'fixed' or 'fixes')",
+      "passed": true,
+      "evidence": "Header uses 'use' (imperative present tense)."
+    },
+    {
+      "text": "The commit message header is 72 characters or fewer",
+      "passed": true,
+      "evidence": "'fix: use milliseconds for password reset link expiry calculation' = 63 characters. Within limit."
+    },
+    {
+      "text": "The commit message header first word after the colon+space is lowercase",
+      "passed": true,
+      "evidence": "First word after ': ' is 'use' — lowercase."
+    },
+    {
+      "text": "The commit message header does not end with a period",
+      "passed": true,
+      "evidence": "Header ends with 'calculation' — no trailing period."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": { "bash": 1, "create": 2 },
+    "total_tool_calls": 3,
+    "total_steps": 2,
+    "errors_encountered": 0,
+    "output_chars": 551,
+    "transcript_chars": 1200
+  },
+  "timing": {},
+  "claims": [],
+  "user_notes_summary": { "uncertainties": [], "needs_review": [], "workarounds": [] },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "No issues. Baseline also scores 5/5 on these assertions, though it lacks the auth scope."
+  }
+}

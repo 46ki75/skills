@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "breaking-rename",
+  "prompt": "We're renaming the `getUser()` function to `fetchUser()` across the entire codebase. This is a public API that our SDK consumers use, so it's a breaking change. Write the commit message.",
+  "assertions": [
+    "The commit message header starts with 'refactor'",
+    "The commit message marks the breaking change with '!' after the type/scope OR includes a 'BREAKING CHANGE:' footer",
+    "The commit message mentions 'fetchUser' (the new name) or references the rename",
+    "The commit message header is 72 characters or fewer",
+    "If a BREAKING CHANGE footer is present, it explains what callers need to change"
+  ]
+}

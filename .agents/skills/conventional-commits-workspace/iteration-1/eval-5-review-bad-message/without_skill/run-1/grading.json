@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "The response identifies that the message is missing a type prefix (feat/fix/etc.)",
+      "passed": true,
+      "evidence": "Issue #3: 'No conventional commit type – Missing a type prefix (e.g., fix:, test:)' — explicitly identified."
+    },
+    {
+      "text": "The response identifies that the description uses past tense ('Updated') instead of imperative mood",
+      "passed": false,
+      "evidence": "The response mentions 'Filler words – Updated the login page to adds noise... Prefer imperative mood' but does not explicitly identify 'Updated' as past tense. It frames it as 'filler words', not a tense violation."
+    },
+    {
+      "text": "The response provides at least one corrected commit message with a proper type prefix",
+      "passed": true,
+      "evidence": "Suggests 'fix(auth): resolve forgot-password redirect on login page' — has proper type prefix."
+    },
+    {
+      "text": "The corrected commit message(s) in the response use imperative mood",
+      "passed": true,
+      "evidence": "Suggested messages use 'resolve' and 'add' — imperative present tense."
+    },
+    {
+      "text": "The response notes that the message mixes multiple concerns (bug fix + tests) and suggests splitting OR uses the dominant type correctly",
+      "passed": true,
+      "evidence": "Issue #2: 'Multiple concerns in one commit – Fixing a bug and adding tests are two separate things'. Suggests split commits."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  },
+  "execution_metrics": {
+    "tool_calls": { "bash": 1, "create": 2 },
+    "total_tool_calls": 3,
+    "total_steps": 2,
+    "errors_encountered": 0,
+    "output_chars": 1030,
+    "transcript_chars": 620
+  },
+  "timing": {},
+  "claims": [],
+  "user_notes_summary": { "uncertainties": [], "needs_review": [], "workarounds": [] },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Baseline catches the missing type and multiple-concerns issues but mischaracterises the tense problem as 'filler words' rather than past tense. The skill explicitly names the past tense violation."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "fix-password-reset",
+  "prompt": "Fixed a bug where the password reset link expired too early — it was using seconds instead of milliseconds when calculating the expiry. Write me a commit for this.",
+  "assertions": [
+    "The commit message header starts with 'fix'",
+    "The commit message header uses imperative mood (e.g. 'use', 'fix', not 'fixed' or 'fixes')",
+    "The commit message header is 72 characters or fewer",
+    "The commit message header first word after the colon+space is lowercase",
+    "The commit message header does not end with a period"
+  ]
+}

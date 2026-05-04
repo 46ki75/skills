@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "The commit message header starts with 'refactor'",
+      "passed": true,
+      "evidence": "Header is 'refactor!: rename getUser() to fetchUser() in public API' — starts with 'refactor'."
+    },
+    {
+      "text": "The commit message marks the breaking change with '!' after the type/scope OR includes a 'BREAKING CHANGE:' footer",
+      "passed": true,
+      "evidence": "'!' present in header as 'refactor!' and 'BREAKING CHANGE:' footer present."
+    },
+    {
+      "text": "The commit message mentions 'fetchUser' (the new name) or references the rename",
+      "passed": true,
+      "evidence": "Header says 'rename getUser() to fetchUser()'; footer also mentions fetchUser()."
+    },
+    {
+      "text": "The commit message header is 72 characters or fewer",
+      "passed": true,
+      "evidence": "'refactor!: rename getUser() to fetchUser() in public API' = 55 characters."
+    },
+    {
+      "text": "If a BREAKING CHANGE footer is present, it explains what callers need to change",
+      "passed": true,
+      "evidence": "Footer: 'SDK consumers must update all call sites from getUser() to fetchUser()'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": { "bash": 1, "create": 2 },
+    "total_tool_calls": 3,
+    "total_steps": 2,
+    "errors_encountered": 0,
+    "output_chars": 794,
+    "transcript_chars": 1200
+  },
+  "timing": {},
+  "claims": [],
+  "user_notes_summary": { "uncertainties": [], "needs_review": [], "workarounds": [] },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Baseline also scores 5/5 on the breaking-change assertions, though it omits scope and the before/after migration guide."
+  }
+}
