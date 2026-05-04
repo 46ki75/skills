@@ -1,6 +1,6 @@
 ---
 name: mermaid
-description: Create diagrams and visualizations using Mermaid syntax. Use when users request flowcharts, sequence diagrams, class diagrams, state diagrams, entity relationship diagrams, Gantt charts, pie charts, mindmaps, timelines, user journey maps, Git graphs, quadrant charts, or requirement diagrams. Also use when users want to visualize processes, workflows, systems, data structures, or relationships.
+description: Create diagrams and visualizations using Mermaid syntax. Always use this skill when users ask for any kind of diagram, chart, or visual representation — including flowcharts, sequence diagrams, class diagrams, state diagrams, entity relationship diagrams, Gantt charts, pie charts, mindmaps, timelines, user journey maps, Git graphs, quadrant charts, and requirement diagrams. Also use whenever users want to visualize processes, workflows, system architectures, data structures, relationships, project plans, or hierarchies, even if they don't explicitly mention Mermaid or diagrams by name.
 ---
 
 # Mermaid Diagram Creation
