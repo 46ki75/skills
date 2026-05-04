@@ -10,6 +10,10 @@ description: >
   commits" explicitly — phrases like "how should I word this commit", "what
   type is this", "write a commit for", "is this commit message ok", or just
   pasting a raw description and asking for a commit all count.
+license: MIT
+metadata:
+  author: "Ikuma Yamashita"
+  version: "1.0"
 ---
 
 # Conventional Commits Skill
@@ -38,14 +42,14 @@ change is breaking).
 
 ## Allowed types
 
-| Type       | Use it when…                                                  | SemVer  |
-|------------|---------------------------------------------------------------|---------|
-| `feat`     | a new user-facing feature or capability is added              | MINOR   |
-| `fix`      | a bug is fixed (a reproducing test would now pass)            | PATCH   |
-| `refactor` | internal code change with zero behavior change                | —       |
-| `docs`     | documentation only (README, comments, guides, ADRs)           | —       |
-| `test`     | tests added or updated, no `src` changes                      | —       |
-| `chore`    | catch-all: dep bumps, build config, CI, formatting, tooling   | —       |
+| Type       | Use it when…                                                | SemVer |
+| ---------- | ----------------------------------------------------------- | ------ |
+| `feat`     | a new user-facing feature or capability is added            | MINOR  |
+| `fix`      | a bug is fixed (a reproducing test would now pass)          | PATCH  |
+| `refactor` | internal code change with zero behavior change              | —      |
+| `docs`     | documentation only (README, comments, guides, ADRs)         | —      |
+| `test`     | tests added or updated, no `src` changes                    | —      |
+| `chore`    | catch-all: dep bumps, build config, CI, formatting, tooling | —      |
 
 Pick the type that describes the **primary intent**. When in doubt, prefer
 the more specific type — e.g. `refactor` over `chore` for internal rewrites.
@@ -60,7 +64,7 @@ the more specific type — e.g. `refactor` over `chore` for internal rewrites.
   Don't use issue IDs as scopes.
 - **Description**: imperative present tense ("add", not "added" / "adds"),
   lowercase first letter, no trailing period, ≤ 72 characters total header.
-  Read it as *"This commit will…"*
+  Read it as _"This commit will…"_
 
 ---
 
@@ -132,7 +136,7 @@ These are the **only** commits that do NOT use the `type:` prefix:
 
 4. **Write the header.** Imperative, lowercase, ≤ 72 chars, no trailing period.
 
-5. **Decide on body/footer.** Add a body when the *why* isn't obvious from the
+5. **Decide on body/footer.** Add a body when the _why_ isn't obvious from the
    header. Add footers for issue refs and breaking changes.
 
 6. **Show your work briefly.** After presenting the commit message, explain in
