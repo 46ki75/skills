@@ -9,3 +9,5 @@ config:
     style: ordered
 ignores:
   - "**/node_modules/**"
+  - "./.agents/**"
+  - "./.claude/**"
