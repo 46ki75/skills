@@ -23,7 +23,7 @@ change is breaking).
 
 ## Message format
 
-```
+```text
 <type>[optional scope][!]: <description>
 
 [optional body]
@@ -71,7 +71,8 @@ both** of these ways:
 
 1. Append `!` after the type/scope: `feat(api)!: …`
 2. Add a `BREAKING CHANGE:` footer (the one token allowed to contain a space):
-   ```
+
+   ```text
    BREAKING CHANGE: <what changed and what callers must do>
    ```
 
@@ -95,6 +96,7 @@ Use the body to explain **what and why** — not how (the diff shows how).
 Each footer is `Token: value` (use `-` instead of spaces in tokens).
 
 Common footers:
+
 - `Refs: #123` — related issue
 - `Closes: #123` — closes the issue on merge
 - `Co-authored-by: Name <email>`
@@ -145,17 +147,20 @@ These are the **only** commits that do NOT use the `type:` prefix:
 ## Examples
 
 **Minimal:**
-```
+
+```text
 fix: prevent crash on empty config file
 ```
 
 **With scope:**
-```
+
+```text
 feat(billing): add monthly invoice export
 ```
 
 **With body and footer:**
-```
+
+```text
 refactor(auth): extract token validation into its own module
 
 The validation logic was duplicated across the login and refresh
@@ -166,7 +171,8 @@ Refs: #482
 ```
 
 **Breaking change:**
-```
+
+```text
 feat(api)!: require API key on all public endpoints
 
 BREAKING CHANGE: requests without an `X-API-Key` header now
@@ -176,7 +182,8 @@ Closes: #517
 ```
 
 **Revert:**
-```
+
+```text
 Revert "feat(billing): add monthly invoice export"
 
 This reverts commit 3f9a1c2e.
