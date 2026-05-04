@@ -43,6 +43,7 @@ Use JSON configuration syntax to specify participant types:
 | Queue | Queue shape | `participant Alice@{ "type" : "queue" }` |
 
 **Example with types:**
+
 ```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary" }
@@ -55,6 +56,7 @@ sequenceDiagram
 ### Aliases
 
 **External syntax (recommended):**
+
 ```mermaid
 sequenceDiagram
     participant A as Alice
@@ -63,6 +65,7 @@ sequenceDiagram
 ```
 
 **Inline syntax:**
+
 ```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Public API" }
@@ -70,6 +73,7 @@ sequenceDiagram
 ```
 
 **Combined (external takes precedence):**
+
 ```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Internal" } as External Name
@@ -90,10 +94,12 @@ sequenceDiagram
 | Dotted open arrow | Async response | `--)` |
 
 **Arrowhead variations:**
+
 - No arrowhead: Add `-` before last `>`  
   Example: `Alice--John` (dotted line, no arrow)
 
 **Example:**
+
 ```mermaid
 sequenceDiagram
     Alice->>John: Sync request
@@ -115,6 +121,7 @@ sequenceDiagram
 ```
 
 **Shorthand:**
+
 ```mermaid
 sequenceDiagram
     Alice->>+John: Request (auto-activate)
@@ -122,6 +129,7 @@ sequenceDiagram
 ```
 
 **Stacking activations:**
+
 ```mermaid
 sequenceDiagram
     Alice->>+John: Request 1
@@ -163,6 +171,7 @@ sequenceDiagram
 ```
 
 **Optional paths:**
+
 ```mermaid
 sequenceDiagram
     Alice->>Bob: Request
@@ -242,6 +251,7 @@ sequenceDiagram
 ```
 
 **Rules:**
+
 - Only recipients can be created
 - Either sender or recipient can be destroyed
 - `create` supports actor/participant types and aliases
@@ -265,6 +275,7 @@ sequenceDiagram
 ```
 
 **Supported colors:**
+
 - Named colors: `box Purple Backend`
 - Hex: `box #FF5733`
 - RGB: `box rgb(33,66,99)`
@@ -274,6 +285,7 @@ sequenceDiagram
 ## Sequence Numbering
 
 **Via diagram code:**
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -282,6 +294,7 @@ sequenceDiagram
 ```
 
 **With custom start/increment:**
+
 ```mermaid
 sequenceDiagram
     autonumber 10 5
@@ -293,6 +306,7 @@ sequenceDiagram
 Add clickable links to participants:
 
 **Simple syntax:**
+
 ```mermaid
 sequenceDiagram
     participant Alice
@@ -303,6 +317,7 @@ sequenceDiagram
 ```
 
 **JSON syntax:**
+
 ```mermaid
 sequenceDiagram
     participant Alice
