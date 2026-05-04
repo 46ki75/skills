@@ -30,6 +30,7 @@ flowchart TD
 ```
 
 **Syntax patterns**:
+
 - `id[Text]` - Rectangle
 - `id(Text)` - Rounded edges
 - `id([Text])` - Stadium
@@ -52,6 +53,7 @@ flowchart TD
 ```
 
 **Syntax patterns**:
+
 - `id[/Text/]` - Parallelogram (lean right)
 - `id[\Text\]` - Parallelogram alt (lean left)
 - `id[/Text\]` - Trapezoid (base bottom)
@@ -74,6 +76,7 @@ flowchart LR
 ```
 
 **Common extended shapes**:
+
 - `rect` - Rectangle/Process
 - `rounded` - Rounded rectangle/Event
 - `stadium` - Stadium/Terminal point
@@ -141,6 +144,7 @@ flowchart LR
 ```
 
 **Link types**:
+
 - `-->` - Arrow
 - `---` - Line (no arrow)
 - `-.->` - Dotted arrow
@@ -157,6 +161,7 @@ flowchart LR
 ```
 
 **Alternative syntax**:
+
 - `A -- text --> B`
 - `A -. text .-> B`
 - `A == text ==> B`
@@ -173,6 +178,7 @@ flowchart LR
 ```
 
 **Bidirectional types**:
+
 - `<-->` - Bidirectional arrow
 - `o--o` - Circle edges
 - `x--x` - Cross edges
@@ -265,14 +271,16 @@ flowchart TB
 ```
 
 **Syntax**:
-```
+
+```text
 subgraph title
   graph definition
 end
 ```
 
 **Subgraph direction** (v10.7.0+):
-```
+
+```text
 subgraph id [title]
   direction TB
   nodes...
@@ -303,6 +311,7 @@ flowchart LR
 ```
 
 **Syntax**:
+
 - Define: `classDef className fill:#f9f,stroke:#333,stroke-width:4px;`
 - Apply inline: `id:::className`
 - Apply separately: `class id1,id2 className;`
@@ -351,6 +360,7 @@ flowchart LR
 ```
 
 **Syntax**:
+
 - Callback: `click nodeId callback "tooltip"`
 - Link: `click nodeId "url" "tooltip" _blank`
 - Href: `click nodeId href "url" "tooltip" _blank`
@@ -369,7 +379,7 @@ Comments start with `%%` and continue to end of line.
 
 ### Renderer Selection
 
-```
+```yaml
 ---
 config:
   flowchart:
@@ -381,7 +391,7 @@ config:
 
 ### Curve Style
 
-```
+```yaml
 ---
 config:
   flowchart:
@@ -402,6 +412,7 @@ mermaid.flowchartConfig = {
 **Reserved word "end"**: Capitalize any letter in "end" or use workaround. `end` in lowercase breaks flowcharts.
 
 **Circle/cross edges**: Starting a node ID with `o` or `x` after `---` creates special edges:
+
 - `A---oB` creates circle edge
 - `A---xB` creates cross edge
 

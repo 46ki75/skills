@@ -56,10 +56,12 @@ flowchart LR
 ### Avoiding Syntax Breakers
 
 **Words to wrap in quotes:**
+
 - `end` - Can break flowcharts and sequence diagrams
 - Nodes containing special characters or spaces
 
 **Patterns to avoid in comments:**
+
 - `%%{` and `}%%` together - Similar to directives, confuses parser
 
 ## Configuration Options
@@ -96,11 +98,13 @@ flowchart LR
 ### Layout Algorithms
 
 **dagre** (default)
+
 - Classic layout
 - Good balance of simplicity and clarity
 - Ideal for most diagrams
 
 **elk** (advanced)
+
 - Sophisticated layout for complex diagrams
 - Reduces overlapping
 - Improves readability of large diagrams
@@ -116,6 +120,7 @@ config:
 ```
 
 Node placement strategies:
+
 - `SIMPLE`
 - `NETWORK_SIMPLEX`
 - `LINEAR_SEGMENTS`
