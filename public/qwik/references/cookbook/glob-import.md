@@ -36,7 +36,7 @@ export const MetaGlobExample = component$<{ name: string }>(({ name }) => {
 ## `import.meta.glob` options
 
 | Option | Effect |
-|--------|--------|
+| -------- | -------- |
 | `{ import: 'default' }` | Only import the default export |
 | `{ query: '?raw' }` | Import as raw string |
 | `{ eager: true }` | Import synchronously at module evaluation time |

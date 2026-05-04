@@ -8,7 +8,9 @@ The `onLoad$` event on `<img>` does not fire when the image is already in the br
 
 ## Solution
 
-Use a `ref` signal to get hold of the DOM element, then call `HTMLImageElement.decode()` inside `useVisibleTask$`. `decode()` resolves as soon as the image data is available — whether it was freshly fetched or served from cache.
+Use a `ref` signal to get hold of the DOM element, then call `HTMLImageElement.decode()` inside
+`useVisibleTask$`. `decode()` resolves as soon as the image data is available — whether it was
+freshly fetched or served from cache.
 
 ```tsx
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';

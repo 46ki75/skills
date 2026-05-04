@@ -10,7 +10,7 @@ pnpm run qwik add turso
 
 Creates `src/lib/turso.ts` and adds to `.env.local`:
 
-```
+```bash
 PRIVATE_TURSO_DATABASE_URL=
 PRIVATE_TURSO_AUTH_TOKEN=
 ```
@@ -25,7 +25,7 @@ sqlite> insert into todo(id, task) values(1, "Go to the gym");
 
 Set in `.env.local`:
 
-```
+```bash
 PRIVATE_TURSO_DATABASE_URL=file:foo.db
 ```
 

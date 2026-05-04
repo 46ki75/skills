@@ -11,7 +11,7 @@ pnpm install @qwikest/icons
 Available icon sets:
 
 | Prefix | Set |
-|--------|-----|
+| -------- | ----- |
 | `Bs` | Bootstrap Icons |
 | `Go` | Octicons (GitHub) |
 | `Hi` | Heroicons (Tailwind) |

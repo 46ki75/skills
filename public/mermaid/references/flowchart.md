@@ -272,7 +272,7 @@ flowchart TB
 
 **Syntax**:
 
-```
+```text
 subgraph title
   graph definition
 end
@@ -280,7 +280,7 @@ end
 
 **Subgraph direction** (v10.7.0+):
 
-```
+```text
 subgraph id [title]
   direction TB
   nodes...
@@ -379,7 +379,7 @@ Comments start with `%%` and continue to end of line.
 
 ### Renderer Selection
 
-```
+```yaml
 ---
 config:
   flowchart:
@@ -391,7 +391,7 @@ config:
 
 ### Curve Style
 
-```
+```yaml
 ---
 config:
   flowchart:

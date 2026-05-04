@@ -32,7 +32,7 @@ Order of `participant` declarations controls display order (overrides order of f
 Use JSON configuration syntax to specify participant types:
 
 | Type | Symbol | Syntax |
-|------|--------|--------|
+| ------ | -------- | -------- |
 | Rectangle (default) | Rectangle with text | `participant Alice` |
 | Actor | Stick figure | `actor Alice` |
 | Boundary | Circle with line | `participant Alice@{ "type" : "boundary" }` |
@@ -85,7 +85,7 @@ sequenceDiagram
 ### Arrow Types
 
 | Type | Description | Syntax |
-|------|-------------|--------|
+| ------ | ------------- | -------- |
 | Solid | Synchronous message | `->>` |
 | Dotted | Asynchronous/response | `-->>` |
 | Solid with cross | Lost message | `-x` |
@@ -448,7 +448,7 @@ mermaid.sequenceConfig = {
 ## CSS Classes for Styling
 
 | Class | Target |
-|-------|--------|
+| ------- | -------- |
 | `actor` | Actor box |
 | `actor-top` | Actor at diagram top |
 | `actor-bottom` | Actor at diagram bottom |

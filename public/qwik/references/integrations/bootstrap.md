@@ -13,7 +13,7 @@ Installs `bootstrap@5` and `@types/bootstrap@5`.
 ## What gets created
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `src/models/bootstrap.ts` | TypeScript models for Bootstrap component props |
 | `src/constants/data.ts` | Demo constant data |
 | `src/components/bootstrap/button.tsx` | Button component |

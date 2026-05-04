@@ -38,7 +38,7 @@ export default component$(() => <QGreetings />);
 ## Hydration strategies
 
 | Prop | When the React component hydrates |
-|------|----------------------------------|
+| ------ | ---------------------------------- |
 | `client:load` | Immediately on load |
 | `client:visible` | When the component enters the viewport |
 | `client:idle` | When the browser is idle |

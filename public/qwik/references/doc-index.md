@@ -10,7 +10,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Concepts
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `concepts/resumable/` | Resumability — serialize/resume, no hydration |
 | ✅ | `concepts/reactivity/` | Fine-grained reactivity, signal subscriptions |
 | ✅ | `concepts/progressive/` | Progressive loading, lazy execution |
@@ -19,7 +19,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Core
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `core/overview/` | `component$`, JSX, rendering |
 | ✅ | `core/state/` | `useSignal`, `useStore`, `useComputed$`, `useResource$` |
 | ✅ | `core/tasks/` | `useTask$`, `useVisibleTask$`, track, cleanup |
@@ -32,7 +32,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Advanced
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `advanced/qrl/` | QRL format, encoding, captured variables, why not `import()` |
 | ✅ | `advanced/optimizer/` | Optimizer rules: `$` extraction, lazy-loadable symbols |
 | ✅ | `advanced/dollar/` | `$` suffix transform — full rules, what can be captured |
@@ -47,7 +47,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Other
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `getting-started/` | Project scaffold, `create-qwik`, structure |
 | ✅ | `faq/` | Common questions: SSR, hydration, React comparison |
 | ✅ | `deprecated-features/` | `useClientEffect$` removal, migration guide |
@@ -60,7 +60,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Core
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `qwikcity/` | Qwik City overview |
 | ✅ | `routing/` | File-based routing, dynamic `[param]`, catch-all `[...rest]` |
 | ✅ | `layout/` | Layouts, nested layouts, `<Slot>` in layouts |
@@ -80,7 +80,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Advanced
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `advanced/routing/` | 404 pages, grouped layouts `(name)`, named layouts `@name`, plugin files |
 | ✅ | `advanced/request-handling/` | `RequestEvent` API, cookie API, `onRequest` |
 | ✅ | `advanced/complex-forms/` | Dot-notation input names for arrays/objects in FormData |
@@ -94,13 +94,13 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### API Reference
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `api/` | `useLocation`, `useNavigate`, `Link`, `routeLoader$`, all City exports |
 
 ### Guides
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `guides/best-practices/` | Inline operations, `useComputed$`, avoid `useVisibleTask$`, `useOn` |
 | ✅ | `guides/serialization/` | `$` boundaries, what can/can't cross a boundary |
 | ✅ | `guides/redirects/` | `redirect()`, status codes, managing multiple redirects |
@@ -118,7 +118,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ### Other
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `qwikcity-deprecated-features/` | Deprecated City APIs |
 | ✅ | `troubleshooting/` | Common errors and fixes |
 
@@ -127,7 +127,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ## Cookbook — `cookbook/`
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `cookbook/` | (index) |
 | ✅ | `cookbook/algolia-search/` | Algolia search integration → `references/cookbook/algolia-search.md` |
 | ✅ | `cookbook/combine-request-handlers/` | Composing request handlers → `references/cookbook/combine-request-handlers.md` |
@@ -150,7 +150,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ## Deployments — `deployments/`
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `deployments/` | (index) — adapter overview, cache headers |
 | ✅ | `deployments/cloudflare-pages/` | Cloudflare Pages adapter |
 | ✅ | `deployments/cloudflare-workers/` | Cloudflare Workers adapter |
@@ -173,7 +173,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ## Integrations — `integrations/`
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `integrations/` | (index) — integration overview |
 | ✅ | `integrations/react/` | `qwik-react` integration → `references/integrations/react.md` |
 | ✅ | `integrations/authjs/` | Auth.js / NextAuth integration → `references/integrations/authjs.md` |
@@ -209,7 +209,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ## Labs — `labs/`
 
 | Status | Path | Topic |
-|--------|------|-------|
+| -------- | ------ | ------- |
 | ✅ | `labs/` | (index) — experimental features |
 | ✅ | `labs/insights/` | Qwik Insights — real-user bundle analytics → `references/labs/insights.md` |
 | ✅ | `labs/devtools/` | Qwik DevTools browser extension → `references/labs/devtools.md` |
@@ -221,7 +221,7 @@ Coverage status: ✅ covered · ⚠️ partial · ❌ not covered
 ## Coverage summary
 
 | Section | Covered | Partial/TODO |
-|---------|---------|--------------|
+| --------- | --------- | -------------- |
 | Qwik Core — Concepts | 4/4 | 0 |
 | Qwik Core — Core | 8/8 | 0 |
 | Qwik Core — Advanced | 10/10 | 0 |

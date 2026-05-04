@@ -309,7 +309,7 @@ Type of a QRL: `QRL<(arg: T) => R>`.
 
 When a `$`-closure captures local variables, the QRL encodes them:
 
-```
+```text
 ./chunk-c.js#Counter_onClick[0,1]
 ```
 

@@ -319,19 +319,19 @@ classDiagram
 
 **Define class:**
 
-```
+```text
 classDef className fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
 **Apply to node:**
 
-```
+```text
 cssClass "nodeId" className;
 ```
 
 **Apply to multiple:**
 
-```
+```text
 cssClass "nodeId1,nodeId2" className;
 ```
 
@@ -357,7 +357,7 @@ classDiagram
 
 Applied to all nodes (override with specific styles):
 
-```
+```text
 classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 

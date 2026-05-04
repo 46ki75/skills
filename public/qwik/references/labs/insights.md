@@ -10,7 +10,7 @@ Collect real user symbol-execution data to improve bundle grouping and prefetch 
 ## Architecture
 
 | Component | Role |
-|-----------|------|
+| ----------- | ------ |
 | `<Insights>` component | Collects timing data per symbol in the browser |
 | `qwikInsights` Vite plugin | Applies collected data during build |
 | Builder.io database | Hosts the insights data (self-hostable) |
