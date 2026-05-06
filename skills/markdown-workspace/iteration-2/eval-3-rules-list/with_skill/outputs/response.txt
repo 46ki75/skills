@@ -1,0 +1,139 @@
+# Common Markdownlint Rules You Should Know
+
+A comprehensive reference for important markdownlint rules, organized by category.
+
+---
+
+## Heading Rules
+
+- **MD001** – Heading levels should increment by one at a time.
+  - Bad: `#` followed immediately by `###`; Good: `#` → `##` → `###`
+
+- **MD003** – Use a consistent heading style throughout the document.
+  - Styles: `atx` (# Heading) or `setext` (underline with === or ---)
+
+- **MD018** – There must be exactly one space after the `#` character in ATX headings.
+  - Bad: `#Heading`; Good: `# Heading`
+
+- **MD019** – There must not be multiple spaces after `#` in ATX headings.
+  - Bad: `#   Heading`; Good: `# Heading`
+
+- **MD022** – Headings must be surrounded by blank lines (one before, one after).
+
+- **MD023** – Headings must start at the beginning of the line (no leading spaces).
+
+- **MD024** – Heading content should not be duplicated within the document.
+
+- **MD025** – Only one H1 heading is allowed per document (the top-level title).
+
+- **MD026** – Headings should not end with trailing punctuation (e.g., no `.`, `!`, `?`).
+
+- **MD036** – Avoid using bold/italic emphasis as a substitute for headings.
+  - Bad: `**Section Title**` (as a heading substitute)
+  - Good: `## Section Title`
+
+- **MD041** – The first line of the document should be an H1 heading.
+
+---
+
+## List Rules
+
+- **MD004** – Unordered list markers should be consistent throughout the document.
+  - Pick one of: `-`, `*`, or `+` and stick to it.
+
+- **MD007** – Unordered list items should be indented consistently (default: 2 spaces).
+
+- **MD029** – Ordered list items should use a consistent numbering style.
+  - Options: all `1.` (lazy), or sequentially numbered `1.`, `2.`, `3.`
+
+- **MD032** – Lists must be surrounded by blank lines.
+
+---
+
+## Code Rules
+
+- **MD014** – Do not prefix shell commands with `$` unless you are also showing the output.
+
+- **MD031** – Fenced code blocks must be surrounded by blank lines.
+
+- **MD038** – No spaces inside code span backticks.
+  - Bad: `` ` code ` ``; Good: `` `code` ``
+
+- **MD040** – Fenced code blocks should specify a language for syntax highlighting.
+  - Bad: ` ``` ` (no language); Good: ` ```bash `
+
+- **MD046** – Use a consistent code block style throughout (fenced vs. indented).
+
+---
+
+## Whitespace & Formatting Rules
+
+- **MD009** – No trailing spaces at the end of lines.
+
+- **MD010** – No hard tab characters; use spaces for indentation.
+
+- **MD012** – No multiple consecutive blank lines.
+
+- **MD013** – Lines should not exceed the maximum length (default: 80 characters).
+  - Configurable; URLs are typically exempt.
+
+- **MD037** – No spaces inside emphasis markers.
+  - Bad: `* text *` or `_ text _`; Good: `*text*` or `_text_`
+
+- **MD047** – Files must end with a single newline character.
+
+---
+
+## Link & URL Rules
+
+- **MD034** – Bare URLs must not appear in text; wrap them with angle brackets or link syntax.
+  - Bad: `https://example.com`
+  - Good: `<https://example.com>` or `[Example](https://example.com)`
+
+---
+
+## HTML & Miscellaneous Rules
+
+- **MD033** – Inline HTML is not allowed by default (can be disabled in config if needed).
+
+- **MD035** – Horizontal rules (`---`, `***`, `___`) must use a consistent style.
+
+---
+
+## Rules Requiring Manual Fixes (Auto-fix Cannot Resolve)
+
+These rules need human judgment to correct properly:
+
+| Rule  | Issue                        | What to Do                                       |
+|-------|------------------------------|--------------------------------------------------|
+| MD025 | Multiple H1 headings         | Decide which is the real title; demote the rest  |
+| MD036 | Emphasis used as a heading   | Determine intent; replace with proper `##` etc.  |
+| MD013 | Line too long                | Break at natural points (conjunctions, commas)   |
+| MD041 | Missing first-line H1        | Add a document title at the top                  |
+
+---
+
+## Configuration Quick Reference
+
+Customize rules in `.markdownlint.json`:
+
+```json
+{
+  "default": true,
+  "MD013": { "line_length": 120 },
+  "MD033": false,
+  "MD041": false
+}
+```
+
+Common adjustments:
+- `"MD013": false` – Disable line-length checking entirely
+- `"MD013": { "code_blocks": false }` – Exclude code blocks from line-length rule
+- `"MD033": false` – Allow inline HTML
+- `"MD041": false` – Don't require an H1 on the first line
+
+---
+
+## Full Rule Documentation
+
+https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md

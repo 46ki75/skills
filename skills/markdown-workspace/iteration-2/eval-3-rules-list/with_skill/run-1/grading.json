@@ -1,0 +1,33 @@
+{
+  "eval_id": 3,
+  "eval_name": "rules-list",
+  "run_type": "with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "At least 15 distinct markdownlint rules are mentioned",
+      "passed": true,
+      "evidence": "29 distinct rules are mentioned: MD001, MD003, MD018, MD019, MD022, MD023, MD024, MD025, MD026, MD036, MD041, MD004, MD007, MD029, MD032, MD014, MD031, MD038, MD040, MD046, MD009, MD010, MD012, MD013, MD037, MD047, MD034, MD033, MD035"
+    },
+    {
+      "text": "MD047 (file should end with newline) is mentioned",
+      "passed": true,
+      "evidence": "Line 83: '**MD047** – Files must end with a single newline character.'"
+    },
+    {
+      "text": "MD034 is described correctly as flagging bare URLs (not as URLs in angle brackets)",
+      "passed": true,
+      "evidence": "Line 89: '**MD034** – Bare URLs must not appear in text; wrap them with angle brackets or link syntax. Bad: `https://example.com` Good: `<https://example.com>` or `[Example](https://example.com)`'"
+    },
+    {
+      "text": "Rules covering headings, lists, whitespace, and code blocks are all included",
+      "passed": true,
+      "evidence": "Multiple sections organized by category: Heading Rules (MD001-MD041), List Rules (MD004-MD032), Code Rules (MD014-MD046), Whitespace & Formatting Rules (MD009-MD047), Link & URL Rules (MD034), HTML & Miscellaneous Rules (MD033-MD035)"
+    }
+  ]
+}

@@ -254,19 +254,34 @@ Use custom config to disable problematic rules.
 
 Most common rules Claude will encounter:
 
-- **MD001** - Header increment by one level
-- **MD004** - Consistent list markers
+- **MD001** - Heading levels increment by one at a time
+- **MD003** - Consistent heading style (atx vs setext)
+- **MD004** - Consistent unordered list markers
+- **MD007** - Unordered list indentation (default: 2 spaces)
 - **MD009** - No trailing spaces
 - **MD010** - No hard tabs
-- **MD012** - No multiple blank lines
-- **MD013** - Line length (default: 80)
-- **MD018** - Space after # in headers
-- **MD022** - Blank lines around headers
+- **MD012** - No multiple consecutive blank lines
+- **MD013** - Line length (default: 80 chars)
+- **MD014** - No `$` before shell commands unless showing output
+- **MD018** - Space after `#` in headings
+- **MD019** - No multiple spaces after `#` in headings
+- **MD022** - Blank lines around headings
+- **MD023** - Headings must start at beginning of line
+- **MD024** - No duplicate heading content
 - **MD025** - Single H1 only
-- **MD031** - Blank lines around code
+- **MD026** - No trailing punctuation in headings
+- **MD029** - Ordered list numbering style
+- **MD031** - Blank lines around fenced code blocks
 - **MD032** - Blank lines around lists
-- **MD034** - Bare URLs in <>
+- **MD033** - No inline HTML (unless explicitly allowed)
+- **MD034** - No bare URLs (wrap with `<url>` or `[text](url)`)
+- **MD035** - Consistent horizontal rule style
 - **MD036** - No emphasis as headers
-- **MD040** - Language for code blocks
+- **MD037** - No spaces inside emphasis markers
+- **MD038** - No spaces inside code span backticks
+- **MD040** - Language for fenced code blocks
+- **MD041** - First line should be H1 header
+- **MD046** - Consistent code block style (fenced vs indented)
+- **MD047** - File must end with a single newline
 
 Full rule documentation: <https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md>

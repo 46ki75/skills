@@ -1,0 +1,28 @@
+{
+  "eval_id": 2,
+  "eval_name": "md034-explanation",
+  "run_type": "with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 3,
+    "failed": 0,
+    "total": 3
+  },
+  "expectations": [
+    {
+      "text": "MD034 is correctly described as flagging bare URLs (URLs NOT wrapped in angle brackets)",
+      "passed": true,
+      "evidence": "MD034 flags any URL that appears 'naked' (bare) in the body of a Markdown document — meaning a raw URL written out as plain text without being wrapped in angle brackets (`<…>`) or formatted as a proper Markdown hyperlink"
+    },
+    {
+      "text": "The fix described is to wrap URLs in angle brackets <> or use [text](url) format",
+      "passed": true,
+      "evidence": "Two fix patterns provided: Option A shows angle-bracket wrapping '<https://github.com/example/repo>' and Option B shows Markdown link format '[example repository](https://github.com/example/repo)'"
+    },
+    {
+      "text": "Both URLs in the content are identified as violating MD034",
+      "passed": true,
+      "evidence": "Output states 'Two of the three errors are MD034 violations — one per URL' and the table shows both URLs on lines 1 and 3 as bare URLs with plain text, no wrapping/syntax"
+    }
+  ]
+}

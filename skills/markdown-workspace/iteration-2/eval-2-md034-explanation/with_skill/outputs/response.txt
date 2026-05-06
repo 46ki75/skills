@@ -1,0 +1,97 @@
+## Markdown Lint Analysis — MD034 Explanation
+
+### Input Content
+
+```markdown
+Check out https://github.com/example/repo for more details.
+
+Also see https://docs.example.com/guide
+```
+
+---
+
+### markdownlint-cli2 Results
+
+Running `markdownlint-cli2` on this content produces **3 errors**:
+
+```
+line 1:11  MD034/no-bare-urls  Bare URL used [Context: "https://github.com/example/rep..."]
+line 1      MD041/first-line-heading  First line in a file should be a top-level heading
+line 3:10  MD034/no-bare-urls  Bare URL used [Context: "https://docs.example.com/guide"]
+```
+
+Two of the three errors are MD034 violations — one per URL.
+
+---
+
+### What is MD034?
+
+**MD034 — No bare URLs** (`no-bare-urls`)
+
+MD034 flags any URL that appears "naked" (bare) in the body of a Markdown
+document — meaning a raw URL written out as plain text without being wrapped
+in angle brackets (`<…>`) or formatted as a proper Markdown hyperlink
+(`[link text](url)`).
+
+Markdown renderers behave inconsistently with bare URLs:
+- Some auto-link them (GitHub Flavored Markdown does).
+- Others render them as plain, non-clickable text.
+
+By requiring explicit link syntax, MD034 ensures:
+1. **Consistent rendering** across all Markdown processors.
+2. **Accessible link text** — screen readers and users see meaningful labels
+   instead of raw URL strings.
+3. **Readability** — long URLs don't clutter prose.
+
+---
+
+### Why MD034 Triggers in This Content
+
+Both URLs in the snippet are bare:
+
+| Line | Bare URL                          | Issue                          |
+|------|-----------------------------------|--------------------------------|
+| 1    | `https://github.com/example/repo` | Plain text, no wrapping/syntax |
+| 3    | `https://docs.example.com/guide`  | Plain text, no wrapping/syntax |
+
+They are not enclosed in `<…>` nor formatted as `[text](url)` links, so
+markdownlint reports them as MD034 violations.
+
+---
+
+### How to Fix MD034
+
+There are two accepted fix patterns:
+
+#### Option A — Angle-bracket wrapping (auto-link)
+
+Encloses the URL in `<` and `>`. The URL itself becomes the link text.
+
+```markdown
+Check out <https://github.com/example/repo> for more details.
+
+Also see <https://docs.example.com/guide>
+```
+
+#### Option B — Descriptive Markdown link (recommended for readability)
+
+Provides a human-friendly label, which is better for accessibility.
+
+```markdown
+Check out the [example repository](https://github.com/example/repo) for more details.
+
+Also see the [example guide](https://docs.example.com/guide)
+```
+
+---
+
+### Summary
+
+| Rule  | Name          | Triggered? | Count | Auto-fixable? |
+|-------|---------------|------------|-------|---------------|
+| MD034 | no-bare-urls  | ✅ Yes     | 2     | ✅ Yes (wraps with `<…>`) |
+| MD041 | first-line-h1 | ✅ Yes     | 1     | ❌ Needs manual decision |
+
+**MD034 is auto-fixable**: running `markdownlint-cli2 --fix` will wrap each
+bare URL in angle brackets automatically. If you prefer descriptive link text,
+apply that manually after the auto-fix or write it directly.

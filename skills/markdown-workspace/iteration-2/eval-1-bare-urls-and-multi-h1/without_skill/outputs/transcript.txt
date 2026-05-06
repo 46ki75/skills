@@ -1,0 +1,18 @@
+Markdown Lint & Fix Transcript
+================================
+
+Issues identified and fixed:
+
+1. BARE URLS (MD034)
+   - Line 4: `http://example.com/install` was a bare URL inline with text.
+     Fixed: wrapped as `[http://example.com/install](http://example.com/install)`
+   - Line 6: `http://docs.example.com` was a bare URL.
+     Fixed: wrapped as `[http://docs.example.com](http://docs.example.com)`
+
+2. MULTIPLE H1 HEADINGS (MD025)
+   - The document contained two `#` (H1) headings: "My Document" and "Another Title".
+     A document should have only one H1. 
+     Fixed: Changed `# Another Title` to `## Another Title` (H2).
+
+No other issues were found. The **Overview** bold inline heading and the
+overall heading hierarchy (H1 → H2) are otherwise consistent after the fix.

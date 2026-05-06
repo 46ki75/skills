@@ -1,0 +1,22 @@
+{
+  "eval_id": 2,
+  "eval_name": "md034-explanation",
+  "prompt": "Can you check this README content for markdown lint issues and explain what rule MD034 does?\n\n```markdown\nCheck out https://github.com/example/repo for more details.\n\nAlso see https://docs.example.com/guide\n```",
+  "assertions": [
+    {
+      "text": "MD034 is correctly described as flagging bare URLs (URLs NOT wrapped in angle brackets)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "The fix described is to wrap URLs in angle brackets <> or use [text](url) format",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Both URLs in the content are identified as violating MD034",
+      "passed": null,
+      "evidence": ""
+    }
+  ]
+}

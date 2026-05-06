@@ -1,0 +1,33 @@
+{
+  "eval_id": 1,
+  "eval_name": "bare-urls-and-multi-h1",
+  "run_type": "with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "MD034 bare URLs are wrapped in angle brackets: <http://example.com/install> and <http://docs.example.com>",
+      "passed": true,
+      "evidence": "Line 5: 'Run this command to install: <http://example.com/install>' and Line 7: 'For more info see <http://docs.example.com>'"
+    },
+    {
+      "text": "MD025 is fixed: only one H1 heading remains, second H1 is demoted to H2",
+      "passed": true,
+      "evidence": "Only one H1 remains: '# My Document' on line 1. Second heading demoted to '## Another Title' on line 13"
+    },
+    {
+      "text": "MD036 is fixed: **Overview** is converted to a proper heading (## Overview)",
+      "passed": true,
+      "evidence": "Line 9: '## Overview' appears as a proper heading instead of bold text"
+    },
+    {
+      "text": "MD022 is satisfied: headings are surrounded by blank lines",
+      "passed": true,
+      "evidence": "All headings (lines 1, 3, 9, 13) are properly surrounded by blank lines before and after them"
+    }
+  ]
+}
