@@ -1,0 +1,37 @@
+{
+  "eval_id": 1,
+  "eval_name": "popup-with-react",
+  "prompt": "I'm starting a new browser extension project with WXT. I want to add a popup that shows when the user clicks the toolbar icon. How do I set that up? I'm using React.",
+  "assertions": [
+    {
+      "name": "mentions-popup-html",
+      "description": "Response mentions creating entrypoints/popup.html or popup/index.html",
+      "type": "llm_judge",
+      "value": "Does the response show or mention creating an entrypoints/popup.html file or entrypoints/popup/index.html?"
+    },
+    {
+      "name": "mentions-react-module",
+      "description": "Response mentions @wxt-dev/module-react",
+      "type": "contains_text",
+      "value": "@wxt-dev/module-react"
+    },
+    {
+      "name": "mentions-wxt-config",
+      "description": "Response shows adding the module to wxt.config.ts",
+      "type": "contains_text",
+      "value": "wxt.config.ts"
+    },
+    {
+      "name": "mentions-entrypoints-dir",
+      "description": "Response mentions the entrypoints/ directory",
+      "type": "contains_text",
+      "value": "entrypoints"
+    },
+    {
+      "name": "correct-project-bootstrap",
+      "description": "Response shows the wxt init command or how to install wxt",
+      "type": "llm_judge",
+      "value": "Does the response show how to bootstrap/create a new WXT project, such as using 'wxt init' or 'npx wxt@latest init'?"
+    }
+  ]
+}

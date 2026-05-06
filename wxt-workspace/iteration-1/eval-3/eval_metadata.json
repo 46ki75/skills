@@ -1,0 +1,37 @@
+{
+  "eval_id": 3,
+  "eval_name": "storage-with-watch",
+  "prompt": "My WXT extension needs to save user preferences (dark mode toggle and a custom URL) that persist across browser restarts. I also want to watch for changes to these settings from my background script. How do I use WXT's storage API for this?",
+  "assertions": [
+    {
+      "name": "uses-defineItem",
+      "description": "Response uses storage.defineItem to create typed storage items",
+      "type": "contains_text",
+      "value": "defineItem"
+    },
+    {
+      "name": "uses-local-prefix",
+      "description": "Response uses the 'local:' prefix for storage keys",
+      "type": "contains_text",
+      "value": "local:"
+    },
+    {
+      "name": "mentions-storage-permission",
+      "description": "Response mentions adding the storage permission to the manifest",
+      "type": "llm_judge",
+      "value": "Does the response mention adding 'storage' to the permissions array in wxt.config.ts or the manifest?"
+    },
+    {
+      "name": "shows-watch",
+      "description": "Response shows how to watch for storage changes",
+      "type": "llm_judge",
+      "value": "Does the response show how to watch for changes to stored values, using storage.watch() or the .watch() method?"
+    },
+    {
+      "name": "shows-fallback",
+      "description": "Response shows how to set default/fallback values",
+      "type": "llm_judge",
+      "value": "Does the response show how to define default or fallback values for storage items?"
+    }
+  ]
+}

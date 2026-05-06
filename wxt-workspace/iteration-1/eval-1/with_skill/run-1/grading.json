@@ -1,0 +1,39 @@
+{
+  "eval_id": 1,
+  "eval_name": "popup-with-react",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "mentions-popup-html: Response mentions creating entrypoints/popup.html or popup/index.html",
+      "passed": true,
+      "evidence": "Response clearly shows 'entrypoints/popup/index.html' as the entrypoint file with the full HTML contents."
+    },
+    {
+      "text": "mentions-react-module: Response mentions @wxt-dev/module-react",
+      "passed": true,
+      "evidence": "Response explicitly shows 'pnpm add -D @wxt-dev/module-react' and modules: ['@wxt-dev/module-react'] in wxt.config.ts."
+    },
+    {
+      "text": "mentions-wxt-config: Response shows adding the module to wxt.config.ts",
+      "passed": true,
+      "evidence": "Response shows a complete wxt.config.ts with modules: ['@wxt-dev/module-react'] and manifest config."
+    },
+    {
+      "text": "mentions-entrypoints-dir: Response mentions the entrypoints/ directory",
+      "passed": true,
+      "evidence": "Response shows the full project structure with entrypoints/popup/ directory."
+    },
+    {
+      "text": "correct-project-bootstrap: Response shows how to bootstrap/create a new WXT project",
+      "passed": true,
+      "evidence": "Response starts with 'pnpm dlx wxt@latest init' bootstrap command."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

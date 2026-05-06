@@ -1,0 +1,39 @@
+{
+  "eval_id": 3,
+  "eval_name": "storage-with-watch",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "uses-defineItem: Response uses storage.defineItem to create typed storage items",
+      "passed": true,
+      "evidence": "Response shows storage.defineItem<boolean>('local:darkMode', {...})."
+    },
+    {
+      "text": "uses-local-prefix: Response uses the 'local:' prefix for storage keys",
+      "passed": true,
+      "evidence": "Response uses 'local:darkMode' and 'local:customUrl' keys."
+    },
+    {
+      "text": "mentions-storage-permission: Response mentions adding 'storage' to permissions",
+      "passed": true,
+      "evidence": "Response shows permissions: ['storage'] in wxt.config.ts."
+    },
+    {
+      "text": "shows-watch: Response shows how to watch for storage changes",
+      "passed": true,
+      "evidence": "Response shows darkModeStorage.watch((newValue, oldValue) => {...}) inside defineBackground()."
+    },
+    {
+      "text": "shows-fallback: Response shows how to define default/fallback values",
+      "passed": false,
+      "evidence": "Response uses 'defaultValue' instead of 'fallback' as the option name. The correct WXT API option is 'fallback', not 'defaultValue'. This would cause incorrect behavior since defaultValue is not a recognized option."
+    }
+  ],
+  "pass_rate": 0.8,
+  "summary": {
+    "pass_rate": 0.8,
+    "passed": 4,
+    "failed": 1,
+    "total": 5
+  }
+}

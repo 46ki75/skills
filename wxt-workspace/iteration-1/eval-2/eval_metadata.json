@@ -1,0 +1,43 @@
+{
+  "eval_id": 2,
+  "eval_name": "content-script-shadow-root",
+  "prompt": "I'm building a WXT extension and I want to inject a floating button into every webpage the user visits. The button should be styled with my own CSS and not be affected by the page's styles. How do I do this with a content script?",
+  "assertions": [
+    {
+      "name": "uses-defineContentScript",
+      "description": "Response uses defineContentScript to define the content script",
+      "type": "contains_text",
+      "value": "defineContentScript"
+    },
+    {
+      "name": "uses-shadow-root",
+      "description": "Response uses createShadowRootUi for style isolation",
+      "type": "contains_text",
+      "value": "createShadowRootUi"
+    },
+    {
+      "name": "sets-cssInjectionMode-ui",
+      "description": "Response sets cssInjectionMode to 'ui'",
+      "type": "contains_text",
+      "value": "cssInjectionMode"
+    },
+    {
+      "name": "has-all-urls-matches",
+      "description": "Response uses <all_urls> or a broad match pattern",
+      "type": "llm_judge",
+      "value": "Does the response show a matches pattern like '<all_urls>' or '*://*/*' to match all pages?"
+    },
+    {
+      "name": "async-main",
+      "description": "Response shows main() is async (required for createShadowRootUi)",
+      "type": "llm_judge",
+      "value": "Does the response show that the main function should be async (since createShadowRootUi returns a Promise)?"
+    },
+    {
+      "name": "uses-content-file-naming",
+      "description": "Response shows the .content. naming convention for content script files",
+      "type": "llm_judge",
+      "value": "Does the response show the correct file naming for a content script, such as something.content.ts or content.ts?"
+    }
+  ]
+}

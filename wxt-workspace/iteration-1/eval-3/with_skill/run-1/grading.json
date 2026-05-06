@@ -1,0 +1,39 @@
+{
+  "eval_id": 3,
+  "eval_name": "storage-with-watch",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "uses-defineItem: Response uses storage.defineItem to create typed storage items",
+      "passed": true,
+      "evidence": "Response shows storage.defineItem<boolean>('local:darkMode', { fallback: false }) and storage.defineItem<string>('local:customUrl', { fallback: ... })."
+    },
+    {
+      "text": "uses-local-prefix: Response uses the 'local:' prefix for storage keys",
+      "passed": true,
+      "evidence": "Response consistently uses 'local:darkMode' and 'local:customUrl' keys."
+    },
+    {
+      "text": "mentions-storage-permission: Response mentions adding 'storage' to permissions in wxt.config.ts",
+      "passed": true,
+      "evidence": "Response starts with adding permissions: ['storage'] to wxt.config.ts."
+    },
+    {
+      "text": "shows-watch: Response shows how to watch for storage changes",
+      "passed": true,
+      "evidence": "Response shows darkMode.watch((newVal, oldVal) => {...}) inside defineBackground()."
+    },
+    {
+      "text": "shows-fallback: Response shows how to define default/fallback values",
+      "passed": true,
+      "evidence": "Response uses { fallback: false } and { fallback: 'https://example.com' } in defineItem calls."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}
