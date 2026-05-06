@@ -16,7 +16,7 @@ description: >
   extension using WXT, even if the question seems simple.
 license: MIT
 metadata:
-  author: "Copilot"
+  author: "Ikuma Yamashita"
   version: "1.0"
 ---
 
@@ -101,9 +101,11 @@ export default defineBackground(() => {
 
 // With manifest options:
 export default defineBackground({
-  persistent: false,  // MV2 only
-  type: 'module',
-  main() { /* ... */ },
+  persistent: false, // MV2 only
+  type: "module",
+  main() {
+    /* ... */
+  },
 });
 ```
 
@@ -112,15 +114,17 @@ export default defineBackground({
 ```ts
 // entrypoints/content.ts  OR  entrypoints/my-feature.content.ts
 export default defineContentScript({
-  matches: ['*://*.example.com/*'],
-  runAt: 'document_idle',       // 'document_start' | 'document_end' | 'document_idle'
-  world: 'ISOLATED',            // or 'MAIN' for main world access
-  cssInjectionMode: 'manifest', // 'manifest' | 'manual' | 'ui'
+  matches: ["*://*.example.com/*"],
+  runAt: "document_idle", // 'document_start' | 'document_end' | 'document_idle'
+  world: "ISOLATED", // or 'MAIN' for main world access
+  cssInjectionMode: "manifest", // 'manifest' | 'manual' | 'ui'
 
   main(ctx) {
     // ctx tracks context invalidation
-    ctx.addEventListener(window, 'resize', handler);
-    ctx.setInterval(() => { /* ... */ }, 1000);
+    ctx.addEventListener(window, "resize", handler);
+    ctx.setInterval(() => {
+      /* ... */
+    }, 1000);
   },
 });
 ```
@@ -153,7 +157,9 @@ Multiple content scripts: name them `foo.content.ts`, `bar.content.ts`.
   <head>
     <meta name="manifest.open_in_tab" content="true" />
   </head>
-  <body>...</body>
+  <body>
+    ...
+  </body>
 </html>
 ```
 
@@ -179,8 +185,8 @@ WXT sets up auto-imports (like Nuxt) for:
 You can use these without importing them. When auto-imports are disabled or you prefer explicit imports, use:
 
 ```ts
-import { storage, createShadowRootUi } from '#imports';
-import { browser } from 'wxt/browser';
+import { storage, createShadowRootUi } from "#imports";
+import { browser } from "wxt/browser";
 ```
 
 Run `wxt prepare` (or `pnpm postinstall`) to regenerate the `.wxt/types/imports-module.d.ts` type declarations after adding files.
@@ -191,14 +197,18 @@ WXT provides a unified `browser` variable that works across all browsers:
 
 ```ts
 // Works in Chrome (uses chrome.*) and Firefox (uses browser.*)
-browser.storage.local.set({ key: 'value' });
-browser.runtime.onMessage.addListener((msg, sender) => { /* ... */ });
+browser.storage.local.set({ key: "value" });
+browser.runtime.onMessage.addListener((msg, sender) => {
+  /* ... */
+});
 ```
 
 For feature detection (don't rely on types — they assume all APIs exist):
 
 ```ts
-browser.runtime.onSuspend?.addListener(() => { /* ... */ });
+browser.runtime.onSuspend?.addListener(() => {
+  /* ... */
+});
 ```
 
 ## Manifest Configuration
@@ -207,14 +217,14 @@ No `manifest.json` in source — WXT generates it from `wxt.config.ts` and entry
 
 ```ts
 // wxt.config.ts
-import { defineConfig } from 'wxt';
+import { defineConfig } from "wxt";
 
 export default defineConfig({
   manifest: {
-    name: 'My Extension',
-    permissions: ['storage', 'tabs'],
-    host_permissions: ['https://example.com/*'],
-    action: { default_title: 'My Extension' },
+    name: "My Extension",
+    permissions: ["storage", "tabs"],
+    host_permissions: ["https://example.com/*"],
+    action: { default_title: "My Extension" },
   },
 });
 ```
@@ -224,9 +234,10 @@ Dynamic manifest based on target:
 ```ts
 export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
-    permissions: browser === 'firefox'
-      ? ['storage', 'webRequest']
-      : ['storage', 'declarativeNetRequest'],
+    permissions:
+      browser === "firefox"
+        ? ["storage", "webRequest"]
+        : ["storage", "declarativeNetRequest"],
   }),
 });
 ```
@@ -241,12 +252,12 @@ WXT ships a built-in storage wrapper. All keys must be prefixed with the storage
 
 ```ts
 // Quick access (needs 'storage' permission in manifest)
-await storage.getItem<string>('local:username');
-await storage.setItem('local:username', 'alice');
-await storage.removeItem('local:username');
+await storage.getItem<string>("local:username");
+await storage.setItem("local:username", "alice");
+await storage.removeItem("local:username");
 
 // Reactive watcher
-const unwatch = storage.watch<string>('local:username', (newVal, oldVal) => {});
+const unwatch = storage.watch<string>("local:username", (newVal, oldVal) => {});
 unwatch(); // stop watching
 ```
 
@@ -254,24 +265,24 @@ unwatch(); // stop watching
 
 ```ts
 // utils/settings.ts
-export const darkMode = storage.defineItem<boolean>('local:darkMode', {
+export const darkMode = storage.defineItem<boolean>("local:darkMode", {
   fallback: false,
 });
 
 // Usage anywhere (auto-imported):
 const isDark = await darkMode.getValue();
 await darkMode.setValue(true);
-darkMode.watch((val) => console.log('theme changed:', val));
+darkMode.watch((val) => console.log("theme changed:", val));
 ```
 
 Versioned storage for schema migrations:
 
 ```ts
-export const prefs = storage.defineItem<PrefsV2>('local:prefs', {
+export const prefs = storage.defineItem<PrefsV2>("local:prefs", {
   version: 2,
   fallback: defaultPrefs,
   migrations: {
-    2: (oldPrefs: PrefsV1): PrefsV2 => ({ ...oldPrefs, newField: 'default' }),
+    2: (oldPrefs: PrefsV1): PrefsV2 => ({ ...oldPrefs, newField: "default" }),
   },
 });
 ```
@@ -282,27 +293,27 @@ Add `'storage'` to `manifest.permissions` in `wxt.config.ts`.
 
 For rendering UI components onto a page, WXT provides three strategies. See `references/content-scripts.md` for full code examples with each framework.
 
-| Method | Isolated CSS | Isolated Events | HMR | Use page context |
-| ------ | :---: | :---: | :---: | :---: |
-| Integrated (`createIntegratedUi`) | ❌ | ❌ | ❌ | ✅ |
-| Shadow Root (`createShadowRootUi`) | ✅ | ✅ (opt-in) | ❌ | ✅ |
-| IFrame (`createIframeUi`) | ✅ | ✅ | ✅ | ❌ |
+| Method                             | Isolated CSS | Isolated Events | HMR | Use page context |
+| ---------------------------------- | :----------: | :-------------: | :-: | :--------------: |
+| Integrated (`createIntegratedUi`)  |      ❌      |       ❌        | ❌  |        ✅        |
+| Shadow Root (`createShadowRootUi`) |      ✅      |   ✅ (opt-in)   | ❌  |        ✅        |
+| IFrame (`createIframeUi`)          |      ✅      |       ✅        | ✅  |        ❌        |
 
 **Shadow Root** is the most commonly used — it isolates your extension's styles from the page:
 
 ```ts
 // entrypoints/overlay.content/index.ts
-import './style.css';
+import "./style.css";
 
 export default defineContentScript({
-  matches: ['<all_urls>'],
-  cssInjectionMode: 'ui',  // required for shadow root
+  matches: ["<all_urls>"],
+  cssInjectionMode: "ui", // required for shadow root
 
   async main(ctx) {
     const ui = await createShadowRootUi(ctx, {
-      name: 'my-overlay',
-      position: 'inline',
-      anchor: 'body',
+      name: "my-overlay",
+      position: "inline",
+      anchor: "body",
       onMount(container) {
         // mount your framework app here
       },
@@ -318,17 +329,17 @@ Install a module and add it to `wxt.config.ts`:
 
 ```ts
 // React
-import { defineConfig } from 'wxt';
-export default defineConfig({ modules: ['@wxt-dev/module-react'] });
+import { defineConfig } from "wxt";
+export default defineConfig({ modules: ["@wxt-dev/module-react"] });
 
 // Vue
-export default defineConfig({ modules: ['@wxt-dev/module-vue'] });
+export default defineConfig({ modules: ["@wxt-dev/module-vue"] });
 
 // Svelte
-export default defineConfig({ modules: ['@wxt-dev/module-svelte'] });
+export default defineConfig({ modules: ["@wxt-dev/module-svelte"] });
 
 // Solid
-export default defineConfig({ modules: ['@wxt-dev/module-solid'] });
+export default defineConfig({ modules: ["@wxt-dev/module-solid"] });
 ```
 
 Each popup/options/sidepanel entrypoint needs its own app instance. Use a directory entrypoint with an `index.html` and framework-specific `main.tsx/ts`.
@@ -346,18 +357,26 @@ wxt -b chrome --mv2   # Chrome MV2
 Runtime browser detection:
 
 ```ts
-if (import.meta.env.BROWSER === 'firefox') { /* ... */ }
-if (import.meta.env.FIREFOX) { /* shorthand */ }
-if (import.meta.env.MANIFEST_VERSION === 2) { /* ... */ }
+if (import.meta.env.BROWSER === "firefox") {
+  /* ... */
+}
+if (import.meta.env.FIREFOX) {
+  /* shorthand */
+}
+if (import.meta.env.MANIFEST_VERSION === 2) {
+  /* ... */
+}
 ```
 
 Per-entrypoint filtering:
 
 ```ts
 export default defineContentScript({
-  include: ['firefox'],  // only built for Firefox
-  matches: ['*://*/*'],
-  main(ctx) { /* ... */ },
+  include: ["firefox"], // only built for Firefox
+  matches: ["*://*/*"],
+  main(ctx) {
+    /* ... */
+  },
 });
 ```
 
