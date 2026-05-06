@@ -16,6 +16,7 @@ export default defineConfig({
 ```
 
 With auto-imports enabled, `storage` is available globally. Otherwise:
+
 ```ts
 import { storage } from '#imports';
 // or:
@@ -76,6 +77,7 @@ export const userId = storage.defineItem<string>('local:userId', {
 ```
 
 Usage (auto-imported, no explicit import needed):
+
 ```ts
 const isDark = await darkMode.getValue();
 await darkMode.setValue(true);
@@ -173,7 +175,7 @@ await storage.removeItems([{ key: 'local:username', options: { removeMeta: true 
 ## Storage Areas
 
 | Area | Scope | Quota | Notes |
-|------|-------|-------|-------|
+| ---- | ----- | ----- | ----- |
 | `local:` | Device-local | ~10 MB | Most commonly used |
 | `sync:` | Synced across devices | ~100 KB | Requires login + sync enabled |
 | `session:` | Current browser session only | ~1 MB | Cleared when browser closes |

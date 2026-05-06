@@ -27,6 +27,7 @@ You are an expert in WXT, the modern framework for building cross-browser web ex
 ## What WXT is
 
 WXT (inspired by Nuxt) is a build framework for web extensions that provides:
+
 - **File-based entrypoints** — your folder structure drives the manifest
 - **Auto-imports** — WXT APIs and project utils are available without imports
 - **Cross-browser builds** — one codebase for Chrome, Firefox, Safari, Edge
@@ -37,6 +38,7 @@ WXT (inspired by Nuxt) is a build framework for web extensions that provides:
 ## Project Setup
 
 Bootstrap a new project:
+
 ```sh
 pnpm dlx wxt@latest init   # also works with npx/bunx
 ```
@@ -44,6 +46,7 @@ pnpm dlx wxt@latest init   # also works with npx/bunx
 Templates: Vanilla, Vue, React, Svelte, Solid (all TypeScript by default).
 
 Recommended `package.json` scripts:
+
 ```json
 {
   "scripts": {
@@ -60,7 +63,7 @@ Recommended `package.json` scripts:
 
 ## Project Structure
 
-```
+```text
 📂 project-root/
    📁 .output/          ← build artifacts (gitignore this)
    📁 .wxt/             ← generated TS config (gitignore this)
@@ -82,7 +85,9 @@ To use a `src/` directory, set `srcDir: 'src'` in `wxt.config.ts`.
 
 The `entrypoints/` directory is the heart of WXT. File names determine entrypoint type. Each entrypoint is either a single file or a directory with an `index` file.
 
-**Critical rule**: Never put code that uses browser APIs (`browser.*`, `chrome.*`, DOM APIs) outside the `main()` function. WXT imports entrypoint files in a Node.js environment during build, so top-level extension API calls will fail with errors like `Browser.action.onClicked.addListener not implemented`.
+**Critical rule**: Never put code that uses browser APIs (`browser.*`, `chrome.*`, DOM APIs) outside the
+`main()` function. WXT imports entrypoint files in a Node.js environment during build, so top-level
+extension API calls will fail with errors like `Browser.action.onClicked.addListener not implemented`.
 
 ### Background Script
 
@@ -167,10 +172,12 @@ See `references/entrypoints.md` for full details on: Newtab, History, Bookmarks,
 ## Auto-imports
 
 WXT sets up auto-imports (like Nuxt) for:
+
 - All WXT APIs: `defineBackground`, `defineContentScript`, `browser`, `storage`, `createShadowRootUi`, etc.
 - Files in `components/`, `composables/`, `hooks/`, `utils/`
 
 You can use these without importing them. When auto-imports are disabled or you prefer explicit imports, use:
+
 ```ts
 import { storage, createShadowRootUi } from '#imports';
 import { browser } from 'wxt/browser';
@@ -181,6 +188,7 @@ Run `wxt prepare` (or `pnpm postinstall`) to regenerate the `.wxt/types/imports-
 ## Extension APIs
 
 WXT provides a unified `browser` variable that works across all browsers:
+
 ```ts
 // Works in Chrome (uses chrome.*) and Firefox (uses browser.*)
 browser.storage.local.set({ key: 'value' });
@@ -188,6 +196,7 @@ browser.runtime.onMessage.addListener((msg, sender) => { /* ... */ });
 ```
 
 For feature detection (don't rely on types — they assume all APIs exist):
+
 ```ts
 browser.runtime.onSuspend?.addListener(() => { /* ... */ });
 ```
@@ -211,6 +220,7 @@ export default defineConfig({
 ```
 
 Dynamic manifest based on target:
+
 ```ts
 export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
@@ -241,6 +251,7 @@ unwatch(); // stop watching
 ```
 
 **Recommended: define typed storage items** in `utils/`:
+
 ```ts
 // utils/settings.ts
 export const darkMode = storage.defineItem<boolean>('local:darkMode', {
@@ -254,6 +265,7 @@ darkMode.watch((val) => console.log('theme changed:', val));
 ```
 
 Versioned storage for schema migrations:
+
 ```ts
 export const prefs = storage.defineItem<PrefsV2>('local:prefs', {
   version: 2,
@@ -271,12 +283,13 @@ Add `'storage'` to `manifest.permissions` in `wxt.config.ts`.
 For rendering UI components onto a page, WXT provides three strategies. See `references/content-scripts.md` for full code examples with each framework.
 
 | Method | Isolated CSS | Isolated Events | HMR | Use page context |
-|--------|:---:|:---:|:---:|:---:|
+| ------ | :---: | :---: | :---: | :---: |
 | Integrated (`createIntegratedUi`) | ❌ | ❌ | ❌ | ✅ |
 | Shadow Root (`createShadowRootUi`) | ✅ | ✅ (opt-in) | ❌ | ✅ |
 | IFrame (`createIframeUi`) | ✅ | ✅ | ✅ | ❌ |
 
 **Shadow Root** is the most commonly used — it isolates your extension's styles from the page:
+
 ```ts
 // entrypoints/overlay.content/index.ts
 import './style.css';
@@ -331,6 +344,7 @@ wxt -b chrome --mv2   # Chrome MV2
 ```
 
 Runtime browser detection:
+
 ```ts
 if (import.meta.env.BROWSER === 'firefox') { /* ... */ }
 if (import.meta.env.FIREFOX) { /* shorthand */ }
@@ -338,6 +352,7 @@ if (import.meta.env.MANIFEST_VERSION === 2) { /* ... */ }
 ```
 
 Per-entrypoint filtering:
+
 ```ts
 export default defineContentScript({
   include: ['firefox'],  // only built for Firefox
@@ -349,6 +364,7 @@ export default defineContentScript({
 ## Common Pitfalls
 
 **Extension API calls at top level** — the most common mistake:
+
 ```ts
 // ❌ Breaks at build time — WXT imports this file in Node.js
 browser.action.onClicked.addListener(() => {});
@@ -360,14 +376,16 @@ export default defineBackground(() => {
 ```
 
 **Deeply nested entrypoints** — WXT only discovers 0–1 levels deep:
-```
+
+```text
 entrypoints/
   youtube/content/index.ts   ❌ not discovered
   youtube.content/index.ts   ✅ correct
 ```
 
 **Related files inside entrypoints/** — put them in a directory entrypoint:
-```
+
+```text
 entrypoints/
   popup.ts    ❌ also don't put popup.css next to it
   popup/      ✅ use a folder instead

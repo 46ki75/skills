@@ -5,7 +5,7 @@ WXT provides three ways to inject UI into web pages from content scripts.
 ## Choosing the Right Method
 
 | Method | Isolated CSS | Isolated Events | HMR | Use page context |
-|--------|:---:|:---:|:---:|:---:|
+| ------ | :---: | :---: | :---: | :---: |
 | Integrated (`createIntegratedUi`) | ❌ | ❌ | ❌ | ✅ |
 | Shadow Root (`createShadowRootUi`) | ✅ | opt-in | ❌ | ✅ |
 | IFrame (`createIframeUi`) | ✅ | ✅ | ✅ | ❌ |
@@ -20,7 +20,10 @@ Use **Integrated** when you intentionally want the page's styles to apply to you
 
 ## Content Script Context (`ctx`)
 
-The first argument to `main()` is a `ContentScriptContext` that tracks whether the content script is still valid. When an extension updates, disables, or the user navigates away, the context becomes "invalidated". Use `ctx` wrappers instead of raw browser APIs to avoid "Extension context invalidated" errors:
+The first argument to `main()` is a `ContentScriptContext` that tracks whether the content script is
+still valid. When an extension updates, disables, or the user navigates away, the context becomes
+"invalidated". Use `ctx` wrappers instead of raw browser APIs to avoid "Extension context invalidated"
+errors:
 
 ```ts
 ctx.addEventListener(window, 'scroll', handler);  // auto-removed on invalidation
@@ -40,6 +43,7 @@ if (ctx.isInvalid) { return; }
 Injected directly into the page's DOM. Affected by the page's CSS — good when you want your UI to blend in.
 
 ### Vanilla
+
 ```ts
 // entrypoints/example-ui.content.ts
 export default defineContentScript({
@@ -60,8 +64,8 @@ export default defineContentScript({
 ```
 
 ### React
+
 ```tsx
-// entrypoints/example-ui.content/index.tsx
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 
@@ -86,6 +90,7 @@ export default defineContentScript({
 ```
 
 ### Vue
+
 ```ts
 // entrypoints/example-ui.content/index.ts
 import { createApp } from 'vue';
@@ -112,6 +117,7 @@ export default defineContentScript({
 ```
 
 ### Svelte
+
 ```ts
 import App from './App.svelte';
 import { mount, unmount } from 'svelte';
@@ -137,12 +143,14 @@ export default defineContentScript({
 CSS is scoped inside a Shadow DOM, so the page's styles don't leak in and your styles don't leak out. This is the recommended approach for most extensions.
 
 ### Steps
+
 1. Import your CSS file at the top of the content script
 2. Set `cssInjectionMode: 'ui'` inside `defineContentScript`
 3. Define the UI with `createShadowRootUi()` (it's async)
 4. Call `ui.mount()`
 
 ### Vanilla
+
 ```ts
 // entrypoints/overlay.content/index.ts
 import './style.css';  // Step 1
@@ -168,6 +176,7 @@ export default defineContentScript({
 ```
 
 ### React
+
 ```tsx
 import './style.css';
 import ReactDOM from 'react-dom/client';
@@ -200,6 +209,7 @@ export default defineContentScript({
 ```
 
 ### Vue
+
 ```ts
 import './style.css';
 import { createApp } from 'vue';
