@@ -1,0 +1,125 @@
+{
+  "skill_name": "wxt",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm starting a new browser extension project with WXT. I want to add a popup that shows when the user clicks the toolbar icon. How do I set that up? I'm using React.",
+      "expected_output": "Instructions for creating a WXT project with React, creating a popup entrypoint (popup.html + React app files), adding the @wxt-dev/module-react module to wxt.config.ts, and the correct file structure.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "mentions-popup-html",
+          "description": "Response mentions creating entrypoints/popup.html (or popup/index.html)",
+          "type": "llm_judge",
+          "value": "Does the response show or mention creating an entrypoints/popup.html file or entrypoints/popup/index.html?"
+        },
+        {
+          "name": "mentions-react-module",
+          "description": "Response mentions @wxt-dev/module-react",
+          "type": "contains_text",
+          "value": "@wxt-dev/module-react"
+        },
+        {
+          "name": "mentions-wxt-config",
+          "description": "Response shows adding the module to wxt.config.ts",
+          "type": "contains_text",
+          "value": "wxt.config.ts"
+        },
+        {
+          "name": "mentions-entrypoints-dir",
+          "description": "Response mentions the entrypoints/ directory",
+          "type": "contains_text",
+          "value": "entrypoints"
+        },
+        {
+          "name": "correct-project-bootstrap",
+          "description": "Response shows the wxt init command or how to install wxt",
+          "type": "llm_judge",
+          "value": "Does the response show how to bootstrap/create a new WXT project, such as using 'wxt init' or 'npx wxt@latest init'?"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a WXT extension and I want to inject a floating button into every webpage the user visits. The button should be styled with my own CSS and not be affected by the page's styles. How do I do this with a content script?",
+      "expected_output": "A content script using createShadowRootUi with cssInjectionMode: 'ui', importing a CSS file, the correct defineContentScript with matches: ['<all_urls>'], and explanation of why Shadow Root isolates styles.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "uses-defineContentScript",
+          "description": "Response uses defineContentScript to define the content script",
+          "type": "contains_text",
+          "value": "defineContentScript"
+        },
+        {
+          "name": "uses-shadow-root",
+          "description": "Response uses createShadowRootUi for style isolation",
+          "type": "contains_text",
+          "value": "createShadowRootUi"
+        },
+        {
+          "name": "sets-cssInjectionMode-ui",
+          "description": "Response sets cssInjectionMode to 'ui'",
+          "type": "contains_text",
+          "value": "cssInjectionMode"
+        },
+        {
+          "name": "has-all-urls-matches",
+          "description": "Response uses <all_urls> or a broad match pattern",
+          "type": "llm_judge",
+          "value": "Does the response show a matches pattern like '<all_urls>' or '*://*/*' to match all pages?"
+        },
+        {
+          "name": "async-main",
+          "description": "Response shows main() is async (required for createShadowRootUi)",
+          "type": "llm_judge",
+          "value": "Does the response show that the main function should be async (since createShadowRootUi returns a Promise)?"
+        },
+        {
+          "name": "uses-content-file-naming",
+          "description": "Response shows the .content. naming convention for content script files",
+          "type": "llm_judge",
+          "value": "Does the response show the correct file naming for a content script, such as something.content.ts or content.ts?"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My WXT extension needs to save user preferences (dark mode toggle and a custom URL) that persist across browser restarts. I also want to watch for changes to these settings from my background script. How do I use WXT's storage API for this?",
+      "expected_output": "Shows storage.defineItem for typed storage items with fallback values, the 'local:' prefix, the 'storage' permission in wxt.config.ts, and storage.watch or the .watch() method on a defined item.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "uses-defineItem",
+          "description": "Response uses storage.defineItem to create typed storage items",
+          "type": "contains_text",
+          "value": "defineItem"
+        },
+        {
+          "name": "uses-local-prefix",
+          "description": "Response uses the 'local:' prefix for storage keys",
+          "type": "contains_text",
+          "value": "local:"
+        },
+        {
+          "name": "mentions-storage-permission",
+          "description": "Response mentions adding the storage permission to the manifest",
+          "type": "llm_judge",
+          "value": "Does the response mention adding 'storage' to the permissions array in wxt.config.ts or the manifest?"
+        },
+        {
+          "name": "shows-watch",
+          "description": "Response shows how to watch for storage changes",
+          "type": "llm_judge",
+          "value": "Does the response show how to watch for changes to stored values, using storage.watch() or the .watch() method?"
+        },
+        {
+          "name": "shows-fallback",
+          "description": "Response shows how to set default/fallback values",
+          "type": "llm_judge",
+          "value": "Does the response show how to define default or fallback values for storage items?"
+        }
+      ]
+    }
+  ]
+}
