@@ -1,0 +1,27 @@
+{
+  "eval_id": 3,
+  "eval_name": "rules-list",
+  "prompt": "I want to know what common markdownlint rules I should be aware of. Can you give me a comprehensive list of important rules?",
+  "assertions": [
+    {
+      "text": "At least 15 distinct markdownlint rules are mentioned",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "MD047 (file should end with newline) is mentioned",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "MD034 is described correctly as flagging bare URLs (not as URLs in angle brackets)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Rules covering headings, lists, whitespace, and code blocks are all included",
+      "passed": null,
+      "evidence": ""
+    }
+  ]
+}

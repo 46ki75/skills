@@ -1,0 +1,33 @@
+{
+  "eval_id": 3,
+  "eval_name": "rules-list",
+  "run_type": "without_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "At least 15 distinct markdownlint rules are mentioned",
+      "passed": true,
+      "evidence": "The response lists 40+ distinct markdownlint rules organized by multiple categories (Headings, Lists, Whitespace, Line Length, Code Blocks, Links/Images, Emphasis, HTML, Blockquotes, Horizontal Rules, Tables, Document Structure, Miscellaneous), far exceeding 15 rules"
+    },
+    {
+      "text": "MD047 (file should end with newline) is mentioned",
+      "passed": true,
+      "evidence": "MD047 is explicitly mentioned in the 'Whitespace and Blank Lines' section (line 68): '- **MD047** \u2013 Files should end with a single newline character.' It also appears in the Summary Table (line 189) listed as 'MD047 - File ends with a newline'"
+    },
+    {
+      "text": "MD034 is described correctly as flagging bare URLs (not as URLs in angle brackets)",
+      "passed": true,
+      "evidence": "MD034 is described in the 'Links and Images' section (lines 99-100): '- **MD034** \u2013 Bare URL used without angle brackets or link syntax. Bad: `http://example.com`  Good: `<http://example.com>` or `[text](url)`' - correctly identifies it as flagging bare URLs, not URLs already in angle brackets"
+    },
+    {
+      "text": "Rules covering headings, lists, whitespace, and code blocks are all included",
+      "passed": true,
+      "evidence": "Comprehensive coverage with dedicated sections: 'Headings' (MD001, MD002, MD003, MD018-MD026, MD041), 'Lists' (MD004, MD005-MD007, MD029-MD032), 'Whitespace and Blank Lines' (MD009, MD010, MD012, MD047), 'Code Blocks and Inline Code' (MD014, MD031, MD035, MD040, MD046, MD048)"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "eval_id": 3,
+  "eval_name": "rules-list",
+  "run_type": "with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "At least 15 distinct markdownlint rules are mentioned",
+      "passed": true,
+      "evidence": "The response lists 30+ distinct markdownlint rules organized by category, including MD001-MD047, far exceeding the requirement of 15. Count includes: MD001, MD018, MD022, MD023, MD024, MD025, MD036, MD041, MD004, MD005, MD007, MD029, MD030, MD032, MD009, MD010, MD012, MD047, MD013, MD031, MD040, MD046, MD034, MD039, MD042, MD037, MD038, MD033, MD011, MD019, MD026, MD028, MD045"
+    },
+    {
+      "text": "MD047 (file should end with newline) is mentioned",
+      "passed": true,
+      "evidence": "MD047 is explicitly mentioned in the 'Whitespace Rules' section (line 74): '**MD047 - Files should end with a single newline character** Every file should end with exactly one newline.'"
+    },
+    {
+      "text": "MD034 is described correctly as flagging bare URLs (not as URLs in angle brackets)",
+      "passed": true,
+      "evidence": "MD034 is described in the 'Link & URL Rules' section (lines 107-110): '**MD034 - Bare URL used** Wrap bare URLs in angle brackets or use proper Markdown link syntax. Bad: `https://example.com` Good: `<https://example.com>` or `[Example](https://example.com)`' - correctly identifies it as flagging bare URLs, not URLs in angle brackets"
+    },
+    {
+      "text": "Rules covering headings, lists, whitespace, and code blocks are all included",
+      "passed": true,
+      "evidence": "Comprehensive coverage is evident: Headings section (MD001, MD018, MD022, MD023, MD024, MD025, MD036, MD041), Lists section (MD004, MD005, MD007, MD029, MD030, MD032), Whitespace Rules section (MD009, MD010, MD012, MD047), and Code Block Rules section (MD031, MD040, MD046)"
+    }
+  ]
+}
