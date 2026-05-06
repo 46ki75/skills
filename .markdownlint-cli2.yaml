@@ -12,3 +12,4 @@ ignores:
   - "./.agents/**"
   - "./.claude/**"
   - "./refs/**"
+  - "./skills/*-workspace/**"
