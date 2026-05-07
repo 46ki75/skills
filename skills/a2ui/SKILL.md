@@ -5,13 +5,16 @@ description: >
   surfaces, components, data models, catalogs, data binding, message streams
   (surfaceUpdate/dataModelUpdate/beginRendering for v0.8;
   createSurface/updateComponents/updateDataModel for v0.9), A2A extension
-  integration, custom catalogs, and client/renderer architecture. Use this
-  skill whenever someone is building or integrating an A2UI agent, renderer,
-  or client; asking how to generate or consume A2UI JSON; working with the
-  A2UI protocol specification; implementing catalog negotiation; or migrating
-  from v0.8 to v0.9. Always invoke this skill for any question that mentions
-  A2UI, surfaceUpdate, beginRendering, createSurface, updateComponents,
-  a2uiClientCapabilities, or agent-driven UI streaming, even if the question
+  integration, custom component catalogs (defining schemas, registering
+  renderers, catalog negotiation, versioning, graceful degradation),
+  and client/renderer architecture. Use this skill whenever someone is
+  building or integrating an A2UI agent, renderer, or client; asking how to
+  generate or consume A2UI JSON; working with the A2UI protocol specification;
+  implementing catalog negotiation; building a custom component catalog;
+  or migrating from v0.8 to v0.9. Always invoke this skill for any question
+  that mentions A2UI, surfaceUpdate, beginRendering, createSurface,
+  updateComponents, a2uiClientCapabilities, supportedCatalogIds, catalogId,
+  DynamicComponent, or agent-driven UI streaming, even if the question
   seems simple.
 license: MIT
 metadata:
@@ -98,6 +101,14 @@ Read the appropriate reference files as needed:
 - **`references/v0.9/renderer-guide.md`** — Client/renderer architecture:
   layered design (MessageProcessor → SurfaceModel → ComponentImplementation),
   framework-specific adapters, binder layer, custom component patterns.
+- **`references/v0.9/custom-catalog-guide.md`** — End-to-end guide for
+  implementing custom component catalogs: defining a catalog JSON Schema,
+  extending or cherry-picking from the Basic Catalog, bundling with
+  `assemble_catalog.py`, implementing and registering components in Angular /
+  React renderers, the three-step catalog negotiation handshake
+  (`supportedCatalogIds` / `catalogId`), versioning and breaking-change rules,
+  two-phase schema validation, graceful degradation, and agent-side ADK
+  integration (`A2uiSchemaManager`, `SendA2uiToClientToolset`).
 
 ## When to Read Which Files
 
@@ -112,3 +123,8 @@ Read the appropriate reference files as needed:
 | Custom functions in v0.9 | `references/v0.9/custom-functions.md` |
 | Rendering components (any framework) | `references/v0.9/basic-catalog-guide.md` |
 | Building a client/renderer | `references/v0.9/renderer-guide.md` |
+| Custom component catalog (define / register / negotiate / version) | `references/v0.9/custom-catalog-guide.md` |
+| Extending or cherry-picking Basic Catalog components | `references/v0.9/custom-catalog-guide.md` |
+| `supportedCatalogIds` / catalog negotiation handshake | `references/v0.9/custom-catalog-guide.md` |
+| Catalog versioning, breaking changes, migration | `references/v0.9/custom-catalog-guide.md` |
+| Agent-side catalog integration (ADK / `SendA2uiToClientToolset`) | `references/v0.9/custom-catalog-guide.md` |
