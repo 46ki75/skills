@@ -1,20 +1,18 @@
 ---
 name: mcp
 description: >
-  Expert guidance for implementing the Model Context Protocol (MCP) — a JSON-RPC 2.0
-  protocol that standardizes how LLM applications integrate with external data sources
-  and tools. Covers all four public spec versions (2024-11-05, 2025-03-26, 2025-06-18,
-  2025-11-25), architecture (host/client/server), transports (stdio, HTTP+SSE,
-  Streamable HTTP), server features (Resources, Prompts, Tools), client features
-  (Sampling, Roots, Elicitation), lifecycle management, OAuth 2.1 authorization, and
-  utilities (Logging, Pagination, Cancellation, Ping, Progress, Tasks). Use this skill
-  whenever someone is building or integrating an MCP server or client; asking how to
-  implement MCP tools, resources, or prompts; working with MCP transports or
-  authorization; handling MCP lifecycle and capability negotiation; or implementing
-  sampling, elicitation, or the Tasks utility. Always invoke this skill for any question
-  that mentions MCP, modelcontextprotocol, tools/list, tools/call, resources/read,
-  sampling/createMessage, elicitation/create, Streamable HTTP transport,
-  Mcp-Session-Id, or JSON-RPC in the context of AI tool integration.
+  Expert guidance for the Model Context Protocol (MCP) — a JSON-RPC 2.0 protocol
+  standardizing how LLM applications integrate with external data sources and tools.
+  Covers spec versions 2024-11-05 through 2025-11-25, architecture (host/client/server),
+  transports (stdio, HTTP+SSE, Streamable HTTP), server features (Resources, Prompts,
+  Tools), client features (Sampling, Roots, Elicitation), lifecycle, OAuth 2.1
+  authorization, and utilities (Logging, Pagination, Cancellation, Ping, Progress,
+  Tasks). Use when building or integrating MCP servers or clients; implementing tools,
+  resources, or prompts; working with transports or authorization; handling lifecycle
+  and capability negotiation; or implementing sampling, elicitation, or Tasks. Always
+  invoke for questions mentioning MCP, modelcontextprotocol, tools/list, tools/call,
+  resources/read, sampling/createMessage, elicitation/create, Streamable HTTP,
+  Mcp-Session-Id, or JSON-RPC in AI tool integration context.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
