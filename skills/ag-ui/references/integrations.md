@@ -332,40 +332,40 @@ from the dropdown.
 
 1. Add to `apps/dojo/src/menu.ts`:
 
-```typescript
-export const menuIntegrations: MenuIntegrationConfig[] = [
-  {
-    id: "my-agent",
-    name: "My Agent",
-    features: ["agentic_chat"],
-  },
-]
-```
+   ```typescript
+   export const menuIntegrations: MenuIntegrationConfig[] = [
+     {
+       id: "my-agent",
+       name: "My Agent",
+       features: ["agentic_chat"],
+     },
+   ]
+   ```
 
-1. Add to `apps/dojo/src/agents.ts`:
+2. Add to `apps/dojo/src/agents.ts`:
 
-```typescript
-import { MyAgent } from "@ag-ui/my-agent"
+   ```typescript
+   import { MyAgent } from "@ag-ui/my-agent"
 
-export const agentsIntegrations: AgentIntegrationConfig[] = [
-  {
-    id: "my-agent",
-    agents: async () => ({
-      agentic_chat: new MyAgent(),
-    }),
-  },
-]
-```
+   export const agentsIntegrations: AgentIntegrationConfig[] = [
+     {
+       id: "my-agent",
+       agents: async () => ({
+         agentic_chat: new MyAgent(),
+       }),
+     },
+   ]
+   ```
 
-1. Add the package to `apps/dojo/package.json` dependencies:
+3. Add the package to `apps/dojo/package.json` dependencies:
 
-```json
-{
-  "dependencies": {
-    "@ag-ui/my-agent": "workspace:*"
-  }
-}
-```
+   ```json
+   {
+     "dependencies": {
+       "@ag-ui/my-agent": "workspace:*"
+     }
+   }
+   ```
 
 ### Available features (Dojo capability IDs)
 

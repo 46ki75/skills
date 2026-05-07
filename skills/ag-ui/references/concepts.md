@@ -238,6 +238,10 @@ class ReasoningEncryptedValueEvent(BaseEvent):
 ```
 
 > Note: `THINKING_*` events are deprecated; use `REASONING_*` instead.
+> Earlier versions of the protocol used `THINKING_START`, `THINKING_END`,
+> `THINKING_TEXT_MESSAGE_START`, `THINKING_TEXT_MESSAGE_CONTENT`, and
+> `THINKING_TEXT_MESSAGE_END`. These map 1-to-1 to their `REASONING_*`
+> equivalents and will be removed in version 1.0.0.
 
 ---
 
