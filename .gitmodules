@@ -1,0 +1,3 @@
+[submodule "submodules/A2UI"]
+	path = submodules/A2UI
+	url = https://github.com/google/A2UI
