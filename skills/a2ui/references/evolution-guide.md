@@ -6,7 +6,7 @@ This guide documents every breaking and notable change between v0.8 (Stable) and
 
 | Dimension | v0.8 | v0.9 |
 |-----------|------|------|
-| Philosophy | Structured Output / Function Calling | Prompt-First / In-Context Schema |
+| Philosophy | Structured Output / Function Calling | prompt-first / In-Context Schema |
 | Surface init | `beginRendering` sent *after* components | `createSurface` sent *first* |
 | Component updates | `surfaceUpdate` | `updateComponents` |
 | Data updates | `dataModelUpdate` | `updateDataModel` |
