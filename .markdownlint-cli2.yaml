@@ -13,3 +13,4 @@ ignores:
   - "./.claude/**"
   - "./refs/**"
   - "./skills/*-workspace/**"
+  - "./submodules/**"

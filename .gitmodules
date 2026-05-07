@@ -1,0 +1,6 @@
+[submodule "submodules/A2UI"]
+	path = submodules/A2UI
+	url = https://github.com/google/A2UI
+[submodule "submodules/ag-ui"]
+	path = submodules/ag-ui
+	url = https://github.com/ag-ui-protocol/ag-ui
