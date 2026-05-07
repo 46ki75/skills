@@ -4,3 +4,6 @@
 [submodule "submodules/ag-ui"]
 	path = submodules/ag-ui
 	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "submodules/modelcontextprotocol"]
+	path = submodules/modelcontextprotocol
+	url = https://github.com/modelcontextprotocol/modelcontextprotocol.git
