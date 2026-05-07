@@ -48,6 +48,8 @@ Summary: 0 error(s)
 
 ## Git Submodules
 
+Run the commands at repository root, not at `skills/`.
+
 ```bash
 git submodule update --init --recursive
 ```
