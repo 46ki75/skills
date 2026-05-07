@@ -48,4 +48,14 @@ Summary: 0 error(s)
 
 ## Git Submodules
 
+```bash
+git submodule update --init --recursive
+```
+
+To keep submodules up to date after pulling changes:
+
+```bash
+git submodule update --recursive
+```
+
 You can add git submodules if you need.
