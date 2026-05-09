@@ -1,0 +1,29 @@
+{
+  "skill_name": "web-view-transition",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm building a React SPA (no router, just vanilla React + Vite). When the user clicks a card in a list, I show a detail panel. Right now it just pops in with no animation. I want a smooth cross-fade transition between the list and the detail view. Can you show me how to use the View Transition API for this?",
+      "expected_output": "Code that wraps the state update in document.startViewTransition(), includes a browser-support fallback, and shows the basic cross-fade pattern with optional CSS duration customization.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have a multi-page app (plain HTML, no framework). Each page is a separate .html file served from the same origin. I want slide animations between pages — the old page should slide out to the left and the new page should slide in from the right. How do I implement this?",
+      "expected_output": "Adds @view-transition { navigation: auto; } to both pages' CSS, plus custom @keyframes and ::view-transition-old/::view-transition-new rules for the slide animation. No JavaScript required explanation.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm building an image gallery SPA. When the user clicks 'Next' I want the image to slide in from the right, and when they click 'Previous' it should slide in from the left. The caption should just fade. How do I apply different animations based on which button was pressed?",
+      "expected_output": "Uses document.startViewTransition with the types option (or vt.types.add()), sets view-transition-name on the image and caption elements, and applies different CSS animations using :active-view-transition-type() for forwards/backwards types.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I want a circular reveal animation that expands from wherever the user clicked, like how some Android apps animate. The new page should expand from the click point as a growing circle. I'm using a SPA with document.startViewTransition.",
+      "expected_output": "Uses transition.ready with the Web Animations API and clipPath circle(), stores the click coordinates, disables default CSS animation with animation: none on the pseudo-elements.",
+      "files": []
+    }
+  ]
+}
