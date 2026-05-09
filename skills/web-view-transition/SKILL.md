@@ -7,16 +7,14 @@ description: >
   animations via CSS pseudo-elements (`::view-transition-old`,
   `::view-transition-new`, `::view-transition-group`), per-element
   animations with `view-transition-name`, JavaScript control via the
-  `ViewTransition` object promises (`ready`, `finished`,
-  `updateCallbackDone`), context-aware transition types with
-  `:active-view-transition-type()`, and graceful fallbacks for
-  unsupported browsers. Use this skill whenever someone wants to add
-  page transition animations, animate between views or routes, implement
-  shared-element transitions, create slide/fade/circular-reveal effects
-  during navigation, or asks about `startViewTransition`, `@view-transition`,
-  `view-transition-name`, `::view-transition-*` pseudo-elements, or the
-  `ViewTransition` object — even if they just say "I want smooth page
-  transitions" or "animate between routes".
+  `ViewTransition` promises (`ready`, `finished`, `updateCallbackDone`),
+  context-aware transition types with `:active-view-transition-type()`,
+  and graceful fallbacks for unsupported browsers. Use this skill when
+  someone wants page transition animations, shared-element transitions,
+  slide/fade/circular-reveal effects, or asks about `startViewTransition`,
+  `@view-transition`, `view-transition-name`, `::view-transition-*`
+  pseudo-elements, or the `ViewTransition` object — even if they just say
+  "smooth page transitions" or "animate between routes".
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
