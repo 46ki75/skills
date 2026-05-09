@@ -406,14 +406,19 @@ set, either remove the animation or make it instant.
 
 ## Reference files
 
-For the full API surface and detailed examples, read the reference docs in
-`refs/web-view-transition-api/` (relative to the repository root):
+Read these when you need deeper detail than what is covered above.
 
-- `View_Transition_API.md` — overview of all interfaces and CSS additions
-- `Using.md` — step-by-step guide with code examples (SPA, MPA, custom animations)
-- `Using_types.md` — detailed guide to transition types
-- `startViewTransition.md` — `Document.startViewTransition()` full syntax
-- `ViewTransition.md` — `ViewTransition` object interface
-- `ready.md`, `finished.md`, `updateCallbackDone.md` — promise semantics
-- `skipTransition.md` — `skipTransition()` method
-- `types.md` — `ViewTransition.types` property and `ViewTransitionTypeSet`
+- **`references/api.md`** — Complete API reference: browser support table,
+  `Document.startViewTransition()` signature, all `ViewTransition` promises,
+  `ViewTransitionTypeSet` methods, `pageswap`/`pagereveal` event objects, and
+  every CSS addition (`@view-transition`, `view-transition-name`,
+  `view-transition-class`, pseudo-classes, pseudo-elements, `<link rel="expect">`)
+- **`references/using.md`** — Detailed walkthrough: how the transition process
+  works step-by-step, SPA and MPA setup, CSS animation customization, per-element
+  naming, the circular-reveal Web Animations API pattern, back/forward direction
+  patterns, `pageswap`/`pagereveal` shared-element examples, and MPA render
+  stabilization with `<link rel="expect">`
+- **`references/using-types.md`** — In-depth guide to transition types: SPA
+  `types` option, `ViewTransition.types.add()`, type-specific CSS with
+  `:active-view-transition-type()`, static MPA types in `@view-transition`,
+  and dynamic MPA types via `pageswap`/`pagereveal` with direction detection
