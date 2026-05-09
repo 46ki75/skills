@@ -43,7 +43,7 @@ When a transition fires, the browser:
 
 The pseudo-element tree looks like:
 
-```
+```text
 ::view-transition
 └─ ::view-transition-group(root)
    └─ ::view-transition-image-pair(root)
@@ -216,11 +216,11 @@ in MPA transitions via `PageSwapEvent.viewTransition` (outgoing page) and
 `PageRevealEvent.viewTransition` (incoming page). Also available anywhere via
 `document.activeViewTransition`.
 
-| Promise | Fulfills when |
-|---------|---------------|
-| `updateCallbackDone` | The DOM update callback resolved |
-| `ready` | Pseudo-elements created, animation about to start |
-| `finished` | Animation completed, new view is interactive |
+| Promise              | Fulfills when                                     |
+| -------------------- | ------------------------------------------------- |
+| `updateCallbackDone` | The DOM update callback resolved                  |
+| `ready`              | Pseudo-elements created, animation about to start |
+| `finished`           | Animation completed, new view is interactive      |
 
 ```js
 const transition = document.startViewTransition(updateFn);
