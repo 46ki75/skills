@@ -6,8 +6,6 @@ Severity: Low | Medium | High
 Status: Not Started | In Progress | Resolved | Resolved (Workaround) | Resolved (Cause Unknown)
 ---
 
-# My Title Here
-
 ## Description
 
 Brief summary of the problem from the user's perspective — what they experience
