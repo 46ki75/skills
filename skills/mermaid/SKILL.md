@@ -4,7 +4,7 @@ description: Create diagrams and visualizations using Mermaid syntax. Use when u
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0"
+  version: "1.0.0"
 ---
 
 # Mermaid Diagram Creation
