@@ -1,5 +1,5 @@
 ---
-name: ag-ui
+name: ag-ui-knowledge
 description: >
   Expert guidance for building with AG-UI (Agent–User Interaction Protocol) —
   covering the event-based streaming architecture, event types (lifecycle, text,
@@ -57,14 +57,14 @@ Every agent interaction is a **run** on a **thread**:
 
 ### Event categories
 
-| Category | Events |
-| --- | --- |
-| Lifecycle | `RUN_STARTED`, `RUN_FINISHED`, `RUN_ERROR`, `STEP_STARTED`, `STEP_FINISHED` |
-| Text | `TEXT_MESSAGE_START`, `TEXT_MESSAGE_CONTENT`, `TEXT_MESSAGE_END` |
-| Tool calls | `TOOL_CALL_START`, `TOOL_CALL_ARGS`, `TOOL_CALL_END`, `TOOL_CALL_RESULT` |
-| State | `STATE_SNAPSHOT`, `STATE_DELTA`, `MESSAGES_SNAPSHOT` |
-| Reasoning | `REASONING_START`, `REASONING_MESSAGE_START/CONTENT/END/CHUNK`, `REASONING_END`, `REASONING_ENCRYPTED_VALUE` |
-| Other | `RAW`, `CUSTOM`, `ACTIVITY_SNAPSHOT`, `ACTIVITY_DELTA` |
+| Category   | Events                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
+| Lifecycle  | `RUN_STARTED`, `RUN_FINISHED`, `RUN_ERROR`, `STEP_STARTED`, `STEP_FINISHED`                                  |
+| Text       | `TEXT_MESSAGE_START`, `TEXT_MESSAGE_CONTENT`, `TEXT_MESSAGE_END`                                             |
+| Tool calls | `TOOL_CALL_START`, `TOOL_CALL_ARGS`, `TOOL_CALL_END`, `TOOL_CALL_RESULT`                                     |
+| State      | `STATE_SNAPSHOT`, `STATE_DELTA`, `MESSAGES_SNAPSHOT`                                                         |
+| Reasoning  | `REASONING_START`, `REASONING_MESSAGE_START/CONTENT/END/CHUNK`, `REASONING_END`, `REASONING_ENCRYPTED_VALUE` |
+| Other      | `RAW`, `CUSTOM`, `ACTIVITY_SNAPSHOT`, `ACTIVITY_DELTA`                                                       |
 
 ### Message roles
 
@@ -89,9 +89,9 @@ new run with `RunAgentInput.resume`.
 
 ## Integration types
 
-| Type | When to use |
-| --- | --- |
-| **Server** | Building a new agent from scratch; maximum control over emitted events |
+| Type           | When to use                                                             |
+| -------------- | ----------------------------------------------------------------------- |
+| **Server**     | Building a new agent from scratch; maximum control over emitted events  |
 | **Middleware** | Wrapping an existing protocol or framework; translating to AG-UI events |
 
 Both types expose the same HTTP endpoint that accepts `RunAgentInput` and
@@ -99,10 +99,10 @@ returns an SSE stream of AG-UI events.
 
 ## SDKs
 
-| Language | Package | Install |
-| --- | --- | --- |
-| Python | `ag-ui-protocol` | `pip install ag-ui-protocol` |
-| TypeScript/JS | `@ag-ui/core`, `@ag-ui/client` | `npm install @ag-ui/client` |
+| Language      | Package                        | Install                      |
+| ------------- | ------------------------------ | ---------------------------- |
+| Python        | `ag-ui-protocol`               | `pip install ag-ui-protocol` |
+| TypeScript/JS | `@ag-ui/core`, `@ag-ui/client` | `npm install @ag-ui/client`  |
 
 ## Reference files
 

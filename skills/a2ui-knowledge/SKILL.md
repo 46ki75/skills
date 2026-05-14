@@ -1,5 +1,5 @@
 ---
-name: a2ui
+name: a2ui-knowledge
 description: >
   Expert guidance for implementing the A2UI (Agent to UI) protocol — covering
   surfaces, components, data models, catalogs, data binding, message streams
@@ -45,10 +45,10 @@ properties:
 
 There are two public versions:
 
-| Version | Status | Key message types |
-| :------ | :----- | :---------------- |
-| **v0.8** | Stable (recommended for production) | `surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface` |
-| **v0.9** | Draft | `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` |
+| Version  | Status                              | Key message types                                                       |
+| :------- | :---------------------------------- | :---------------------------------------------------------------------- |
+| **v0.8** | Stable (recommended for production) | `surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface`   |
+| **v0.9** | Draft                               | `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` |
 
 v0.9 is a "prompt-first" redesign — flatter component syntax, standard JSON
 objects instead of key-value arrays, and a unified catalog format. Use v0.8 for
@@ -112,19 +112,19 @@ Read the appropriate reference files as needed:
 
 ## When to Read Which Files
 
-| User is asking about… | Read |
-| :-------------------- | :--- |
-| v0.8 message format / schema | `references/v0.8/protocol.md` |
-| v0.8 A2A integration | `references/v0.8/a2a-extension.md` |
-| v0.8 custom catalogs | `references/v0.8/custom-catalog.md` |
-| v0.9 message format / schema | `references/v0.9/protocol.md` |
-| v0.9 A2A integration | `references/v0.9/a2a-extension.md` |
-| v0.8 → v0.9 migration / differences | `references/v0.9/evolution-guide.md` |
-| Custom functions in v0.9 | `references/v0.9/custom-functions.md` |
-| Rendering components (any framework) | `references/v0.9/basic-catalog-guide.md` |
-| Building a client/renderer | `references/v0.9/renderer-guide.md` |
+| User is asking about…                                              | Read                                      |
+| :----------------------------------------------------------------- | :---------------------------------------- |
+| v0.8 message format / schema                                       | `references/v0.8/protocol.md`             |
+| v0.8 A2A integration                                               | `references/v0.8/a2a-extension.md`        |
+| v0.8 custom catalogs                                               | `references/v0.8/custom-catalog.md`       |
+| v0.9 message format / schema                                       | `references/v0.9/protocol.md`             |
+| v0.9 A2A integration                                               | `references/v0.9/a2a-extension.md`        |
+| v0.8 → v0.9 migration / differences                                | `references/v0.9/evolution-guide.md`      |
+| Custom functions in v0.9                                           | `references/v0.9/custom-functions.md`     |
+| Rendering components (any framework)                               | `references/v0.9/basic-catalog-guide.md`  |
+| Building a client/renderer                                         | `references/v0.9/renderer-guide.md`       |
 | Custom component catalog (define / register / negotiate / version) | `references/v0.9/custom-catalog-guide.md` |
-| Extending or cherry-picking Basic Catalog components | `references/v0.9/custom-catalog-guide.md` |
-| `supportedCatalogIds` / catalog negotiation handshake | `references/v0.9/custom-catalog-guide.md` |
-| Catalog versioning, breaking changes, migration | `references/v0.9/custom-catalog-guide.md` |
-| Agent-side catalog integration (ADK / `SendA2uiToClientToolset`) | `references/v0.9/custom-catalog-guide.md` |
+| Extending or cherry-picking Basic Catalog components               | `references/v0.9/custom-catalog-guide.md` |
+| `supportedCatalogIds` / catalog negotiation handshake              | `references/v0.9/custom-catalog-guide.md` |
+| Catalog versioning, breaking changes, migration                    | `references/v0.9/custom-catalog-guide.md` |
+| Agent-side catalog integration (ADK / `SendA2uiToClientToolset`)   | `references/v0.9/custom-catalog-guide.md` |
