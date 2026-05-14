@@ -18,7 +18,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0"
+  version: "1.0.0"
 ---
 
 # Web View Transition API
@@ -107,11 +107,11 @@ up:
 
 ```js
 document.startViewTransition(() => {
-  clickedCard.style.viewTransitionName = 'selected-card';
+  clickedCard.style.viewTransitionName = "selected-card";
   updateDOM();
   // Reset in the next frame to prevent bfcache conflicts
   requestAnimationFrame(() => {
-    clickedCard.style.viewTransitionName = '';
+    clickedCard.style.viewTransitionName = "";
   });
 });
 ```
@@ -150,10 +150,14 @@ Target the pseudo-elements to override the default cross-fade. Prefer targeting
 
 /* Custom swipe-up animation */
 @keyframes slide-out {
-  to { transform: translateY(-100%); }
+  to {
+    transform: translateY(-100%);
+  }
 }
 @keyframes slide-in {
-  from { transform: translateY(100%); }
+  from {
+    transform: translateY(100%);
+  }
 }
 
 ::view-transition-old(root) {
@@ -179,21 +183,36 @@ use the `ViewTransition.ready` promise together with the Web Animations API.
 
 ```js
 let lastClick;
-document.addEventListener('click', (e) => (lastClick = e));
+document.addEventListener("click", (e) => (lastClick = e));
 
 function navigate(updateFn) {
-  if (!document.startViewTransition) { updateFn(); return; }
+  if (!document.startViewTransition) {
+    updateFn();
+    return;
+  }
 
   const x = lastClick?.clientX ?? innerWidth / 2;
   const y = lastClick?.clientY ?? innerHeight / 2;
-  const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const r = Math.hypot(
+    Math.max(x, innerWidth - x),
+    Math.max(y, innerHeight - y),
+  );
 
   const transition = document.startViewTransition(updateFn);
 
   transition.ready.then(() => {
     document.documentElement.animate(
-      { clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-      { duration: 500, easing: 'ease-in', pseudoElement: '::view-transition-new(root)' }
+      {
+        clipPath: [
+          `circle(0 at ${x}px ${y}px)`,
+          `circle(${r}px at ${x}px ${y}px)`,
+        ],
+      },
+      {
+        duration: 500,
+        easing: "ease-in",
+        pseudoElement: "::view-transition-new(root)",
+      },
     );
   });
 }
@@ -224,14 +243,16 @@ in MPA transitions via `PageSwapEvent.viewTransition` (outgoing page) and
 const transition = document.startViewTransition(updateFn);
 
 // Know when the DOM is updated (regardless of animation outcome)
-transition.updateCallbackDone.then(() => console.log('DOM updated'));
+transition.updateCallbackDone.then(() => console.log("DOM updated"));
 
 // Run custom JS animation at the right moment
-transition.ready.then(() => { /* animate */ });
+transition.ready.then(() => {
+  /* animate */
+});
 
 // Cleanup after animation completes
 transition.finished.then(() => {
-  element.style.viewTransitionName = '';
+  element.style.viewTransitionName = "";
 });
 
 // Skip animation (DOM update still runs)
@@ -242,21 +263,25 @@ transition.skipTransition();
 
 ```js
 async function handleNav(isBack) {
-  if (isBack) document.documentElement.classList.add('back-nav');
+  if (isBack) document.documentElement.classList.add("back-nav");
 
   const transition = document.startViewTransition(updateFn);
 
   try {
     await transition.finished;
   } finally {
-    document.documentElement.classList.remove('back-nav');
+    document.documentElement.classList.remove("back-nav");
   }
 }
 ```
 
 ```css
-.back-nav::view-transition-old(root) { animation-name: slide-out-right; }
-.back-nav::view-transition-new(root) { animation-name: slide-in-left; }
+.back-nav::view-transition-old(root) {
+  animation-name: slide-out-right;
+}
+.back-nav::view-transition-new(root) {
+  animation-name: slide-in-left;
+}
 ```
 
 ---
@@ -270,8 +295,10 @@ context (e.g. "forwards" vs "backwards" in a gallery).
 
 ```js
 document.startViewTransition({
-  update() { renderNextImage(); },
-  types: ['forwards'],
+  update() {
+    renderNextImage();
+  },
+  types: ["forwards"],
 });
 ```
 
@@ -279,7 +306,7 @@ Modify types dynamically on the returned object:
 
 ```js
 const vt = document.startViewTransition({ update: renderFn });
-if (isBack) vt.types.add('backwards');
+if (isBack) vt.types.add("backwards");
 ```
 
 ### MPA — set types in `@view-transition`
@@ -294,9 +321,9 @@ if (isBack) vt.types.add('backwards');
 Or assign dynamically via `pageswap`/`pagereveal` events:
 
 ```js
-window.addEventListener('pageswap', (e) => {
+window.addEventListener("pageswap", (e) => {
   if (e.viewTransition && goingForward(e)) {
-    e.viewTransition.types.add('forwards');
+    e.viewTransition.types.add("forwards");
   }
 });
 ```
@@ -306,19 +333,31 @@ window.addEventListener('pageswap', (e) => {
 ```css
 /* Styles when any transition is active */
 html:active-view-transition {
-  :root { view-transition-name: none; }
-  .card { view-transition-name: card; }
+  :root {
+    view-transition-name: none;
+  }
+  .card {
+    view-transition-name: card;
+  }
 }
 
 /* Different animations per type */
 html:active-view-transition-type(forwards) {
-  &::view-transition-old(card) { animation-name: slide-out-left; }
-  &::view-transition-new(card) { animation-name: slide-in-right; }
+  &::view-transition-old(card) {
+    animation-name: slide-out-left;
+  }
+  &::view-transition-new(card) {
+    animation-name: slide-in-right;
+  }
 }
 
 html:active-view-transition-type(backwards) {
-  &::view-transition-old(card) { animation-name: slide-out-right; }
-  &::view-transition-new(card) { animation-name: slide-in-left; }
+  &::view-transition-old(card) {
+    animation-name: slide-out-right;
+  }
+  &::view-transition-new(card) {
+    animation-name: slide-in-left;
+  }
 }
 ```
 
@@ -331,30 +370,32 @@ enabling shared-element transitions between specific elements.
 
 ```js
 // outgoing page — runs just before unload
-window.addEventListener('pageswap', async (e) => {
+window.addEventListener("pageswap", async (e) => {
   if (!e.viewTransition) return;
 
   const targetUrl = new URL(e.activation.entry.url);
   if (isDetailPage(targetUrl)) {
     const id = extractId(targetUrl);
-    document.querySelector(`#item-${id} img`).style.viewTransitionName = 'hero-img';
+    document.querySelector(`#item-${id} img`).style.viewTransitionName =
+      "hero-img";
 
     // Clean up to avoid bfcache naming conflicts
     await e.viewTransition.finished;
-    document.querySelector(`#item-${id} img`).style.viewTransitionName = '';
+    document.querySelector(`#item-${id} img`).style.viewTransitionName = "";
   }
 });
 
 // incoming page — runs when new page first renders
-window.addEventListener('pagereveal', async (e) => {
+window.addEventListener("pagereveal", async (e) => {
   if (!e.viewTransition) return;
 
   const fromUrl = navigation.activation.from?.url;
   if (fromUrl && isListPage(new URL(fromUrl))) {
-    document.querySelector('.detail-hero').style.viewTransitionName = 'hero-img';
+    document.querySelector(".detail-hero").style.viewTransitionName =
+      "hero-img";
 
     await e.viewTransition.finished;
-    document.querySelector('.detail-hero').style.viewTransitionName = '';
+    document.querySelector(".detail-hero").style.viewTransitionName = "";
   }
 });
 ```

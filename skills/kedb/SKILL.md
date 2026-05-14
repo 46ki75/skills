@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0"
+  version: "1.0.0"
 ---
 
 # KEDB Skill
@@ -28,12 +28,12 @@ constantly; writing happens only on explicit human request.
 
 ## File Map
 
-| File | Mutability | When to read | When to write |
-| ---- | ---------- | ------------ | ------------- |
-| `SKILL.md` | Immutable | Loaded automatically when skill triggers | Never |
-| `kedb-template.md` | Immutable | Before creating a new entry | Never |
-| `kedb-index.md` | Mutable | Start of every read; start of every write | After every entry create/update |
-| `entries/<slug>.md` | Mutable | When the index points to a matching entry | When creating or updating that entry |
+| File                | Mutability | When to read                              | When to write                        |
+| ------------------- | ---------- | ----------------------------------------- | ------------------------------------ |
+| `SKILL.md`          | Immutable  | Loaded automatically when skill triggers  | Never                                |
+| `kedb-template.md`  | Immutable  | Before creating a new entry               | Never                                |
+| `kedb-index.md`     | Mutable    | Start of every read; start of every write | After every entry create/update      |
+| `entries/<slug>.md` | Mutable    | When the index points to a matching entry | When creating or updating that entry |
 
 The `entries/` subdirectory holds one markdown file per entry, named `<slug>.md`
 where `<slug>` matches the `Slug` field in the entry's frontmatter.
