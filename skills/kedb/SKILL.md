@@ -1,13 +1,10 @@
 ---
 name: kedb
 description: >
-  Maintains a Known Error Database (KEDB) of documented problems, symptoms, workarounds, root causes, and permanent solutions, modeled after the ITIL KEDB concept. Operates in two
-  modes: (1) READ — when the agent encounters an error, stack trace, unexpected behavior, build failure, test failure, runtime exception, or any debugging situation, ALWAYS consult
-  `kedb-index.md` first to check whether the symptom matches a previously documented entry before investigating from scratch; (2) WRITE — when the user explicitly asks to "add a KEDB
-  entry", "document this issue", "record this fix", "log this in the KEDB", "save this workaround", or similar, create or update an entry using `kedb-template.md` and follow the
-  required workflow including the non-optional index update. Trigger phrases for read: "this error", "encountered this bug", "is this a known issue", "check KEDB", "known error
-  database", "have we seen this before", "any prior occurrences". Trigger phrases for write: "document this", "add to KEDB", "record this fix", "log this error", "save this
-  workaround", "create a KEDB entry". Never auto-create entries — the write path is human-invoked only.
+  Maintains a Known Error Database (KEDB) of documented errors, symptoms, workarounds, root causes, and solutions. READ mode (autonomous): on any error, stack trace, test/build
+  failure, or unexpected behavior, consult `kedb-index.md` before investigating from scratch. Triggers: "this error", "is this a known issue", "check KEDB", "known error database",
+  "have we seen this before". WRITE mode (human-invoked only): create or update entries via `kedb-template.md` when asked to "add to KEDB", "document this issue", "record this fix",
+  "log this error", "save this workaround", or "create a KEDB entry". Always update `kedb-index.md` after writing. Never auto-create entries.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
@@ -159,7 +156,8 @@ file in `entries/`. Columns, in order:
 - `Event Date` — RFC 3339 timestamp from the entry's frontmatter.
 - `Description` — one-line summary (≤200 chars). Strong enough that an agent
   scanning the index can decide whether to open the full entry without opening
-  every candidate.
+  every candidate. Avoid raw `|` characters — escape with `\|` or rephrase,
+  as unescaped pipes break the table's column count.
 
 Note: individual entry files (`entries/<slug>.md`) use **YAML frontmatter** for
 their metadata. The index file uses a **markdown table** for fast scanning.

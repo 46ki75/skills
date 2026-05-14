@@ -1,10 +1,12 @@
 ---
 Slug: my-slug-here
 Title: My Title Here
-Event Date: 2026-05-14T00:00:00Z
+Event Date: YYYY-MM-DDTHH:MM:SSZ
 Severity: Low | Medium | High
 Status: Not Started | In Progress | Resolved | Resolved (Workaround) | Resolved (Cause Unknown)
 ---
+
+# My Title Here
 
 ## Description
 
