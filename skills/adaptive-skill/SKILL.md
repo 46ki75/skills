@@ -1,5 +1,5 @@
 ---
-name: type-b-skill-creator
+name: adaptive-skill
 description: >
   Create a Type B Proprietary Skill — a project-specific agent skill backed by a
   KEDB (Known Error Database) that accumulates failure knowledge without ever mutating
