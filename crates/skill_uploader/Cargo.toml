@@ -1,0 +1,27 @@
+[package]
+name = "skill_uploader"
+description = "CLI that validates, archives, and publishes Agent Skills to GitHub Releases."
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+skill_parser = { workspace = true }
+skill_validator = { workspace = true }
+skill_archiver = { workspace = true }
+
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+octocrab = { workspace = true }
+walkdir = { workspace = true }

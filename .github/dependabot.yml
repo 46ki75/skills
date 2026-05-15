@@ -11,3 +11,39 @@ updates:
       - "46ki75"
     reviewers:
       - "46ki75"
+
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "main"
+    labels:
+      - "Git Submodules"
+    assignees:
+      - "46ki75"
+    reviewers:
+      - "46ki75"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "main"
+    labels:
+      - "Cargo"
+    assignees:
+      - "46ki75"
+    reviewers:
+      - "46ki75"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "main"
+    labels:
+      - "GitHub Actions"
+    assignees:
+      - "46ki75"
+    reviewers:
+      - "46ki75"

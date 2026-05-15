@@ -1,0 +1,20 @@
+[package]
+name = "skill_parser"
+description = "Parses Agent Skill SKILL.md frontmatter and body."
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+gray_matter = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }

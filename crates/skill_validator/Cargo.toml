@@ -1,0 +1,18 @@
+[package]
+name = "skill_validator"
+description = "Validates an Agent Skill against the spec and repo-local rules."
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+skill_parser = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
