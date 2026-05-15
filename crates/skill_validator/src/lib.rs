@@ -25,6 +25,12 @@ pub enum ValidationError {
     /// Frontmatter `description` is missing or whitespace-only.
     #[error("description is empty")]
     DescriptionMissing,
+    /// Frontmatter `description` exceeds the 1024-character upload limit.
+    #[error("description is too long ({0} chars, max 1024)")]
+    DescriptionTooLong(usize),
+    /// Frontmatter `description` contains an XML/HTML-like tag.
+    #[error("description must not contain XML tags (found {0:?})")]
+    DescriptionContainsXmlTag(String),
     /// `metadata.author` is required by this repo but absent or empty.
     #[error("metadata.author is required but missing")]
     AuthorMissing,
@@ -92,6 +98,14 @@ pub fn validate(skill: &ParsedSkill) -> ValidationReport {
 
     if fm.description.trim().is_empty() {
         errors.push(ValidationError::DescriptionMissing);
+    } else {
+        let len = fm.description.chars().count();
+        if len > 1024 {
+            errors.push(ValidationError::DescriptionTooLong(len));
+        }
+        if let Some(tag) = find_xml_tag(&fm.description) {
+            errors.push(ValidationError::DescriptionContainsXmlTag(tag));
+        }
     }
 
     match fm.metadata.as_ref() {
@@ -135,6 +149,25 @@ fn is_kebab_case(s: &str) -> bool {
         return false;
     }
     s.split('-').all(|segment| !segment.is_empty())
+}
+
+fn find_xml_tag(s: &str) -> Option<String> {
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'<' {
+            let after = bytes.get(i + 1).copied();
+            let is_tag_start =
+                matches!(after, Some(b'/') | Some(b'a'..=b'z') | Some(b'A'..=b'Z'));
+            if is_tag_start {
+                if let Some(end) = bytes[i..].iter().position(|&b| b == b'>') {
+                    return Some(s[i..i + end + 1].to_string());
+                }
+            }
+        }
+        i += 1;
+    }
+    None
 }
 
 fn is_semver_like(v: &str) -> bool {
@@ -234,5 +267,58 @@ mod tests {
             r.errors[0],
             ValidationError::NameNotKebabCase { .. }
         ));
+    }
+
+    #[test]
+    fn description_at_limit_ok() {
+        let desc = "a".repeat(1024);
+        let s = make("markdown", "markdown", &desc, Some("X"), Some("1.0.0"));
+        assert!(validate(&s).is_ok());
+    }
+
+    #[test]
+    fn description_too_long() {
+        let desc = "a".repeat(1025);
+        let s = make("markdown", "markdown", &desc, Some("X"), Some("1.0.0"));
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::DescriptionTooLong(1025)));
+    }
+
+    #[test]
+    fn description_with_xml_tag_rejected() {
+        let s = make(
+            "markdown",
+            "markdown",
+            "hello <example>foo</example>",
+            Some("X"),
+            Some("1.0.0"),
+        );
+        let r = validate(&s);
+        assert!(matches!(
+            r.errors[0],
+            ValidationError::DescriptionContainsXmlTag(_)
+        ));
+    }
+
+    #[test]
+    fn description_with_self_closing_tag_rejected() {
+        let s = make("markdown", "markdown", "x <br/> y", Some("X"), Some("1.0.0"));
+        let r = validate(&s);
+        assert!(matches!(
+            r.errors[0],
+            ValidationError::DescriptionContainsXmlTag(_)
+        ));
+    }
+
+    #[test]
+    fn description_with_lt_operator_ok() {
+        let s = make(
+            "markdown",
+            "markdown",
+            "use when a < b or 1 < 2",
+            Some("X"),
+            Some("1.0.0"),
+        );
+        assert!(validate(&s).is_ok());
     }
 }

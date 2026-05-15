@@ -9,6 +9,9 @@ so a single pass over `skills/` surfaces every problem at once.
 - `name` is present, non-empty, kebab-case (`[a-z0-9-]`, no leading, trailing,
   or consecutive `-`), and equals the on-disk directory name.
 - `description` is present and non-empty.
+- `description` is at most 1024 characters (upload-platform rule).
+- `description` does not contain XML/HTML tags such as `<example>` or
+  `</commentary>` (upload-platform rule).
 - `metadata.author` is present and non-empty (repo rule; optional in the spec).
 - `metadata.version` is present and shaped like `MAJOR.MINOR` or
   `MAJOR.MINOR.PATCH` with digits only (repo rule; optional in the spec).
@@ -20,7 +23,8 @@ so a single pass over `skills/` surfaces every problem at once.
 - `ValidationReport { dir_name, errors }` — implements `Display` for human-
   readable output.
 - `ValidationError` — one variant per rule (`NameMissing`, `NameNotKebabCase`,
-  `NameMismatch`, `DescriptionMissing`, `AuthorMissing`, `VersionMissing`,
+  `NameMismatch`, `DescriptionMissing`, `DescriptionTooLong`,
+  `DescriptionContainsXmlTag`, `AuthorMissing`, `VersionMissing`,
   `InvalidVersion`).
 
 ## Example
