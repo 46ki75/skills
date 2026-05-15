@@ -1,3 +1,10 @@
+//! Packages a validated [`ParsedSkill`] into a ZIP archive.
+//!
+//! Each archive is named `<name>-v<version>.zip` and contains the skill's
+//! directory at its top level (e.g. `markdown/SKILL.md`,
+//! `markdown/references/...`). Dotfiles are skipped. The underlying `zip`
+//! crate is synchronous, so file writes happen inside [`tokio::task::spawn_blocking`].
+
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -7,29 +14,43 @@ use walkdir::WalkDir;
 use zip::CompressionMethod;
 use zip::write::{FileOptions, ZipWriter};
 
+/// Errors produced by [`clean_dist`] and [`build_archive`].
 #[derive(Debug, thiserror::Error)]
 pub enum ArchiveError {
+    /// The skill has no `metadata.version`, so the artifact filename and tag
+    /// cannot be determined.
     #[error("skill {0:?} has no metadata.version (cannot build archive)")]
     MissingVersion(String),
+    /// File-system I/O failure.
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
+    /// Failure from the `zip` crate while writing the archive.
     #[error("zip error: {0}")]
     Zip(#[from] zip::result::ZipError),
+    /// Failure from `walkdir` while enumerating skill contents.
     #[error("walkdir error: {0}")]
     Walk(#[from] walkdir::Error),
+    /// The blocking task that performs the zip write panicked or was cancelled.
     #[error("join error: {0}")]
     Join(#[from] tokio::task::JoinError),
 }
 
+/// Metadata about a successfully built ZIP, used downstream by the uploader.
 #[derive(Debug, Clone)]
 pub struct BuiltArtifact {
+    /// Skill name from the frontmatter.
     pub name: String,
+    /// Skill version from `metadata.version`.
     pub version: String,
+    /// GitHub release tag — always `"{name}-v{version}"`.
     pub tag: String,
+    /// Bare filename of the archive (e.g. `markdown-v1.0.0.zip`).
     pub file_name: String,
+    /// Full path to the archive inside the dist directory.
     pub zip_path: PathBuf,
 }
 
+/// Removes `dist` if present and recreates it as an empty directory.
 pub async fn clean_dist(dist: &Path) -> Result<(), ArchiveError> {
     if tokio::fs::try_exists(dist).await? {
         tokio::fs::remove_dir_all(dist).await?;
@@ -38,6 +59,11 @@ pub async fn clean_dist(dist: &Path) -> Result<(), ArchiveError> {
     Ok(())
 }
 
+/// Builds `dist/<name>-v<version>.zip` from the skill's directory tree.
+///
+/// Returns a [`BuiltArtifact`] describing the resulting file. Returns
+/// [`ArchiveError::MissingVersion`] if `metadata.version` is absent — callers
+/// should run `skill_validator::validate` first to surface that consistently.
 pub async fn build_archive(
     skill: &ParsedSkill,
     dist: &Path,

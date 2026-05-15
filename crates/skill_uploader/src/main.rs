@@ -1,3 +1,15 @@
+//! CLI orchestrator that validates, archives, and publishes the skills under
+//! `skills/`.
+//!
+//! Subcommands:
+//!
+//! - `check` — parse and validate every skill; exit non-zero on any failure.
+//! - `build` — write a `<name>-v<version>.zip` per valid skill into `dist/`.
+//! - `upload` — build, then push any artifact whose `<name>-v<version>` release
+//!   tag does not yet exist on GitHub.
+//!
+//! Logging is controlled via `RUST_LOG` (defaults to `info`).
+
 mod cli;
 mod github;
 mod pipeline;

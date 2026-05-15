@@ -1,32 +1,67 @@
+//! Validates a parsed Agent Skill against the spec plus this repository's
+//! house rules.
+//!
+//! Rules enforced:
+//!
+//! - `name` is present, non-empty, kebab-case, and equals the on-disk
+//!   directory name.
+//! - `description` is present and non-empty.
+//! - `metadata.author` is present and non-empty.
+//! - `metadata.version` is present and shaped like `MAJOR.MINOR` or
+//!   `MAJOR.MINOR.PATCH` (digits only).
+//!
+//! Errors are collected in a [`ValidationReport`] rather than short-circuiting,
+//! so a single pass over `skills/` surfaces every problem.
+
 use skill_parser::ParsedSkill;
 
+/// A single rule violation discovered by [`validate`].
 #[derive(Debug, thiserror::Error)]
 pub enum ValidationError {
+    /// Frontmatter `name` is missing or whitespace-only.
     #[error("name is empty")]
     NameMissing,
+    /// Frontmatter `name` contains characters outside `[a-z0-9-]` or has leading/trailing `-`.
     #[error("name {name:?} is not kebab-case (allowed: lowercase letters, digits, hyphens)")]
-    NameNotKebabCase { name: String },
+    NameNotKebabCase {
+        /// The offending `name` value.
+        name: String,
+    },
+    /// Frontmatter `name` does not equal the on-disk directory name.
     #[error("name {name:?} does not match directory name {dir:?}")]
-    NameMismatch { name: String, dir: String },
+    NameMismatch {
+        /// The `name` declared in the frontmatter.
+        name: String,
+        /// The directory name found on disk.
+        dir: String,
+    },
+    /// Frontmatter `description` is missing or whitespace-only.
     #[error("description is empty")]
     DescriptionMissing,
+    /// `metadata.author` is required by this repo but absent or empty.
     #[error("metadata.author is required but missing")]
     AuthorMissing,
+    /// `metadata.version` is required by this repo but absent or empty.
     #[error("metadata.version is required but missing")]
     VersionMissing,
+    /// `metadata.version` is present but does not match the expected shape.
     #[error(
         "metadata.version {0:?} is not a valid semver-like version (expected MAJOR.MINOR[.PATCH])"
     )]
     InvalidVersion(String),
 }
 
+/// Outcome of validating a single skill.
 #[derive(Debug, Default)]
 pub struct ValidationReport {
+    /// Directory name of the skill that was validated.
     pub dir_name: String,
+    /// Every rule violation found. Empty on success.
     pub errors: Vec<ValidationError>,
 }
 
 impl ValidationReport {
+    /// Returns `true` when no rule violations were recorded.
     pub fn is_ok(&self) -> bool {
         self.errors.is_empty()
     }
@@ -45,6 +80,11 @@ impl std::fmt::Display for ValidationReport {
     }
 }
 
+/// Validates a [`ParsedSkill`] and returns every rule violation found.
+///
+/// The returned report is always populated with `dir_name`. Inspect
+/// [`ValidationReport::is_ok`] (or `errors.is_empty()`) to decide whether
+/// the skill is publishable.
 pub fn validate(skill: &ParsedSkill) -> ValidationReport {
     let mut errors = Vec::new();
     let fm = &skill.frontmatter;
