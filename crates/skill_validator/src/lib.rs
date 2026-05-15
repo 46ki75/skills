@@ -157,8 +157,7 @@ fn find_xml_tag(s: &str) -> Option<String> {
     while i < bytes.len() {
         if bytes[i] == b'<' {
             let after = bytes.get(i + 1).copied();
-            let is_tag_start =
-                matches!(after, Some(b'/') | Some(b'a'..=b'z') | Some(b'A'..=b'Z'));
+            let is_tag_start = matches!(after, Some(b'/') | Some(b'a'..=b'z') | Some(b'A'..=b'Z'));
             if is_tag_start {
                 if let Some(end) = bytes[i..].iter().position(|&b| b == b'>') {
                     return Some(s[i..i + end + 1].to_string());
@@ -281,7 +280,10 @@ mod tests {
         let desc = "a".repeat(1025);
         let s = make("markdown", "markdown", &desc, Some("X"), Some("1.0.0"));
         let r = validate(&s);
-        assert!(matches!(r.errors[0], ValidationError::DescriptionTooLong(1025)));
+        assert!(matches!(
+            r.errors[0],
+            ValidationError::DescriptionTooLong(1025)
+        ));
     }
 
     #[test]
@@ -302,7 +304,13 @@ mod tests {
 
     #[test]
     fn description_with_self_closing_tag_rejected() {
-        let s = make("markdown", "markdown", "x <br/> y", Some("X"), Some("1.0.0"));
+        let s = make(
+            "markdown",
+            "markdown",
+            "x <br/> y",
+            Some("X"),
+            Some("1.0.0"),
+        );
         let r = validate(&s);
         assert!(matches!(
             r.errors[0],

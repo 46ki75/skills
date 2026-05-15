@@ -1,26 +1,24 @@
 ---
 name: rust-toasty
 description: >
-  Expert guidance for the Toasty Rust ORM — model definition with
-  `#[derive(toasty::Model)]`, the `#[key]` / `#[auto]` / `#[unique]` /
-  `#[index]` / `#[has_many]` / `#[belongs_to]` / `#[has_one]` attributes,
-  relationships (`HasMany` / `BelongsTo` / `HasOne`), preloading associations,
-  the `create!` / `update!` / `find_by_*` / `filter_*` query macros and
-  builders, batch operations, transactions, embedded types, deferred fields,
-  `Vec<scalar>` array fields, and driver-specific behavior for SQLite,
-  PostgreSQL, MySQL, and DynamoDB. Also covers Toasty's internal architecture
-  for contributors: the app/db schema layers and mapping, the query-engine
-  compilation pipeline (AST → Simplify → Lower → Plan → Execute), and the
-  driver trait interface. Always invoke this skill for any question that
-  mentions Toasty, the `toasty` crate, `toasty::Model`, `toasty::Db`,
-  `toasty::HasMany`, `toasty::BelongsTo`, `toasty::HasOne`, the
-  `toasty::create!` or `toasty::update!` macros, any code under
-  `submodules/toasty/`, or any Rust code that imports `toasty` — even when the
-  question seems simple or framework-agnostic.
+  Expert guidance for the Toasty Rust ORM: model definition with
+  `#[derive(toasty::Model)]` and the `#[key]`, `#[auto]`, `#[unique]`,
+  `#[index]`, `#[has_many]`, `#[belongs_to]`, `#[has_one]` attributes;
+  relationships, association preloading, the `create!`, `update!`,
+  `find_by_*`, and `filter_*` query macros and builders; batch operations,
+  transactions, embedded types, deferred fields, scalar `Vec` array fields,
+  and driver-specific behavior for SQLite, PostgreSQL, MySQL, and DynamoDB.
+  Also covers Toasty internals for contributors: the app/db schema layers
+  and mapping, the query-engine compilation pipeline (AST → Simplify →
+  Lower → Plan → Execute), and the driver trait. Always invoke this skill
+  for any question mentioning Toasty, the `toasty` crate, `toasty::Model`,
+  `toasty::Db`, `toasty::HasMany`, `toasty::BelongsTo`, `toasty::HasOne`,
+  the `toasty::create!` or `toasty::update!` macros, code under
+  `submodules/toasty/`, or any Rust code that imports `toasty`.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Toasty (Rust ORM) Skill
