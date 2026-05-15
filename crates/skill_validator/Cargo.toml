@@ -1,5 +1,7 @@
 [package]
 name = "skill_validator"
+description = "Validates an Agent Skill against the spec and repo-local rules."
+readme = "README.md"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
