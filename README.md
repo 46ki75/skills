@@ -1,77 +1,60 @@
 # skills
 
-A collection of [Agent Skills](https://agentskills.io/home) maintained by
-[@46ki75](https://github.com/46ki75). Each skill lives under `skills/<name>/`
-with a `SKILL.md` (YAML frontmatter + body) and any supporting files.
+My personal collection of [Agent Skills](https://agentskills.io/home). Each
+skill lives under `skills/<name>/` with a `SKILL.md` (YAML frontmatter + body)
+and any supporting files.
+
+Not intended for external contributors — feel free to fork or copy ideas, but
+issues/PRs aren't actively triaged.
 
 ## Layout
 
-- `skills/` — published skills.
-- `crates/` — Rust workspace that validates, archives, and publishes the
-  skills. See each crate's README for details.
+- `skills/` — my published skills.
+- `crates/` — Rust workspace that validates, archives, and publishes them.
 - `.agents/skills/` — skills authored by other providers (reference only).
 - `submodules/` — upstream repositories tracked as git submodules.
 
-## Releasing a skill
+## Releasing
 
-The release pipeline is fully automated. To ship a new (or bumped) skill:
-
-1. Edit the skill under `skills/<name>/` and bump `metadata.version` in its
+1. Edit a skill under `skills/<name>/` and bump `metadata.version` in its
    `SKILL.md` frontmatter.
-2. Commit and push (or merge) to `main`.
+2. Push (or merge a PR) to `main`.
 
-That's it. `.github/workflows/release.yml` then runs
-`cargo run --release -p skill_uploader -- upload`, which:
+`.github/workflows/release.yml` runs `skill_uploader upload`, which validates
+every skill, builds `<name>-v<version>.zip` into `dist/`, then for each
+artifact:
 
-- Validates every skill (see `crates/skill_validator` for the rules).
-- Builds a `<name>-v<version>.zip` per skill into `dist/`.
-- For each artifact, queries GitHub Releases and:
-  - creates a release **and** uploads the ZIP if no release with that tag
-    exists,
-  - uploads the ZIP to the existing release if the tag exists but the asset
-    is missing (orphan-asset recovery),
-  - skips if both are already present.
+- Creates the release and uploads the ZIP if no release with that tag exists.
+- Uploads the ZIP to the existing release if the tag exists but the asset is
+  missing (orphan-asset recovery).
+- Skips if both are already present.
 
-### No manual `git tag` required
+### No manual `git tag`
 
-The GitHub Releases API creates the tag for you when the release is created;
-the tag points at the default branch's HEAD at API-call time (i.e. the commit
-that triggered the workflow). Manually running `git tag <name>-v<version>`
-before push is **not** needed and would race with the workflow.
+The GitHub Releases API creates the tag when it creates the release, pointing
+at the default-branch HEAD at API-call time (the commit that triggered the
+workflow). Manual `git tag <name>-v<version>` is **not** needed and would
+race with the workflow.
 
-A release/tag pair is treated as immutable: once `<name>-v<version>` exists
-with the expected ZIP attached, the workflow will never overwrite it. To
-publish a fix, bump `metadata.version` and let a new release be cut.
+A `<name>-v<version>` release is immutable once published — bump
+`metadata.version` to ship a fix.
 
-## Local development
+## Local commands
 
 ```bash
-# Install Node tooling (markdownlint-cli2 etc.)
-pnpm i
-
-# Lint markdown
-pnpm run lint
-
 # Validate every skill without writing files
 cargo run -p skill_uploader -- check
 
 # Build ZIPs into ./dist (does not upload)
 cargo run -p skill_uploader -- build
 
-# Dry-run upload against a specific repo
+# Dry-run upload (calls GitHub list API, logs planned actions)
 GITHUB_TOKEN=ghp_... \
   cargo run -p skill_uploader -- upload --repo 46ki75/skills --dry-run
-```
 
-## Git submodules
+# Markdown lint
+pnpm run lint
 
-The `submodules/` directory contains upstream reference repositories. Run at
-the repo root, not at `skills/`:
-
-```bash
+# Init submodules (run at repo root)
 git submodule update --init --recursive
 ```
-
-## License
-
-MIT.
