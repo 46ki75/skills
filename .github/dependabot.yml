@@ -11,3 +11,15 @@ updates:
       - "46ki75"
     reviewers:
       - "46ki75"
+
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "main"
+    labels:
+      - "Git Submodules"
+    assignees:
+      - "46ki75"
+    reviewers:
+      - "46ki75"
