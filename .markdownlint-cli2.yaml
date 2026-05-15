@@ -14,4 +14,6 @@ ignores:
   - "./notes/**"
   - "./refs/**"
   - "./skills/*-workspace/**"
+  - "./skills/rust-toasty/references/**"
   - "./submodules/**"
+  - "./target/**"
