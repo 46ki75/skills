@@ -107,11 +107,7 @@ fn zip_skill_dir(src: &Path, top_dir: &str, zip_path: &Path) -> Result<(), Archi
         let archive_path_str = archive_path.to_string_lossy().replace('\\', "/");
 
         if entry.file_type().is_dir() {
-            if rel.as_os_str().is_empty() {
-                writer.add_directory(format!("{archive_path_str}/"), dir_options)?;
-            } else {
-                writer.add_directory(format!("{archive_path_str}/"), dir_options)?;
-            }
+            writer.add_directory(format!("{archive_path_str}/"), dir_options)?;
         } else if entry.file_type().is_file() {
             writer.start_file(archive_path_str, options)?;
             buf.clear();
