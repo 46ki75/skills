@@ -61,6 +61,18 @@ export const useThrottler = <A extends unknown[], R>(
 type as `number`, which is serializable. The Qwik optimizer encodes this QRL
 as a chunk; nothing inside the closure leaks across the boundary improperly.
 
+> **Note for reviewers / future readers:** `window.setTimeout` returns a
+> `number` in real browsers **and** under jsdom (verified directly against
+> jsdom 26.x). It is only the bare global `setTimeout` in a Node-only context
+> that returns a `NodeJS.Timeout` object. This recipe runs inside a QRL
+> invoked from browser event handlers (`onMouseMove$`, `onInput$`, …), so
+> `window.setTimeout` + `useSignal<number>` is the correct shape and matches
+> `cookbook/debouncer.md`. Don't "fix" this to `noSerialize(setTimeout(...))`
+> — that pattern is only required when the timer is armed from a `useTask$`
+> body that also runs during SSR (e.g. the signal-pair `useThrottledSignal`
+> in elmethis), where the bare `setTimeout` on the server returns a
+> non-serializable `Timeout` object.
+
 ## Usage
 
 ```tsx

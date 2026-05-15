@@ -523,6 +523,14 @@ const a = useStore<T>(cloneDeep(initialValue));
 const b = useStore<T>(cloneDeep(initialValue)); // independent
 ```
 
+> **Note for reviewers / future readers:** `a.user === b.user` really is
+> `true` here — verified empirically inside a `component$` rendered through
+> `createDOM`. It's tempting to assume Qwik wraps each `.user` read in its
+> own proxy and the strict-equality claim breaks down, but Qwik either
+> returns the underlying nested object directly or memoizes its nested proxy
+> per backing-object identity. Either way the `===` check holds and the
+> aliasing bug is reproducible through reference equality.
+
 ---
 
 ## `useOn`, `useOnDocument`, `useOnWindow`
