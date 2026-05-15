@@ -7,3 +7,6 @@
 [submodule "submodules/modelcontextprotocol"]
 	path = submodules/modelcontextprotocol
 	url = https://github.com/modelcontextprotocol/modelcontextprotocol.git
+[submodule "submodules/toasty"]
+	path = submodules/toasty
+	url = https://github.com/46ki75/toasty
