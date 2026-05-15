@@ -14,6 +14,7 @@ missing_docs = "warn"
 edition = "2024"
 license = "MIT"
 authors = ["Ikuma Yamashita"]
+repository = "https://github.com/46ki75/skills"
 version = "0.1.0"
 rust-version = "1.85"
 
