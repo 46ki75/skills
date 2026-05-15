@@ -1,3 +1,37 @@
 [workspace]
 resolver = "3"
-members = ["crates/build-artifact"]
+members = [
+    "crates/skill_parser",
+    "crates/skill_validator",
+    "crates/skill_archiver",
+    "crates/skill_uploader",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+authors = ["Ikuma Yamashita"]
+version = "0.1.0"
+rust-version = "1.85"
+
+[workspace.dependencies]
+skill_parser = { path = "crates/skill_parser" }
+skill_validator = { path = "crates/skill_validator" }
+skill_archiver = { path = "crates/skill_archiver" }
+
+tokio = { version = "1", features = [
+    "rt-multi-thread",
+    "macros",
+    "fs",
+    "process",
+] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+gray_matter = { version = "0.3", default-features = false, features = ["yaml"] }
+octocrab = "0.50"
+walkdir = "2"
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"

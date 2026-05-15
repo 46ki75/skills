@@ -7,3 +7,6 @@ node_modules/
 
 # Rust
 target/
+
+# Build artifacts produced by skill_uploader
+dist/

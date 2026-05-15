@@ -1,0 +1,13 @@
+[package]
+name = "skill_parser"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+gray_matter = { workspace = true }
+tracing = { workspace = true }

@@ -1,0 +1,12 @@
+[package]
+name = "skill_validator"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+skill_parser = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
