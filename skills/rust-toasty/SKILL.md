@@ -40,15 +40,15 @@ run efficiently there.
 
 ## Workspace orientation
 
-| Crate                                              | What it is                                                              |
-| -------------------------------------------------- | ----------------------------------------------------------------------- |
-| `toasty`                                           | User-facing API: `Db`, the query engine entry points, the runtime       |
-| `toasty-core`                                      | Shared types: schema (app/db/mapping), statement AST, `Driver` trait    |
-| `toasty-macros`                                    | `#[derive(Model)]`, `#[derive(Embed)]`, `create!` / `update!` codegen   |
-| `toasty-sql`                                       | Statement-AST → SQL string serialization used by all SQL drivers        |
-| `toasty-driver-{sqlite,postgresql,mysql,dynamodb}` | Concrete database driver implementations                                |
-| `toasty-driver-integration-suite`                  | Shared integration tests run against every driver                       |
-| `toasty-cli`                                       | Command-line tool                                                       |
+| Crate                                              | What it is                                                            |
+| -------------------------------------------------- | --------------------------------------------------------------------- |
+| `toasty`                                           | User-facing API: `Db`, the query engine entry points, the runtime     |
+| `toasty-core`                                      | Shared types: schema (app/db/mapping), statement AST, `Driver` trait  |
+| `toasty-macros`                                    | `#[derive(Model)]`, `#[derive(Embed)]`, `create!` / `update!` codegen |
+| `toasty-sql`                                       | Statement-AST → SQL string serialization used by all SQL drivers      |
+| `toasty-driver-{sqlite,postgresql,mysql,dynamodb}` | Concrete database driver implementations                              |
+| `toasty-driver-integration-suite`                  | Shared integration tests run against every driver                     |
+| `toasty-cli`                                       | Command-line tool                                                     |
 
 Application code only depends on `toasty` (plus one driver crate). Everything
 else is internal.
@@ -209,42 +209,42 @@ surface is small but the details (attribute spelling, key/reference
 direction, where defaults differ per driver) matter and shift between
 releases.
 
-| Question                                            | Read                                                                                |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| What is Toasty, at a glance?                        | `references/guide/introduction.md`                                                  |
-| How do I set up my first Toasty project?            | `references/guide/getting-started.md`                                               |
-| How do I define a model / what types are supported? | `references/guide/defining-models.md`                                               |
-| How do `#[key]` and `#[auto]` work?                 | `references/guide/keys-and-auto-generation.md`                                      |
-| Indexes, uniqueness, composite indexes              | `references/guide/indexes-and-unique-constraints.md`                                |
-| Field defaults, `Option`, attribute reference       | `references/guide/field-options.md`                                                 |
-| `Vec<scalar>` array fields                          | `references/guide/vec-scalar-fields.md`                                             |
-| How relationships work overall                      | `references/guide/relationships.md`                                                 |
-| Modeling a `BelongsTo` (foreign key) side           | `references/guide/belongs-to.md`                                                    |
-| Modeling a `HasMany` (one-to-many)                  | `references/guide/has-many.md`                                                      |
-| Modeling a `HasOne` (one-to-one)                    | `references/guide/has-one.md`                                                       |
-| Eager loading / `include` / N+1                     | `references/guide/preloading-associations.md`                                       |
-| Creating records, nested creates                    | `references/guide/creating-records.md`                                              |
-| Querying / `find_by_*` / `filter_*`                 | `references/guide/querying-records.md`                                              |
-| Filter expressions (`eq`, `gt`, `in`, …)            | `references/guide/filtering-with-expressions.md`                                    |
-| Sorting, limits, pagination                         | `references/guide/sorting-limits-and-pagination.md`                                 |
-| Updating records                                    | `references/guide/updating-records.md`                                              |
-| Deleting records                                    | `references/guide/deleting-records.md`                                              |
-| Embedded structs (`#[derive(Embed)]`)               | `references/guide/embedded-types.md`                                                |
-| Deferred fields (lazy column loading)               | `references/guide/deferred-fields.md`                                               |
-| Batch operations                                    | `references/guide/batch-operations.md`                                              |
-| Transactions                                        | `references/guide/transactions.md`                                                  |
-| Optimistic concurrency control                      | `references/guide/concurrency-control.md`                                           |
-| Connecting `Db` to a database                       | `references/guide/database-setup.md`                                                |
-| Migrations / table creation                         | `references/guide/schema-management.md`                                             |
-| PostgreSQL setup and quirks                         | `references/guide/postgresql.md`                                                    |
-| MySQL setup and quirks                              | `references/guide/mysql.md`                                                         |
-| SQLite setup and quirks                             | `references/guide/sqlite.md`                                                        |
-| DynamoDB setup, indexes, scan vs query              | `references/guide/dynamodb.md`                                                      |
-| Crate layout / contributor onboarding               | `references/dev/README.md`, `references/dev/architecture/README.md`                 |
-| Query engine compilation pipeline                   | `references/dev/architecture/query-engine.md`                                       |
-| Type system design                                  | `references/dev/architecture/type-system.md`                                        |
-| Design proposals (deferred fields, enums, …)        | `references/dev/design/` — see `references/dev/design/README.md` for the index      |
-| What's planned next                                 | `references/dev/roadmap.md`                                                         |
+| Question                                            | Read                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| What is Toasty, at a glance?                        | `references/guide/introduction.md`                                             |
+| How do I set up my first Toasty project?            | `references/guide/getting-started.md`                                          |
+| How do I define a model / what types are supported? | `references/guide/defining-models.md`                                          |
+| How do `#[key]` and `#[auto]` work?                 | `references/guide/keys-and-auto-generation.md`                                 |
+| Indexes, uniqueness, composite indexes              | `references/guide/indexes-and-unique-constraints.md`                           |
+| Field defaults, `Option`, attribute reference       | `references/guide/field-options.md`                                            |
+| `Vec<scalar>` array fields                          | `references/guide/vec-scalar-fields.md`                                        |
+| How relationships work overall                      | `references/guide/relationships.md`                                            |
+| Modeling a `BelongsTo` (foreign key) side           | `references/guide/belongs-to.md`                                               |
+| Modeling a `HasMany` (one-to-many)                  | `references/guide/has-many.md`                                                 |
+| Modeling a `HasOne` (one-to-one)                    | `references/guide/has-one.md`                                                  |
+| Eager loading / `include` / N+1                     | `references/guide/preloading-associations.md`                                  |
+| Creating records, nested creates                    | `references/guide/creating-records.md`                                         |
+| Querying / `find_by_*` / `filter_*`                 | `references/guide/querying-records.md`                                         |
+| Filter expressions (`eq`, `gt`, `in`, …)            | `references/guide/filtering-with-expressions.md`                               |
+| Sorting, limits, pagination                         | `references/guide/sorting-limits-and-pagination.md`                            |
+| Updating records                                    | `references/guide/updating-records.md`                                         |
+| Deleting records                                    | `references/guide/deleting-records.md`                                         |
+| Embedded structs (`#[derive(Embed)]`)               | `references/guide/embedded-types.md`                                           |
+| Deferred fields (lazy column loading)               | `references/guide/deferred-fields.md`                                          |
+| Batch operations                                    | `references/guide/batch-operations.md`                                         |
+| Transactions                                        | `references/guide/transactions.md`                                             |
+| Optimistic concurrency control                      | `references/guide/concurrency-control.md`                                      |
+| Connecting `Db` to a database                       | `references/guide/database-setup.md`                                           |
+| Migrations / table creation                         | `references/guide/schema-management.md`                                        |
+| PostgreSQL setup and quirks                         | `references/guide/postgresql.md`                                               |
+| MySQL setup and quirks                              | `references/guide/mysql.md`                                                    |
+| SQLite setup and quirks                             | `references/guide/sqlite.md`                                                   |
+| DynamoDB setup, indexes, scan vs query              | `references/guide/dynamodb.md`                                                 |
+| Crate layout / contributor onboarding               | `references/dev/README.md`, `references/dev/architecture/README.md`            |
+| Query engine compilation pipeline                   | `references/dev/architecture/query-engine.md`                                  |
+| Type system design                                  | `references/dev/architecture/type-system.md`                                   |
+| Design proposals (deferred fields, enums, …)        | `references/dev/design/` — see `references/dev/design/README.md` for the index |
+| What's planned next                                 | `references/dev/roadmap.md`                                                    |
 
 For a single-page map of every reference file with a one-line summary, see
 `references/doc-index.md`.
@@ -254,6 +254,11 @@ For a single-page map of every reference file with a one-line summary, see
 - **Always read the relevant reference page before writing code.** Don't
   reconstruct the macro syntax from memory; the attribute names and argument
   forms are easy to get subtly wrong.
+- **Cite the reference path(s) you used at the end of your answer.** Even a
+  short trailing line like "See also: `references/guide/dynamodb.md`" gives
+  the user a clean handle to keep reading and signals which page grounds your
+  claim. Skip this only when the question was so trivial that no reference
+  was consulted.
 - **Ask which driver before suggesting query patterns.** A filter that
   compiles against PostgreSQL may not compile against DynamoDB. If the user
   hasn't said, state your assumption explicitly.
