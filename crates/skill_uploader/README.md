@@ -8,13 +8,17 @@ CLI orchestrator that validates, archives, and publishes the skills under
 
 - `check` — parse and validate every skill. Exits non-zero on any failure
   without writing files.
-- `build` — clean `dist/`, validate every skill, then write
-  `<name>-v<version>.zip` per valid skill into `dist/`. Exits non-zero if any
-  skill failed validation, but always processes the rest first.
-- `upload` — runs `build`, then lists existing GitHub Releases on the target
-  repo and creates a new release plus uploads the ZIP for any artifact whose
-  `<name>-v<version>` tag does not yet exist. A release is treated as an
-  immutable version: existing tags are skipped.
+- `build` — validate every skill (collecting every error, not fail-fast); if
+  all skills pass, clean `dist/` and write `<name>-v<version>.zip` per skill
+  in parallel. Exits non-zero on any validation failure and does *not* touch
+  `dist/` in that case.
+- `upload` — runs `build`; aborts if any skill failed validation. Otherwise
+  lists existing GitHub Releases on the target repo and:
+  - **No release with that tag** → create the release and upload the ZIP.
+  - **Release exists but the ZIP asset is missing** (e.g. a previous run
+    crashed between create and upload) → upload the asset to the existing
+    release.
+  - **Release exists with the expected asset** → skip.
 
 ## Flags
 
@@ -22,8 +26,9 @@ CLI orchestrator that validates, archives, and publishes the skills under
 - `--dist-dir <PATH>` — defaults to `./dist`.
 - `--repo <OWNER/NAME>` (`upload` only) — overrides `$GITHUB_REPOSITORY` and
   the `origin` remote.
-- `--dry-run` (`upload` only) — log what would be uploaded without creating
-  releases.
+- `--dry-run` (`upload` only) — still calls the GitHub list endpoint (so it
+  exercises auth + repo access), but logs the planned actions instead of
+  creating releases or uploading assets.
 
 ## Environment
 

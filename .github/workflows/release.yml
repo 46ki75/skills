@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-skills-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     name: Build and Publish Skill Archives

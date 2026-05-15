@@ -9,8 +9,8 @@ This crate only parses. Rule enforcement (kebab-case names, mandatory
 
 ## API
 
-- `parse_skill(dir: &Path) -> Result<ParsedSkill, ParseError>` — reads
-  `dir/SKILL.md` and returns the parsed result.
+- `parse_skill(dir: &Path).await -> Result<ParsedSkill, ParseError>` — reads
+  `dir/SKILL.md` (async, via `tokio::fs`) and returns the parsed result.
 - `SkillFrontmatter` — fields from the
   [Agent Skills spec](https://agentskills.io/specification.md) plus the
   repo-local `metadata` block.
@@ -22,11 +22,12 @@ This crate only parses. Rule enforcement (kebab-case names, mandatory
 
 ## Example
 
-```rust
+```rust,no_run
 use skill_parser::parse_skill;
 use std::path::Path;
 
-let skill = parse_skill(Path::new("skills/markdown"))?;
+# async fn run() -> Result<(), skill_parser::ParseError> {
+let skill = parse_skill(Path::new("skills/markdown")).await?;
 println!("{} v{:?}", skill.frontmatter.name, skill.frontmatter.metadata);
-# Ok::<(), skill_parser::ParseError>(())
+# Ok(()) }
 ```

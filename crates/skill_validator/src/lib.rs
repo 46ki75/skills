@@ -1,17 +1,4 @@
-//! Validates a parsed Agent Skill against the spec plus this repository's
-//! house rules.
-//!
-//! Rules enforced:
-//!
-//! - `name` is present, non-empty, kebab-case, and equals the on-disk
-//!   directory name.
-//! - `description` is present and non-empty.
-//! - `metadata.author` is present and non-empty.
-//! - `metadata.version` is present and shaped like `MAJOR.MINOR` or
-//!   `MAJOR.MINOR.PATCH` (digits only).
-//!
-//! Errors are collected in a [`ValidationReport`] rather than short-circuiting,
-//! so a single pass over `skills/` surfaces every problem.
+#![doc = include_str!("../README.md")]
 
 use skill_parser::ParsedSkill;
 
@@ -53,6 +40,7 @@ pub enum ValidationError {
 
 /// Outcome of validating a single skill.
 #[derive(Debug, Default)]
+#[must_use = "inspect the report (or call `is_ok`) before assuming a skill is publishable"]
 pub struct ValidationReport {
     /// Directory name of the skill that was validated.
     pub dir_name: String,
@@ -140,12 +128,13 @@ fn is_kebab_case(s: &str) -> bool {
     if s.is_empty() {
         return false;
     }
-    let bytes = s.as_bytes();
-    if bytes[0] == b'-' || bytes[bytes.len() - 1] == b'-' {
+    if !s
+        .chars()
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+    {
         return false;
     }
-    s.chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+    s.split('-').all(|segment| !segment.is_empty())
 }
 
 fn is_semver_like(v: &str) -> bool {
@@ -225,5 +214,25 @@ mod tests {
     fn two_part_version_ok() {
         let s = make("markdown", "markdown", "lint md", Some("X"), Some("1.0"));
         assert!(validate(&s).is_ok());
+    }
+
+    #[test]
+    fn double_hyphen_rejected() {
+        let s = make("foo--bar", "foo--bar", "x", Some("X"), Some("1.0.0"));
+        let r = validate(&s);
+        assert!(matches!(
+            r.errors[0],
+            ValidationError::NameNotKebabCase { .. }
+        ));
+    }
+
+    #[test]
+    fn trailing_hyphen_rejected() {
+        let s = make("foo-", "foo-", "x", Some("X"), Some("1.0.0"));
+        let r = validate(&s);
+        assert!(matches!(
+            r.errors[0],
+            ValidationError::NameNotKebabCase { .. }
+        ));
     }
 }

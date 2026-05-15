@@ -1,16 +1,11 @@
-//! Packages a validated [`ParsedSkill`] into a ZIP archive.
-//!
-//! Each archive is named `<name>-v<version>.zip` and contains the skill's
-//! directory at its top level (e.g. `markdown/SKILL.md`,
-//! `markdown/references/...`). Dotfiles are skipped. The underlying `zip`
-//! crate is synchronous, so file writes happen inside [`tokio::task::spawn_blocking`].
+#![doc = include_str!("../README.md")]
 
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
 use skill_parser::ParsedSkill;
-use walkdir::WalkDir;
+use walkdir::{DirEntry, WalkDir};
 use zip::CompressionMethod;
 use zip::write::{FileOptions, ZipWriter};
 
@@ -105,19 +100,15 @@ fn zip_skill_dir(src: &Path, top_dir: &str, zip_path: &Path) -> Result<(), Archi
         .compression_method(CompressionMethod::Stored)
         .unix_permissions(0o755);
 
-    let mut buf = Vec::new();
+    let walker = WalkDir::new(src)
+        .follow_links(false)
+        .sort_by_file_name()
+        .into_iter()
+        .filter_entry(|e| !is_hidden(e));
 
-    for entry in WalkDir::new(src).follow_links(false).sort_by_file_name() {
+    for entry in walker {
         let entry = entry?;
         let path = entry.path();
-
-        if path
-            .file_name()
-            .and_then(|s| s.to_str())
-            .is_some_and(|n| n.starts_with('.'))
-        {
-            continue;
-        }
         let rel = match path.strip_prefix(src) {
             Ok(r) => r,
             Err(_) => continue,
@@ -136,12 +127,22 @@ fn zip_skill_dir(src: &Path, top_dir: &str, zip_path: &Path) -> Result<(), Archi
             writer.add_directory(format!("{archive_path_str}/"), dir_options)?;
         } else if entry.file_type().is_file() {
             writer.start_file(archive_path_str, options)?;
-            buf.clear();
-            File::open(path)?.read_to_end(&mut buf)?;
-            writer.write_all(&buf)?;
+            let mut reader = BufReader::new(File::open(path)?);
+            std::io::copy(&mut reader, &mut writer)?;
         }
     }
 
     writer.finish()?;
     Ok(())
+}
+
+fn is_hidden(entry: &DirEntry) -> bool {
+    // depth() is 0 only for the root of the walk; never prune the root.
+    if entry.depth() == 0 {
+        return false;
+    }
+    entry
+        .file_name()
+        .to_str()
+        .is_some_and(|n| n.starts_with('.'))
 }

@@ -1749,6 +1749,7 @@ dependencies = [
 name = "skill_archiver"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "skill_parser",
  "thiserror",
  "tokio",
@@ -1764,6 +1765,7 @@ dependencies = [
  "gray_matter",
  "serde",
  "thiserror",
+ "tokio",
  "tracing",
 ]
 

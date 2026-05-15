@@ -1,10 +1,4 @@
-//! Parses Agent Skill `SKILL.md` files.
-//!
-//! Splits the YAML frontmatter from the markdown body using [`gray_matter`]
-//! and deserializes the frontmatter into [`SkillFrontmatter`]. The
-//! [`Agent Skills specification`](https://agentskills.io/specification.md)
-//! defines the schema; this crate only parses — see `skill_validator` for
-//! rule enforcement.
+#![doc = include_str!("../README.md")]
 
 use std::path::{Path, PathBuf};
 
@@ -92,16 +86,20 @@ pub enum ParseError {
 /// Reads `dir/SKILL.md`, splits frontmatter and body, and returns a [`ParsedSkill`].
 ///
 /// Does not enforce validation rules — that is `skill_validator`'s job.
-pub fn parse_skill(dir: &Path) -> Result<ParsedSkill, ParseError> {
+pub async fn parse_skill(dir: &Path) -> Result<ParsedSkill, ParseError> {
     let skill_md = dir.join("SKILL.md");
-    if !skill_md.is_file() {
-        return Err(ParseError::MissingSkillMd(dir.to_path_buf()));
-    }
-
-    let raw = std::fs::read_to_string(&skill_md).map_err(|e| ParseError::Io {
-        path: skill_md.clone(),
-        source: e,
-    })?;
+    let raw = match tokio::fs::read_to_string(&skill_md).await {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+            return Err(ParseError::MissingSkillMd(dir.to_path_buf()));
+        }
+        Err(e) => {
+            return Err(ParseError::Io {
+                path: skill_md.clone(),
+                source: e,
+            });
+        }
+    };
 
     let matter = Matter::<YAML>::new();
     let parsed =

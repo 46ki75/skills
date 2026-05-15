@@ -16,4 +16,5 @@ workspace = true
 serde = { workspace = true }
 thiserror = { workspace = true }
 gray_matter = { workspace = true }
+tokio = { workspace = true }
 tracing = { workspace = true }
