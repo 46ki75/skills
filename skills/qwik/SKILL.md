@@ -17,7 +17,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Qwik & Qwik City Skill
@@ -339,6 +339,55 @@ useVisibleTask$(() => {
 });
 ```
 
+### `useStore` gotchas when deep-cloning or seeding two stores
+
+`useStore` returns a `Proxy`. Two consequences that bite often:
+
+- `structuredClone(store)` throws `DataCloneError` — the proxy's internal
+  traps are incompatible. Use `cloneDeep` from `es-toolkit` (or `lodash`) when
+  you need a deep snapshot for comparison, debouncing, throttling, or
+  history.
+- `useStore({ ...initialValue })` only shallow-copies. If you create two
+  stores from the same seed, their nested objects are aliased — mutating one
+  mutates the other. Pass `cloneDeep(initialValue)` to each.
+
+```ts
+import { cloneDeep, isEqual } from "es-toolkit";
+
+const live = useStore<T>(cloneDeep(initialValue));
+const snapshotted = useStore<T>(cloneDeep(initialValue)); // independent
+
+useTask$(({ track }) => {
+  const snap = track(() => cloneDeep(live)); // reactive deep snapshot
+  if (!isEqual(snap, snapshotted)) Object.assign(snapshotted, snap);
+});
+```
+
+See `references/qwik-core.md` ("Testing helper") for more, including the
+related `useTask$` cleanup pattern.
+
+### `useTask$` cleanup fires on re-run, not only on unmount
+
+A `cleanup()` registered inside a tracking `useTask$` fires **before every
+re-run** as well as on unmount. That's the right behaviour for things that
+should reset on the next write (e.g. a debounce timer). It's the wrong
+behaviour for things that must survive across writes (e.g. a throttle
+cooldown timer).
+
+When you need an unmount-only cleanup, register it from a **separate
+`useTask$` with no `track()`** — a no-track task runs once on construction
+and its cleanup fires only on unmount. Pattern and rationale documented in
+`references/qwik-core.md` ("Testing helper" / cleanup).
+
+### Testing async signal writes with `createDOM`
+
+`createDOM` only flushes pending renders inside `userEvent` / `render`. A
+signal write from a raw `setTimeout` (or any callback outside Qwik's invoke
+context) queues a render that `await new Promise(r => setTimeout(r, ms))`
+will not pump. In production this Just Works; in tests, click a no-op
+`#btn-flush` button after waiting to flush the scheduler. Details in
+`references/qwik-core.md` ("Testing helper").
+
 ---
 
 ## Reference files
@@ -365,6 +414,7 @@ matching file from `references/cookbook/`:
 | Algolia / search             | `cookbook/algolia-search.md`             |
 | Composing middleware         | `cookbook/combine-request-handlers.md`   |
 | Debounce input               | `cookbook/debouncer.md`                  |
+| Throttle input               | `cookbook/throttle.md`                   |
 | Image load detection         | `cookbook/detect-img-onload.md`          |
 | Drag and drop                | `cookbook/drag-and-drop.md`              |
 | Fonts / FOIT / CLS           | `cookbook/fonts.md`                      |
