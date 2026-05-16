@@ -14,7 +14,8 @@ so a single pass over `skills/` surfaces every problem at once.
   `</commentary>` (upload-platform rule).
 - `metadata.author` is present and non-empty (repo rule; optional in the spec).
 - `metadata.version` is present and shaped like `MAJOR.MINOR` or
-  `MAJOR.MINOR.PATCH` with digits only (repo rule; optional in the spec).
+  `MAJOR.MINOR.PATCH` with digits only and no leading zeros (e.g. `01.0`,
+  `1.02` are rejected; repo rule; optional in the spec).
 
 ## API
 
