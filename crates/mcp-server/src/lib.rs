@@ -2,11 +2,12 @@
 //!
 //! Provides a [`Server`] type that implements [`rmcp::ServerHandler`] with
 //! one example tool (`ping`), one task-capable tool (`slow_count`), three
-//! example prompts (`greeting` no-arg, `echo` single-arg, `summarize`
-//! multi-arg), one static resource (`mem://example`), and two parameterized
-//! resource templates (`echo://{message}`, `greet://{language}/{name}`).
-//! Use it as a starting point and add real tools, prompts, or resources as
-//! needed.
+//! server-to-client request tools (`ask_llm` sampling, `greet_user`
+//! elicitation, `list_workspace_roots` roots), three example prompts
+//! (`greeting`, `echo`, `summarize`), one static resource (`mem://example`),
+//! and two parameterized resource templates (`echo://{message}`,
+//! `greet://{language}/{name}`). Use it as a starting point and add real
+//! tools, prompts, or resources as needed.
 
 use std::sync::Arc;
 
@@ -69,6 +70,22 @@ pub struct SlowCountArgs {
 /// Inspector) still completes within typical request timeouts.
 const SLOW_COUNT_TICK_MS: u64 = 100;
 
+/// Arguments for the `ask_llm` (sampling) tool.
+#[derive(Debug, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct AskLlmArgs {
+    /// The question to ask the connected client's LLM.
+    pub question: String,
+}
+
+/// Shape elicited from the user by the `greet_user` tool.
+#[derive(Debug, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct UserNameInput {
+    /// The user's preferred display name.
+    pub name: String,
+}
+
+rmcp::elicit_safe!(UserNameInput);
+
 /// MCP server skeleton. Clone is cheap — internal state lives behind
 /// [`std::sync::Arc`] when added.
 #[derive(Clone)]
@@ -124,6 +141,97 @@ impl Server {
         Ok(CallToolResult::success(vec![Content::text(
             args.target.to_string(),
         )]))
+    }
+
+    /// Sampling example: ask the connected client's LLM to answer a question.
+    ///
+    /// Requires a client that supports `sampling/createMessage` (e.g. Claude
+    /// Desktop). Inspector will respond with an error if sampling isn't
+    /// available.
+    #[tool(description = "Ask the client's LLM a question via sampling.")]
+    async fn ask_llm(
+        &self,
+        Parameters(args): Parameters<AskLlmArgs>,
+        ctx: RequestContext<RoleServer>,
+    ) -> Result<CallToolResult, McpError> {
+        let response = ctx
+            .peer
+            .create_message(
+                CreateMessageRequestParams::new(
+                    vec![SamplingMessage::user_text(&args.question)],
+                    512,
+                )
+                .with_system_prompt("You are a concise assistant.")
+                .with_temperature(0.7),
+            )
+            .await
+            .map_err(|e| {
+                McpError::internal_error(format!("sampling request failed: {e}"), None)
+            })?;
+
+        let text = response
+            .message
+            .content
+            .first()
+            .and_then(|c| c.as_text())
+            .map(|t| t.text.clone())
+            .unwrap_or_else(|| "(no text response)".to_string());
+        Ok(CallToolResult::success(vec![Content::text(text)]))
+    }
+
+    /// Elicitation example: ask the user (via the client) for their name,
+    /// then greet them. Requires a client that supports
+    /// `elicitation/create`.
+    #[tool(description = "Ask the user for their name, then greet them.")]
+    async fn greet_user(
+        &self,
+        ctx: RequestContext<RoleServer>,
+    ) -> Result<CallToolResult, McpError> {
+        match ctx
+            .peer
+            .elicit::<UserNameInput>("Please enter your name")
+            .await
+        {
+            Ok(Some(input)) => Ok(CallToolResult::success(vec![Content::text(format!(
+                "Hello, {}!",
+                input.name
+            ))])),
+            Ok(None) => Ok(CallToolResult::success(vec![Content::text(
+                "Greeting cancelled — no name was provided.",
+            )])),
+            Err(e) => Err(McpError::internal_error(
+                format!("elicitation failed: {e}"),
+                None,
+            )),
+        }
+    }
+
+    /// Roots example: query the client for the filesystem/workspace roots
+    /// it exposes, and return a summary. Requires a client that supports
+    /// `roots/list` (e.g. an IDE-integrated MCP client).
+    #[tool(description = "List the workspace roots the client has exposed.")]
+    async fn list_workspace_roots(
+        &self,
+        ctx: RequestContext<RoleServer>,
+    ) -> Result<CallToolResult, McpError> {
+        let result = ctx.peer.list_roots().await.map_err(|e| {
+            McpError::internal_error(format!("roots/list request failed: {e}"), None)
+        })?;
+
+        let text = if result.roots.is_empty() {
+            "Client exposed no roots.".to_string()
+        } else {
+            result
+                .roots
+                .iter()
+                .map(|root| match &root.name {
+                    Some(name) => format!("- {} ({})", name, root.uri),
+                    None => format!("- {}", root.uri),
+                })
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
+        Ok(CallToolResult::success(vec![Content::text(text)]))
     }
 }
 
@@ -224,10 +332,14 @@ impl ServerHandler for Server {
         .with_protocol_version(ProtocolVersion::LATEST)
         .with_instructions(
             "Generic MCP server skeleton. Replace the example tools (`ping`, \
-             `slow_count`), prompts (`greeting`, `echo`, `summarize`), static \
-             resource (`mem://example`), and resource templates \
-             (`echo://{message}`, `greet://{language}/{name}`) with real \
-             handlers. `slow_count` supports task-based (async) invocation.",
+             `slow_count`, `ask_llm`, `greet_user`, `list_workspace_roots`), \
+             prompts (`greeting`, `echo`, `summarize`), static resource \
+             (`mem://example`), and resource templates (`echo://{message}`, \
+             `greet://{language}/{name}`) with real handlers. `slow_count` \
+             supports task-based (async) invocation. `ask_llm` requires \
+             client sampling support, `greet_user` requires client \
+             elicitation support, and `list_workspace_roots` requires \
+             client roots support.",
         )
     }
 
