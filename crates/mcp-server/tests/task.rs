@@ -13,7 +13,8 @@ use mcp_server::Server;
 use rmcp::{
     ClientHandler, RoleClient, ServiceExt,
     model::{
-        CallToolRequestParams, ClientRequest, ListTasksRequest, Request, ServerResult, TaskStatus,
+        CallToolRequestParams, CancelTaskParams, ClientRequest, ListTasksRequest, Request,
+        ServerResult, TaskStatus,
     },
     service::RunningService,
 };
@@ -146,6 +147,88 @@ async fn list_tasks_surfaces_completed_tasks() -> anyhow::Result<()> {
         &task_id,
         TaskStatus::Completed,
         Duration::from_secs(5),
+    )
+    .await?;
+
+    client_service.cancel().await?;
+    let _ = server_handle.await;
+    Ok(())
+}
+
+/// Exercises the `Cancelled` branch of the `list_tasks` override in
+/// `src/tasks.rs`. The override distinguishes cancellations from generic
+/// failures by string-matching the underlying `Error::TaskError` message
+/// (rmcp 1.7 has no structured discriminator). This test locks in that
+/// behavior so a future upstream change to the error text — or an
+/// accidental flip back to the always-`Failed` branch — fails loudly.
+#[tokio::test]
+async fn list_tasks_reports_cancelled_status_for_cancelled_task() -> anyhow::Result<()> {
+    let server = Server::new();
+    let client = TestClient;
+
+    let (server_transport, client_transport) = tokio::io::duplex(4096);
+    let server_handle = tokio::spawn(async move {
+        let service = server.serve(server_transport).await?;
+        service.waiting().await?;
+        anyhow::Ok(())
+    });
+    let client_service = client.serve(client_transport).await?;
+
+    // Enqueue a long-running task (target=20 → ~2s) so we have time to
+    // observe `Working` and then cancel it before it can complete.
+    let mut args = serde_json::Map::new();
+    args.insert("target".into(), serde_json::Value::from(20u8));
+    let mut task_meta = serde_json::Map::new();
+    task_meta.insert("source".into(), serde_json::Value::String("test".into()));
+    let params = CallToolRequestParams::new("slow_count")
+        .with_arguments(args)
+        .with_task(task_meta);
+    let response = client_service
+        .send_request(ClientRequest::CallToolRequest(Request::new(params)))
+        .await?;
+    let ServerResult::CreateTaskResult(info) = response else {
+        panic!("expected CreateTaskResult, got {response:?}");
+    };
+    let task_id = info.task.task_id.clone();
+
+    // Confirm the task is actually `Working` before we cancel — otherwise
+    // a regression that never reports `Working` (e.g. dropping running
+    // tasks from `list_tasks`) would slip past this test.
+    wait_for_task_status(
+        &client_service,
+        &task_id,
+        TaskStatus::Working,
+        Duration::from_secs(2),
+    )
+    .await?;
+
+    // `CancelTaskResult` and `GetTaskResult` share an identical wire shape
+    // (`allOf[Result, Task]`), so rmcp's untagged `ServerResult` may
+    // deserialize the cancel response as either variant. Accept both and
+    // assert on the embedded task instead.
+    let cancel = client_service
+        .send_request(ClientRequest::CancelTaskRequest(Request::new(
+            CancelTaskParams {
+                meta: None,
+                task_id: task_id.clone(),
+            },
+        )))
+        .await?;
+    let cancelled_task = match cancel {
+        ServerResult::CancelTaskResult(r) => r.task,
+        ServerResult::GetTaskResult(r) => r.task,
+        other => panic!("expected Cancel/GetTaskResult after tasks/cancel, got {other:?}"),
+    };
+    assert_eq!(cancelled_task.task_id, task_id);
+    assert_eq!(cancelled_task.status, TaskStatus::Cancelled);
+
+    // The override should surface the cancelled task with
+    // `TaskStatus::Cancelled` — not `Failed`.
+    wait_for_task_status(
+        &client_service,
+        &task_id,
+        TaskStatus::Cancelled,
+        Duration::from_secs(2),
     )
     .await?;
 

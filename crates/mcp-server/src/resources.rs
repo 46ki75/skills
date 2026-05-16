@@ -46,6 +46,10 @@ pub fn read_resource(
     }
 
     if let Some(message) = request.uri.strip_prefix(ECHO_RESOURCE_SCHEME) {
+        // `echo://` is deliberately permissive: anything after the scheme
+        // (including slashes — e.g. `echo://a/b`) is echoed verbatim. Only
+        // a fully-empty payload is rejected. `greet://` below is stricter
+        // because its template has a fixed `{language}/{name}` shape.
         if message.is_empty() {
             return Err(McpError::invalid_params(
                 "echo:// requires a non-empty message segment",

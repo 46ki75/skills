@@ -9,7 +9,7 @@ use rmcp::{
     handler::server::wrapper::Parameters,
     model::{CallToolResult, Content, CreateMessageRequestParams, SamplingMessage},
     schemars,
-    service::RequestContext,
+    service::{ElicitationError, RequestContext},
     tool, tool_router,
 };
 use serde::{Deserialize, Serialize};
@@ -99,19 +99,32 @@ impl Server {
                 McpError::internal_error(format!("sampling request failed: {e}"), None)
             })?;
 
-        let text = response
-            .message
-            .content
-            .first()
-            .and_then(|c| c.as_text())
-            .map(|t| t.text.clone())
-            .unwrap_or_else(|| "(no text response)".to_string());
+        let text = match response.message.content.iter().find_map(|c| c.as_text()) {
+            Some(t) => t.text.clone(),
+            None => {
+                // Image/audio/tool_use/tool_result responses aren't handled
+                // by this skeleton — surface a warning so anyone copying this
+                // tool sees they need to handle multimodal sampling content.
+                tracing::warn!(
+                    model = %response.model,
+                    "ask_llm: sampling response contained no text content; \
+                     non-text content blocks are not handled by this skeleton",
+                );
+                "(no text response)".to_string()
+            }
+        };
         Ok(CallToolResult::success(vec![Content::text(text)]))
     }
 
     /// Elicitation example: ask the user (via the client) for their name,
     /// then greet them. Requires a client that supports
     /// `elicitation/create`.
+    ///
+    /// Decline/cancel and "client does not support elicitation" are *user
+    /// actions* or *capability mismatches*, not service failures — surface
+    /// them as `CallToolResult::success` with an informative message so the
+    /// client can render them naturally. Only genuine protocol/parse
+    /// failures escalate to `internal_error`.
     #[tool(description = "Ask the user for their name, then greet them.")]
     async fn greet_user(
         &self,
@@ -127,8 +140,20 @@ impl Server {
                 input.name
             ))])),
             Ok(None) => Ok(CallToolResult::success(vec![Content::text(
-                "Greeting cancelled — no name was provided.",
+                "Greeting skipped — no name was provided.",
             )])),
+            Err(ElicitationError::UserDeclined) => Ok(CallToolResult::success(vec![
+                Content::text("Greeting skipped — the user declined to share their name."),
+            ])),
+            Err(ElicitationError::UserCancelled) => Ok(CallToolResult::success(vec![
+                Content::text("Greeting cancelled — the user dismissed the prompt."),
+            ])),
+            Err(ElicitationError::CapabilityNotSupported) => Ok(CallToolResult::success(vec![
+                Content::text(
+                    "This client does not support elicitation, so the user could not be \
+                     prompted for a name.",
+                ),
+            ])),
             Err(e) => Err(McpError::internal_error(
                 format!("elicitation failed: {e}"),
                 None,

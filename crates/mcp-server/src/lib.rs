@@ -59,6 +59,11 @@ impl Server {
     }
 }
 
+// All three handler attributes must target the same `impl ServerHandler`
+// block — each one synthesizes a different set of trait methods, so
+// splitting them across multiple `impl` blocks would conflict. The
+// `#[task_handler]` macro reads `self.processor` by default; rename that
+// field and you'll need to pass the new name to the macro.
 #[tool_handler]
 #[prompt_handler]
 #[task_handler]
