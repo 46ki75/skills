@@ -10,3 +10,6 @@
 [submodule "submodules/toasty"]
 	path = submodules/toasty
 	url = https://github.com/46ki75/toasty
+[submodule "submodules/mcp-rust-sdk"]
+	path = submodules/mcp-rust-sdk
+	url = https://github.com/modelcontextprotocol/rust-sdk
