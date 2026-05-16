@@ -91,8 +91,7 @@ async fn read_resource_serves_static_and_templated_uris() -> anyhow::Result<()> 
             ReadResourceRequestParams::new("echo://"),
         )))
         .await
-        .err()
-        .expect("empty echo:// URI should be rejected");
+        .expect_err("empty echo:// URI should be rejected");
     let rendered = err.to_string();
     assert!(
         rendered.contains("non-empty"),
