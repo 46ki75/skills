@@ -20,7 +20,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0"
+  version: "1.0.0"
 ---
 
 # rmcp (Rust SDK for MCP) Skill
@@ -70,7 +70,7 @@ SEP-1330 enum inference are still in motion. Specific known limitations:
 - `OperationProcessor` does not yet expose per-task `created_at` /
   `last_updated_at` — `tasks/list` overrides have to fake the
   timestamps. See `references/server/tasks.md`.
-- The macro-generated `list_tasks` only surfaces *running* tasks; the
+- The macro-generated `list_tasks` only surfaces _running_ tasks; the
   canonical pattern (in `crates/mcp-server/src/tasks.rs`) is to override
   it and merge in `peek_completed()`.
 - Some `ServerResult::*` variants share wire shape after `serde`
@@ -78,7 +78,7 @@ SEP-1330 enum inference are still in motion. Specific known limitations:
   so the untagged enum may pick the wrong variant when deserializing.
   Callers must accept either. See `references/client/requests.md`.
 - `Peer::elicit` returns `Err(ElicitationError::UserDeclined)` etc. for
-  *user actions*, which are not service failures. Tools must
+  _user actions_, which are not service failures. Tools must
   pattern-match on `ElicitationError` and return
   `CallToolResult::success` for the user-action variants. See
   `references/server/elicitation.md`.

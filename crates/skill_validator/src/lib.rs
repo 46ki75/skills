@@ -39,7 +39,7 @@ pub enum ValidationError {
     VersionMissing,
     /// `metadata.version` is present but does not match the expected shape.
     #[error(
-        "metadata.version {0:?} is not a valid semver-like version (expected MAJOR.MINOR[.PATCH])"
+        "metadata.version {0:?} is not a valid semver-like version (expected MAJOR.MINOR.PATCH, digits only, no leading zeros)"
     )]
     InvalidVersion(String),
 }
@@ -171,12 +171,14 @@ fn find_xml_tag(s: &str) -> Option<String> {
 
 fn is_semver_like(v: &str) -> bool {
     let parts: Vec<&str> = v.split('.').collect();
-    if !(2..=3).contains(&parts.len()) {
+    if parts.len() != 3 {
         return false;
     }
-    parts
-        .iter()
-        .all(|p| !p.is_empty() && p.chars().all(|c| c.is_ascii_digit()))
+    parts.iter().all(|p| {
+        !p.is_empty()
+            && p.chars().all(|c| c.is_ascii_digit())
+            && !(p.len() > 1 && p.starts_with('0'))
+    })
 }
 
 #[cfg(test)]
@@ -243,8 +245,52 @@ mod tests {
     }
 
     #[test]
-    fn two_part_version_ok() {
+    fn two_part_version_rejected() {
         let s = make("markdown", "markdown", "lint md", Some("X"), Some("1.0"));
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
+    }
+
+    #[test]
+    fn four_part_version_rejected() {
+        let s = make(
+            "markdown",
+            "markdown",
+            "lint md",
+            Some("X"),
+            Some("1.0.0.0"),
+        );
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
+    }
+
+    #[test]
+    fn version_with_leading_zero_rejected() {
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("01.0.0"));
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
+
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("1.02.0"));
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
+
+        let s = make(
+            "markdown",
+            "markdown",
+            "lint md",
+            Some("X"),
+            Some("1.0.003"),
+        );
+        let r = validate(&s);
+        assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
+    }
+
+    #[test]
+    fn version_zero_segment_ok() {
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("0.0.0"));
+        assert!(validate(&s).is_ok());
+
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("1.0.0"));
         assert!(validate(&s).is_ok());
     }
 
