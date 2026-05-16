@@ -14,11 +14,12 @@ description: >
   for any question mentioning Toasty, the `toasty` crate, `toasty::Model`,
   `toasty::Db`, `toasty::HasMany`, `toasty::BelongsTo`, `toasty::HasOne`,
   the `toasty::create!` or `toasty::update!` macros, code under
-  `submodules/toasty/`, or any Rust code that imports `toasty`.
+  `submodules/toasty/`, the local working example at `crates/toasty-app/`,
+  or any Rust code that imports `toasty`.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.1"
+  version: "1.1"
 ---
 
 # Toasty (Rust ORM) Skill
@@ -47,6 +48,7 @@ run efficiently there.
 | `toasty-driver-{sqlite,postgresql,mysql,dynamodb}` | Concrete database driver implementations                              |
 | `toasty-driver-integration-suite`                  | Shared integration tests run against every driver                     |
 | `toasty-cli`                                       | Command-line tool                                                     |
+| `crates/toasty-app/` (local)                       | **Local working example** built on `toasty 0.6`, one test per topic   |
 
 Application code only depends on `toasty` (plus one driver crate). Everything
 else is internal.

@@ -1,0 +1,25 @@
+# Convenience recipes for the toasty-app crate.
+#
+# Run from this directory (`crates/toasty-app`) — `just` walks up to find
+# the Justfile, but the cargo invocations below work from the workspace
+# root just as well.
+
+default:
+	just --list
+
+# Run the demo binary against an ephemeral SQLite database.
+run:
+	cargo run -p toasty-app --bin toasty-app-demo
+
+# Run all integration tests for this crate (SQLite, in-memory).
+test:
+	cargo test -p toasty-app
+
+# Run tests against PostgreSQL — requires `TOASTY_CONNECTION_URL` to be set
+# and a running database.
+test-postgresql:
+	cargo test -p toasty-app --no-default-features --features postgresql
+
+# Run tests against MySQL — same requirements as Postgres.
+test-mysql:
+	cargo test -p toasty-app --no-default-features --features mysql

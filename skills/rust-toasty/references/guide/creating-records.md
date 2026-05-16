@@ -418,3 +418,5 @@ The create builder's setter methods accept flexible input types through the
 `&String`. For numeric fields, you can pass the value directly or by reference.
 See [Defining Models — What types can you pass to setters?](./defining-models.md#what-types-can-you-pass-to-setters)
 for details.
+
+See also: tested code at `crates/toasty-app/tests/crud.rs`.

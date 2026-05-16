@@ -309,3 +309,5 @@ Query builders support these terminal methods:
 | `.exec(&mut db)` | `Result<Vec<User>>` |
 | `.first().exec(&mut db)` | `Result<Option<User>>` |
 | `.get(&mut db)` | `Result<User>` |
+
+See also: tested code at `crates/toasty-app/tests/crud.rs`.

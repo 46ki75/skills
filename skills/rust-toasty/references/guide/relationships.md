@@ -284,3 +284,5 @@ querying, creating, and updating:
   child, replace and unset behavior
 - [**Preloading Associations**](./preloading-associations.md) — avoiding extra
   queries by loading relations upfront with `.include()`
+
+See also: tested code at `crates/toasty-app/tests/relationships.rs`.

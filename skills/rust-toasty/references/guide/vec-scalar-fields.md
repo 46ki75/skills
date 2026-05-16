@@ -354,3 +354,5 @@ The element-removal builders are narrower:
 they lower to `array_remove` and array slicing. On the other drivers
 they return an error. See the per-database pages for the storage and
 operator details specific to each backend.
+
+See also: tested code at `crates/toasty-app/tests/vec_fields.rs`.

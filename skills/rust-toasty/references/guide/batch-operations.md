@@ -236,3 +236,5 @@ Both can insert multiple records, but they differ:
 
 Use `create_many()` when inserting multiple records of the same model. Use
 `batch()` when combining different operations or models.
+
+See also: tested code at `crates/toasty-app/tests/batch.rs`.

@@ -372,3 +372,5 @@ generates:
 | `user.update().profile(...)` | Update builder | Replace or associate a profile |
 | `user.update().profile(None)` | Update builder | Disassociate the profile |
 | `User::fields().profile()` | Field path | Used with `.include()` for preloading |
+
+See also: tested code at `crates/toasty-app/tests/relationships.rs`.

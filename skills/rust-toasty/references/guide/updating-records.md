@@ -191,3 +191,5 @@ For a model with `#[key]` on `id` and `#[unique]` on `email`, Toasty generates:
 
 The update builder has a setter method for each field. Only the fields you set
 are included in the `UPDATE` statement.
+
+See also: tested code at `crates/toasty-app/tests/crud.rs`.

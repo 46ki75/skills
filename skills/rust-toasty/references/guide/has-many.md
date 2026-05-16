@@ -308,3 +308,5 @@ For a `User` model with `#[has_many] posts: HasMany<Post>`, Toasty generates:
 |---|---|
 | `User::fields().posts()` | Field path for preloading and filtering |
 | `User::fields().posts().any(expr)` | Filter parents by child conditions |
+
+See also: tested code at `crates/toasty-app/tests/relationships.rs`.

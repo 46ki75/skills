@@ -228,3 +228,5 @@ support all four levels.
 
 Set `.read_only(true)` to create a read-only transaction. The database rejects
 write operations inside a read-only transaction.
+
+See also: tested code at `crates/toasty-app/tests/transactions.rs`.

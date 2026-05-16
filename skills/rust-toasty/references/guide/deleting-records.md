@@ -120,3 +120,5 @@ For a model with `#[key]` on `id` and `#[unique]` on `email`, Toasty generates:
   given email. Executes immediately.
 - Any query builder's `.delete()` method — converts the query into a delete
   statement.
+
+See also: tested code at `crates/toasty-app/tests/crud.rs`.

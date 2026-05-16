@@ -327,3 +327,5 @@ Methods available on `Page`:
 | `.items` | `Vec<M>` | The records in this page |
 | `.len()` | `usize` | Number of items (via `Deref` to slice) |
 | `.iter()` | iterator | Iterate items (via `Deref` to slice) |
+
+See also: tested code at `crates/toasty-app/tests/pagination.rs`.
