@@ -1,0 +1,301 @@
+---
+name: rmcp
+description: >
+  Expert guidance for the `rmcp` crate — the official Rust SDK for the
+  Model Context Protocol from `modelcontextprotocol/rust-sdk` (pinned at
+  `submodules/mcp-rust-sdk/`). Covers crate-side details: Cargo feature
+  flags (`server`, `client`, `macros`, `elicitation`, transport-*, TLS
+  variants), the `ServerHandler` / `ClientHandler` traits, the
+  `#[tool_router]` / `#[prompt_router]` / `#[tool_handler]` /
+  `#[prompt_handler]` / `#[task_handler]` macros, `Parameters<T>`,
+  `RequestContext<RoleServer>` / `RequestContext<RoleClient>`,
+  `ServiceExt::serve`, `RunningService<RoleClient, _>`, `OperationProcessor`
+  and SEP-1319 tasks, server-to-client requests (sampling, elicitation,
+  roots), the `rmcp::elicit_safe!` macro, `ElicitationError` variants,
+  the stdio and Streamable HTTP transports (`StreamableHttpService` +
+  `LocalSessionManager`), and the in-memory `tokio::io::duplex` test
+  harness pattern. Use whenever someone is writing, reviewing, debugging,
+  or extending Rust code that imports `rmcp`. Always invoke this skill for
+  any question mentioning `rmcp`, the `rmcp` crate, `ServerHandler`,
+  `ClientHandler`, `#[tool_router]`, `#[prompt_router]`, `#[tool_handler]`,
+  `#[prompt_handler]`, `#[task_handler]`, `rmcp::elicit_safe!`,
+  `ElicitationError`, `OperationProcessor`, `StreamableHttpService`,
+  `RoleServer`, `RoleClient`, `ServiceExt`, code under
+  `submodules/mcp-rust-sdk/`, the local example crate `crates/mcp-server/`,
+  or any Rust code that imports `rmcp`. For protocol-level questions that
+  aren't Rust-specific (the JSON-RPC wire format, MCP spec versions,
+  capability semantics) prefer the `mcp-knowledge` skill instead.
+license: MIT
+metadata:
+  author: "Ikuma Yamashita"
+  version: "1.0"
+---
+
+# rmcp (Rust SDK for MCP) Skill
+
+You are an expert on [`rmcp`](https://docs.rs/rmcp), the official Rust
+SDK for the [Model Context Protocol](https://modelcontextprotocol.io/).
+Your goal is to help users write correct, idiomatic `rmcp` code — servers,
+clients, tools, prompts, resources, tasks, transports, and test harnesses
+— without re-discovering the same macro contracts and trait shapes every
+time.
+
+`rmcp` is **fast-moving and lightly documented**. The repository at
+`submodules/mcp-rust-sdk/` is the source of truth: when a signature in
+this skill conflicts with what's in the pinned submodule, trust the
+submodule and update the skill. The reference files in this skill
+intentionally cite specific source paths so they stay grepable as the
+crate evolves.
+
+For protocol-level questions (the JSON-RPC wire format, spec versions,
+what a `tools/call` request looks like across implementations), defer to
+`skills/mcp-knowledge/`. This skill stays Rust-specific.
+
+## Workspace orientation
+
+The `rmcp` workspace ships two crates plus a large set of examples:
+
+| Crate / directory                               | What it is                                                                                                                                                                                          |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `submodules/mcp-rust-sdk/crates/rmcp/`          | The main `rmcp` crate. Re-exports everything the user sees: `ServerHandler`, `ClientHandler`, `ServiceExt`, `model::*`, `transport::*`, `task_manager::*`                                           |
+| `submodules/mcp-rust-sdk/crates/rmcp-macros/`   | The procedural-macros crate behind `#[tool_router]`, `#[tool_handler]`, `#[prompt_router]`, `#[prompt_handler]`, `#[task_handler]`. Re-exported by `rmcp` when the `macros` feature is on           |
+| `submodules/mcp-rust-sdk/examples/servers/src/` | One example server per primitive (calculator, counter, prompt, task, sampling, elicitation, completion, memory, structured output, OAuth)                                                           |
+| `submodules/mcp-rust-sdk/examples/clients/src/` | Example clients (stdio subprocess, streamable HTTP, sampling, task polling, progress, OAuth flows)                                                                                                  |
+| `crates/mcp-server/`                            | **Local** working server example built against `rmcp` 1.7. Covers every server-side primitive and ships an integration test per feature. This is the canonical reference cited throughout the skill |
+
+Application code depends on `rmcp` (plus whichever transport feature it
+needs). `rmcp-macros` is pulled in transitively by the `macros` feature
+— never depend on it directly.
+
+## Version and stability note
+
+The skill targets **`rmcp` 1.x** (the workspace pins 1.7 at
+`Cargo.toml:49`). The SDK is officially Tier 2 conformance — most of the
+2025-11-25 MCP spec works, but pieces like prompt argument substitution,
+embedded resources in prompts, DNS-rebinding protection, and full
+SEP-1330 enum inference are still in motion. Specific known limitations:
+
+- `OperationProcessor` does not yet expose per-task `created_at` /
+  `last_updated_at` — `tasks/list` overrides have to fake the
+  timestamps. See `references/server/tasks.md`.
+- The macro-generated `list_tasks` only surfaces *running* tasks; the
+  canonical pattern (in `crates/mcp-server/src/tasks.rs`) is to override
+  it and merge in `peek_completed()`.
+- Some `ServerResult::*` variants share wire shape after `serde`
+  flattening (most prominently `CancelTaskResult` vs `GetTaskResult`),
+  so the untagged enum may pick the wrong variant when deserializing.
+  Callers must accept either. See `references/client/requests.md`.
+- `Peer::elicit` returns `Err(ElicitationError::UserDeclined)` etc. for
+  *user actions*, which are not service failures. Tools must
+  pattern-match on `ElicitationError` and return
+  `CallToolResult::success` for the user-action variants. See
+  `references/server/elicitation.md`.
+
+When you hit something that looks broken, check the submodule first —
+`grep` for the symbol in `submodules/mcp-rust-sdk/crates/rmcp/src/`
+before guessing.
+
+## Feature flags at a glance
+
+Defaults (from `submodules/mcp-rust-sdk/crates/rmcp/Cargo.toml:116`):
+`default = ["base64", "macros", "server"]`. So `cargo add rmcp` gives
+you a server crate with macros and base64 image support. You still need
+to **opt in** to the transports and to client-side support.
+
+| Flag                                                         | When to enable                                                                      |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `server`                                                     | Authoring a server. Pulls in `ServerHandler`, `schemars`, `transport-async-rw`      |
+| `client`                                                     | Authoring or testing a client. Adds `ClientHandler`, `tokio-stream`                 |
+| `macros`                                                     | `#[tool_router]` / `#[tool]` / `#[prompt_router]` / `#[prompt]` / `#[task_handler]` |
+| `transport-io`                                               | stdio transport (`rmcp::transport::stdio()`)                                        |
+| `transport-streamable-http-server`                           | Streamable HTTP server (`StreamableHttpService`, axum / tower integration)          |
+| `transport-streamable-http-client-reqwest`                   | Streamable HTTP client with reqwest backend                                         |
+| `transport-child-process`                                    | Spawn a server as a subprocess and talk to it over stdio                            |
+| `elicitation`                                                | `rmcp::elicit_safe!`, `ElicitationError`, typed `Peer::elicit<T>()`                 |
+| `schemars`                                                   | JSON Schema generation for tool/prompt argument types (auto-on with `server`)       |
+| `auth` / `auth-client-credentials-jwt`                       | OAuth 2.0 client-credentials and JWT-signed assertions                              |
+| `reqwest` / `reqwest-native-tls` / `reqwest-tls-no-provider` | Pick exactly one TLS strategy for the reqwest backend                               |
+
+A common starter set for a server with stdio + HTTP + tasks +
+elicitation is what `crates/mcp-server/` uses:
+
+```toml
+rmcp = { version = "1.7", features = [
+    "server", "client", "macros",
+    "transport-io",
+    "transport-streamable-http-server",
+    "schemars",
+    "elicitation",
+] }
+```
+
+See `references/feature-flags.md` for the full list and the
+`reqwest` TLS choice (which is easy to get wrong).
+
+## Minimum-you-need-to-know — server
+
+The smallest viable server is a struct with a `tool_router` field, one
+`#[tool]` method in a `#[tool_router]` block, and a `#[tool_handler]
+impl ServerHandler`:
+
+```rust
+use rmcp::{
+    ErrorData as McpError, ServerHandler, ServiceExt,
+    handler::server::router::tool::ToolRouter,
+    model::{CallToolResult, Content},
+    tool, tool_handler, tool_router,
+    transport::stdio,
+};
+
+#[derive(Clone)]
+struct Hello {
+    tool_router: ToolRouter<Hello>,
+}
+
+#[tool_router]
+impl Hello {
+    fn new() -> Self {
+        Self { tool_router: Self::tool_router() }
+    }
+
+    #[tool(description = "Health check.")]
+    async fn ping(&self) -> Result<CallToolResult, McpError> {
+        Ok(CallToolResult::success(vec![Content::text("pong")]))
+    }
+}
+
+#[tool_handler]
+impl ServerHandler for Hello {}
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    Hello::new().serve(stdio()).await?.waiting().await?;
+    Ok(())
+}
+```
+
+The router field name (`tool_router`) is the **macro default**; rename
+it and you'll need to pass the new name to both `#[tool_router]` and
+`#[tool_handler]`. The same applies to `prompt_router` and the
+`processor` field that `#[task_handler]` reads.
+
+When you add prompts, resources, or tasks, all the handler attributes
+**must target the same `impl ServerHandler` block**:
+
+```rust
+#[tool_handler]
+#[prompt_handler]
+#[task_handler]
+impl ServerHandler for Server { /* ... */ }
+```
+
+Splitting them across multiple `impl` blocks is a compile error because
+each macro synthesizes a different subset of `ServerHandler`'s methods.
+The full annotated form is in `crates/mcp-server/src/lib.rs:62-93` —
+read it. The skill's `references/server/getting-started.md` walks
+through the composition step by step.
+
+## Minimum-you-need-to-know — client
+
+The smallest viable client is even shorter — `ClientHandler` has a
+default implementation for `()` and `ClientInfo`, so the stub is one
+line:
+
+```rust
+use rmcp::{ClientHandler, ServiceExt, model::CallToolRequestParams};
+use rmcp::model::{ClientRequest, Request, ServerResult};
+
+#[derive(Default, Clone)]
+struct MyClient;
+impl ClientHandler for MyClient {}
+
+// Connect to any transport — for tests this is `tokio::io::duplex`,
+// for production it's a subprocess or `StreamableHttpClientTransport`.
+let client = MyClient.serve(transport).await?;
+
+let response = client
+    .send_request(ClientRequest::CallToolRequest(Request::new(
+        CallToolRequestParams::new("ping"),
+    )))
+    .await?;
+
+let ServerResult::CallToolResult(result) = response else {
+    panic!("expected CallToolResult, got {response:?}");
+};
+```
+
+The reason this matters: every test in `crates/mcp-server/tests/` uses
+this exact harness pattern (with `tokio::io::duplex` as the transport)
+to drive the server from inside the same process. It's the cheapest way
+to write integration tests for any MCP server. See
+`references/client/testing.md`.
+
+If you need to advertise client capabilities (so the server can ask the
+user to elicit input, or sample the LLM, or list roots), override
+`get_info()`:
+
+```rust
+use rmcp::model::{ClientCapabilities, ClientInfo, Implementation};
+
+impl ClientHandler for MyClient {
+    fn get_info(&self) -> ClientInfo {
+        ClientInfo::new(
+            ClientCapabilities::builder().enable_elicitation().build(),
+            Implementation::from_build_env(),
+        )
+    }
+}
+```
+
+And override the corresponding callback (`create_elicitation`,
+`create_message`, `list_roots`) to respond to those requests. The default
+`create_elicitation` automatically declines, which is what
+`crates/mcp-server/tests/elicitation.rs` relies on.
+
+## Reference files
+
+The reference set is split into shared topics, server features, and
+client features. Read the index at `references/doc-index.md` for a
+one-line summary of every file. Quick map below:
+
+### Shared
+
+| File                          | Read when                                                                                                  |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `references/feature-flags.md` | Picking Cargo features, debugging missing-feature compile errors, choosing the right `reqwest` TLS variant |
+
+### Server features
+
+| File                                   | Read when                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------- |
+| `references/server/getting-started.md` | Composing `Server` with multiple routers; the stacked-handler-macros rule         |
+| `references/server/tools.md`           | Authoring `#[tool]` methods, `Parameters<T>`, `CallToolResult`, `task_support`    |
+| `references/server/prompts.md`         | `#[prompt_router]`, multi-arg prompt examples, `PromptMessageRole`                |
+| `references/server/resources.md`       | Static resources, URI templates, why there's no macro router for resources        |
+| `references/server/tasks.md`           | SEP-1319 task lifecycle, `OperationProcessor`, the `list_tasks` override pattern  |
+| `references/server/sampling.md`        | `ctx.peer.create_message(...)`, multimodal content handling                       |
+| `references/server/elicitation.md`     | `ctx.peer.elicit::<T>(...)`, `elicit_safe!`, the `ElicitationError` variants      |
+| `references/server/roots.md`           | `ctx.peer.list_roots()` for workspace-aware servers                               |
+| `references/server/transports.md`      | stdio and Streamable HTTP wiring, `StreamableHttpService` + `LocalSessionManager` |
+
+### Client features
+
+| File                                   | Read when                                                                                |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `references/client/getting-started.md` | Smallest viable `ClientHandler`, the `ServiceExt::serve` lifecycle                       |
+| `references/client/handler.md`         | Full `ClientHandler` method list, `ClientCapabilities` builder, notification callbacks   |
+| `references/client/requests.md`        | Sending `ClientRequest::*`, pattern-matching `ServerResult::*`, the untagged-enum gotcha |
+| `references/client/sampling.md`        | Overriding `create_message` to satisfy a server's sampling request                       |
+| `references/client/elicitation.md`     | Overriding `create_elicitation`, `ElicitationAction`, form vs URL elicitation            |
+| `references/client/roots.md`           | Overriding `list_roots` to expose workspace/filesystem roots                             |
+| `references/client/transports.md`      | Child-process transport, Streamable HTTP client (reqwest), in-memory duplex              |
+| `references/client/testing.md`         | The `tokio::io::duplex` harness — the standard way to unit-test an MCP server            |
+
+## Going further than this skill
+
+For end-to-end runnable examples beyond what `crates/mcp-server/` covers
+(OAuth servers, completion, structured output, progress notifications,
+subprocess-launching clients, OAuth client-credentials flows), browse
+`submodules/mcp-rust-sdk/examples/`. Each subcrate's `Cargo.toml`
+declares exactly the feature set it needs, which is itself a useful
+reference when you're not sure what to enable.
