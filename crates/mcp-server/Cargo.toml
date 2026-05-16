@@ -1,0 +1,36 @@
+[package]
+name = "mcp-server"
+description = "Generic MCP server skeleton (stdio + streamable HTTP) built on rmcp."
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rmcp = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+schemars = { workspace = true }
+anyhow = { workspace = true }
+axum = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["io-util"] }
+
+[[bin]]
+name = "mcp-server-stdio"
+path = "src/bin/stdio.rs"
+
+[[bin]]
+name = "mcp-server-http"
+path = "src/bin/http.rs"
