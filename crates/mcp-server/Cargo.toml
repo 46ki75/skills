@@ -24,6 +24,9 @@ schemars = { workspace = true }
 anyhow = { workspace = true }
 axum = { workspace = true }
 
+[dev-dependencies]
+tokio = { workspace = true, features = ["io-util"] }
+
 [[bin]]
 name = "mcp-server-stdio"
 path = "src/bin/stdio.rs"

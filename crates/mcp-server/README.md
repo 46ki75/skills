@@ -7,15 +7,16 @@ starting point for project-specific MCP servers.
 The crate ships a [`Server`] type that implements `rmcp::ServerHandler`
 with an example of every MCP primitive — including parameterized variants:
 
-| Primitive                  | Example                     | Notes                                        |
-| -------------------------- | --------------------------- | -------------------------------------------- |
-| Tool                       | `ping`                      | No args, returns `"pong"`                    |
-| Prompt                     | `greeting`                  | No args, canned exchange                     |
-| Prompt (single arg)        | `echo`                      | Typed arg `message: string`                  |
-| Prompt (multiple args)     | `summarize`                 | `topic: string`, `bullet_count: u8`, `tone?` |
-| Resource                   | `mem://example`             | Static in-memory text                        |
-| Resource template          | `echo://{message}`          | One URI variable, echoed back as content     |
-| Resource template (2 args) | `greet://{language}/{name}` | Multi-segment template, returns a greeting   |
+| Primitive                  | Example                     | Notes                                          |
+| -------------------------- | --------------------------- | ---------------------------------------------- |
+| Tool                       | `ping`                      | No args, returns `"pong"`                      |
+| Tool (task-capable)        | `slow_count`                | `target: u8`, supports async task invocation   |
+| Prompt                     | `greeting`                  | No args, canned exchange                       |
+| Prompt (single arg)        | `echo`                      | Typed arg `message: string`                    |
+| Prompt (multiple args)     | `summarize`                 | `topic: string`, `bullet_count: u8`, `tone?`   |
+| Resource                   | `mem://example`             | Static in-memory text                          |
+| Resource template          | `echo://{message}`          | One URI variable, echoed back as content       |
+| Resource template (2 args) | `greet://{language}/{name}` | Multi-segment template, returns a greeting     |
 
 It also ships two binaries:
 
@@ -64,6 +65,29 @@ All extension points live in `src/lib.rs`:
 - **Resources** — edit `list_resources`, `read_resource`, and
   `list_resource_templates` directly on the `ServerHandler` impl. There is
   no macro router for resources in `rmcp`.
+- **Tasks (async tool invocation)** — annotate a tool with
+  `execution(task_support = "optional")` (or `"required"`) and ensure the
+  server struct carries a `processor: Arc<Mutex<OperationProcessor>>` field
+  initialized in `new()`. The `#[task_handler]` attribute on the
+  `ServerHandler` impl synthesizes the `tasks/enqueue`, `tasks/list`,
+  `tasks/get`, `tasks/result`, and `tasks/cancel` handlers.
+
+  Note: SEP-1319 tasks are opt-in *by the client*. Clients that do not set
+  a `task` field on `tools/call` (including the current MCP Inspector) will
+  invoke an `"optional"` task tool synchronously and wait for the full
+  result — so they can hit a request timeout (`-32001`) if the tool is
+  genuinely slow. Either keep the synchronous path short, mark the tool
+  `task_support = "required"`, or test the task path with a task-aware
+  client (see `crates/mcp-server/tests/task.rs` and the `rmcp` task client
+  example).
+
+  Also note: the macro-generated `list_tasks` only surfaces tasks that are
+  *currently running* (`OperationProcessor::list_running`). Short tools
+  vanish from `tasks/list` as soon as they finish. The skeleton overrides
+  `list_tasks` to also include `peek_completed()` results, so finished
+  tasks remain observable as `TaskStatus::Completed` / `Failed`. If you
+  prefer the default behavior, remove the override on the `ServerHandler`
+  impl.
 
 For richer examples (typed prompt arguments, dynamic resources, sampling,
 elicitation, long-running tasks), see the `rmcp` examples under
