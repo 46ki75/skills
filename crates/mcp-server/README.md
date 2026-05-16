@@ -7,13 +7,15 @@ starting point for project-specific MCP servers.
 The crate ships a [`Server`] type that implements `rmcp::ServerHandler`
 with an example of every MCP primitive — including parameterized variants:
 
-| Primitive         | Example                | Notes                            |
-| ----------------- | ---------------------- | -------------------------------- |
-| Tool              | `ping`                 | No args, returns `"pong"`        |
-| Prompt            | `greeting`             | No args, canned exchange         |
-| Prompt (typed)    | `echo`                 | Typed arg `message: string`      |
-| Resource          | `mem://example`        | Static in-memory text            |
-| Resource template | `echo://{message}`     | URI param echoed back as content |
+| Primitive                  | Example                     | Notes                                        |
+| -------------------------- | --------------------------- | -------------------------------------------- |
+| Tool                       | `ping`                      | No args, returns `"pong"`                    |
+| Prompt                     | `greeting`                  | No args, canned exchange                     |
+| Prompt (single arg)        | `echo`                      | Typed arg `message: string`                  |
+| Prompt (multiple args)     | `summarize`                 | `topic: string`, `bullet_count: u8`, `tone?` |
+| Resource                   | `mem://example`             | Static in-memory text                        |
+| Resource template          | `echo://{message}`          | One URI variable, echoed back as content     |
+| Resource template (2 args) | `greet://{language}/{name}` | Multi-segment template, returns a greeting   |
 
 It also ships two binaries:
 
