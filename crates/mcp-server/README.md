@@ -4,14 +4,16 @@ Generic [Model Context Protocol](https://modelcontextprotocol.io/) server
 skeleton built on [`rmcp`](https://crates.io/crates/rmcp). Use it as a
 starting point for project-specific MCP servers.
 
-The crate ships a [`Server`] type that implements `rmcp::ServerHandler` with
-one example of each MCP primitive:
+The crate ships a [`Server`] type that implements `rmcp::ServerHandler`
+with an example of every MCP primitive — including parameterized variants:
 
-| Primitive | Example                                  |
-| --------- | ---------------------------------------- |
-| Tool      | `ping` — returns `"pong"`                |
-| Prompt    | `greeting` — canned no-argument exchange |
-| Resource  | `mem://example` — in-memory text blob    |
+| Primitive         | Example                | Notes                            |
+| ----------------- | ---------------------- | -------------------------------- |
+| Tool              | `ping`                 | No args, returns `"pong"`        |
+| Prompt            | `greeting`             | No args, canned exchange         |
+| Prompt (typed)    | `echo`                 | Typed arg `message: string`      |
+| Resource          | `mem://example`        | Static in-memory text            |
+| Resource template | `echo://{message}`     | URI param echoed back as content |
 
 It also ships two binaries:
 
