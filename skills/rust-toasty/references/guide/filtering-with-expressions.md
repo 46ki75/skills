@@ -596,3 +596,5 @@ let users = User::filter(
 user with no todos matches `todos().all(...)` for any filter. This
 mirrors Rust's `[].iter().all(...)` semantics.
 
+See also: tested code at `crates/toasty-app/tests/filtering.rs`.
+

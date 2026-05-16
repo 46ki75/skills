@@ -278,3 +278,5 @@ for user in &users {
 | `model.relation.get()` | Access preloaded BelongsTo data (returns `&T`) |
 | `model.relation.get()` | Access preloaded HasOne data (returns `&T` or `&Option<T>`) |
 | `model.relation.is_unloaded()` | Check if a relation was preloaded |
+
+See also: tested code at `crates/toasty-app/tests/preloading.rs`.

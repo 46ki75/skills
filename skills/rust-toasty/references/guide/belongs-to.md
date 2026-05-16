@@ -300,3 +300,5 @@ For a `Post` model with `#[belongs_to] user: BelongsTo<User>`, Toasty generates:
 | `toasty::create!(Post { user: &user })` | Create builder | Sets the foreign key from a parent reference |
 | `toasty::create!(Post { user_id: id })` | Create builder | Sets the foreign key directly |
 | `Post::fields().user()` | Field path | Used with `.include()` for preloading |
+
+See also: tested code at `crates/toasty-app/tests/relationships.rs`.

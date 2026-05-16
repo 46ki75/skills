@@ -1,0 +1,31 @@
+[package]
+name = "toasty-app"
+description = "Generic Toasty ORM skeleton (SQLite by default) with one tested example per primitive."
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[features]
+default = ["sqlite"]
+sqlite = ["toasty/sqlite"]
+postgresql = ["toasty/postgresql"]
+mysql = ["toasty/mysql"]
+
+[dependencies]
+toasty = { workspace = true }
+tokio = { workspace = true }
+uuid = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+
+[[bin]]
+name = "toasty-app-demo"
+path = "src/bin/demo.rs"
