@@ -13,9 +13,9 @@ so a single pass over `skills/` surfaces every problem at once.
 - `description` does not contain XML/HTML tags such as `<example>` or
   `</commentary>` (upload-platform rule).
 - `metadata.author` is present and non-empty (repo rule; optional in the spec).
-- `metadata.version` is present and shaped like `MAJOR.MINOR` or
-  `MAJOR.MINOR.PATCH` with digits only and no leading zeros (e.g. `01.0`,
-  `1.02` are rejected; repo rule; optional in the spec).
+- `metadata.version` is present and shaped like `MAJOR.MINOR.PATCH` with
+  digits only and no leading zeros (e.g. `1.0` and `01.0.0` are rejected;
+  repo rule; optional in the spec).
 
 ## API
 
