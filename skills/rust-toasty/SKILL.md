@@ -19,7 +19,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.1"
+  version: "1.1.0"
 ---
 
 # Toasty (Rust ORM) Skill
