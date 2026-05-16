@@ -11,16 +11,50 @@ use std::time::Duration;
 
 use mcp_server::Server;
 use rmcp::{
-    ClientHandler, ServiceExt,
+    ClientHandler, RoleClient, ServiceExt,
     model::{
         CallToolRequestParams, ClientRequest, ListTasksRequest, Request, ServerResult, TaskStatus,
     },
+    service::RunningService,
 };
 
 #[derive(Default, Clone)]
 struct TestClient;
 
 impl ClientHandler for TestClient {}
+
+/// Poll `tasks/list` until the given task reaches `target` status, or fail
+/// after `within` elapses. Replaces fixed `tokio::time::sleep` waits to keep
+/// the tests robust on slow CI runners.
+async fn wait_for_task_status(
+    client: &RunningService<RoleClient, TestClient>,
+    task_id: &str,
+    target: TaskStatus,
+    within: Duration,
+) -> anyhow::Result<()> {
+    tokio::time::timeout(within, async {
+        loop {
+            let tasks = client
+                .send_request(ClientRequest::ListTasksRequest(ListTasksRequest::default()))
+                .await?;
+            let ServerResult::ListTasksResult(listed) = tasks else {
+                anyhow::bail!("expected ListTasksResult, got {tasks:?}");
+            };
+            if listed
+                .tasks
+                .iter()
+                .any(|t| t.task_id == task_id && t.status == target)
+            {
+                return anyhow::Ok(());
+            }
+            tokio::time::sleep(Duration::from_millis(20)).await;
+        }
+    })
+    .await
+    .map_err(|_| {
+        anyhow::anyhow!("task {task_id} did not reach {target:?} within {within:?}")
+    })?
+}
 
 #[tokio::test]
 async fn slow_count_can_be_invoked_as_a_task() -> anyhow::Result<()> {
@@ -69,8 +103,6 @@ async fn slow_count_can_be_invoked_as_a_task() -> anyhow::Result<()> {
         "expected the newly created task to appear in the task list",
     );
 
-    // Give the task a short moment to start running, then cancel and clean up.
-    tokio::time::sleep(Duration::from_millis(50)).await;
     client_service.cancel().await?;
     let _ = server_handle.await;
     Ok(())
@@ -105,24 +137,17 @@ async fn list_tasks_surfaces_completed_tasks() -> anyhow::Result<()> {
     };
     let task_id = info.task.task_id;
 
-    // Wait for the task to finish.
-    tokio::time::sleep(Duration::from_millis(400)).await;
-
     // The default macro-generated `list_tasks` would return an empty list
-    // here. Our override merges completed tasks, so the task should be
-    // visible with TaskStatus::Completed.
-    let tasks = client_service
-        .send_request(ClientRequest::ListTasksRequest(ListTasksRequest::default()))
-        .await?;
-    let ServerResult::ListTasksResult(listed) = tasks else {
-        panic!("expected ListTasksResult, got {tasks:?}");
-    };
-    let entry = listed
-        .tasks
-        .iter()
-        .find(|t| t.task_id == task_id)
-        .expect("completed task should appear in tasks/list");
-    assert_eq!(entry.status, TaskStatus::Completed);
+    // once the task finishes; our override merges completed tasks. Poll
+    // until the task surfaces as `Completed` (bounded by a generous timeout
+    // so the test fails fast on regressions rather than flaking on slow CI).
+    wait_for_task_status(
+        &client_service,
+        &task_id,
+        TaskStatus::Completed,
+        Duration::from_secs(5),
+    )
+    .await?;
 
     client_service.cancel().await?;
     let _ = server_handle.await;

@@ -46,6 +46,12 @@ pub fn read_resource(
     }
 
     if let Some(message) = request.uri.strip_prefix(ECHO_RESOURCE_SCHEME) {
+        if message.is_empty() {
+            return Err(McpError::invalid_params(
+                "echo:// requires a non-empty message segment",
+                Some(json!({ "uri": request.uri })),
+            ));
+        }
         return Ok(ReadResourceResult::new(vec![ResourceContents::text(
             message,
             request.uri.clone(),

@@ -27,10 +27,18 @@ pub async fn list_tasks(server: &Server) -> Result<ListTasksResult, McpError> {
         .collect();
 
     for result in processor.peek_completed() {
-        let status = if result.result.is_ok() {
-            TaskStatus::Completed
-        } else {
-            TaskStatus::Failed
+        // `OperationProcessor::cancel_task` records cancellations as
+        // `Err(TaskError("Operation cancelled"))` and timeouts as
+        // `Err(TaskError("Operation timed out"))`. `TaskResult` exposes no
+        // structured discriminator in rmcp 1.7, so we string-match on the
+        // rendered error to distinguish cancellation from other failures.
+        // Timeouts intentionally fall through to `Failed`.
+        let status = match &result.result {
+            Ok(_) => TaskStatus::Completed,
+            Err(e) if e.to_string().to_lowercase().contains("cancelled") => {
+                TaskStatus::Cancelled
+            }
+            Err(_) => TaskStatus::Failed,
         };
         tasks.push(Task::new(
             result.descriptor.operation_id.clone(),
