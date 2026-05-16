@@ -11,7 +11,7 @@ env:
   NODE_VERSION: "24.x"
 
 jobs:
-  notionrs:
+  markdown-lint:
     name: Markdown Lint
     runs-on: ubuntu-latest
     steps:
