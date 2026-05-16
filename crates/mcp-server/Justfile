@@ -1,0 +1,2 @@
+inspect:
+	pnpx @modelcontextprotocol/inspector cargo run --bin mcp-server-stdio
