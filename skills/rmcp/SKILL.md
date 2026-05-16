@@ -2,29 +2,21 @@
 name: rmcp
 description: >
   Expert guidance for the `rmcp` crate — the official Rust SDK for the
-  Model Context Protocol from `modelcontextprotocol/rust-sdk` (pinned at
-  `submodules/mcp-rust-sdk/`). Covers crate-side details: Cargo feature
-  flags (`server`, `client`, `macros`, `elicitation`, transport-*, TLS
-  variants), the `ServerHandler` / `ClientHandler` traits, the
-  `#[tool_router]` / `#[prompt_router]` / `#[tool_handler]` /
-  `#[prompt_handler]` / `#[task_handler]` macros, `Parameters<T>`,
-  `RequestContext<RoleServer>` / `RequestContext<RoleClient>`,
-  `ServiceExt::serve`, `RunningService<RoleClient, _>`, `OperationProcessor`
-  and SEP-1319 tasks, server-to-client requests (sampling, elicitation,
-  roots), the `rmcp::elicit_safe!` macro, `ElicitationError` variants,
-  the stdio and Streamable HTTP transports (`StreamableHttpService` +
-  `LocalSessionManager`), and the in-memory `tokio::io::duplex` test
-  harness pattern. Use whenever someone is writing, reviewing, debugging,
-  or extending Rust code that imports `rmcp`. Always invoke this skill for
-  any question mentioning `rmcp`, the `rmcp` crate, `ServerHandler`,
-  `ClientHandler`, `#[tool_router]`, `#[prompt_router]`, `#[tool_handler]`,
-  `#[prompt_handler]`, `#[task_handler]`, `rmcp::elicit_safe!`,
-  `ElicitationError`, `OperationProcessor`, `StreamableHttpService`,
-  `RoleServer`, `RoleClient`, `ServiceExt`, code under
-  `submodules/mcp-rust-sdk/`, the local example crate `crates/mcp-server/`,
-  or any Rust code that imports `rmcp`. For protocol-level questions that
-  aren't Rust-specific (the JSON-RPC wire format, MCP spec versions,
-  capability semantics) prefer the `mcp-knowledge` skill instead.
+  Model Context Protocol, pinned at `submodules/mcp-rust-sdk/`. Covers
+  Cargo features (`server`, `client`, `macros`, `elicitation`,
+  transport-* and TLS variants), the `ServerHandler` and `ClientHandler`
+  traits, the `#[tool_router]`, `#[prompt_router]`, `#[tool_handler]`,
+  `#[prompt_handler]`, and `#[task_handler]` macros, `Parameters`,
+  `RequestContext`, `ServiceExt::serve`, `RunningService`,
+  `OperationProcessor` and SEP-1319 tasks, server-to-client requests
+  (sampling, elicitation, roots), `rmcp::elicit_safe!`,
+  `ElicitationError`, the stdio and Streamable HTTP transports
+  (`StreamableHttpService`, `LocalSessionManager`), and the
+  `tokio::io::duplex` test harness. Always invoke for any question
+  mentioning `rmcp`, the listed traits or macros, `RoleServer`,
+  `RoleClient`, code under `submodules/mcp-rust-sdk/`, the example crate
+  `crates/mcp-server/`, or Rust code that imports `rmcp`. For
+  protocol-level questions, prefer the `mcp-knowledge` skill.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
