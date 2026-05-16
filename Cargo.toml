@@ -4,7 +4,7 @@ members = [
     "crates/skill_parser",
     "crates/skill_validator",
     "crates/skill_archiver",
-    "crates/skill_uploader",
+    "crates/skill_cli",
     "crates/mcp-server",
 ]
 
@@ -53,6 +53,7 @@ rmcp = { version = "1.7", features = [
     "transport-io",
     "transport-streamable-http-server",
     "schemars",
+    "elicitation",
 ] }
 axum = "0.8"
 tokio-util = "0.7"

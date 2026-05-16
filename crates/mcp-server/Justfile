@@ -1,0 +1,30 @@
+# Convenience recipes for the mcp-server crate.
+#
+# Run from this directory (`crates/mcp-server`) — `just` walks up to find
+# the Justfile, but the cargo invocations below use `--manifest-path` so
+# they also work from the workspace root.
+
+default:
+	just --list
+
+# Run the stdio server. Useful for IDE/MCP-client integration.
+run-stdio:
+	cargo run --bin mcp-server-stdio
+
+# Run the streamable HTTP server (binds 127.0.0.1:8000/mcp by default;
+# override with `MCP_BIND_ADDRESS=...`).
+run-http:
+	cargo run --bin mcp-server-http
+
+# Run all integration tests for this crate.
+test:
+	cargo test -p mcp-server
+
+# Inspect the stdio server with MCP Inspector.
+inspect:
+	pnpx @modelcontextprotocol/inspector cargo run --bin mcp-server-stdio
+
+# Inspect the HTTP server with MCP Inspector. Start `just run-http` in
+# another terminal first, then run this recipe.
+inspect-http:
+	pnpx @modelcontextprotocol/inspector --transport http http://127.0.0.1:8000/mcp

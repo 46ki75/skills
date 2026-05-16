@@ -18,7 +18,7 @@ inside `tokio::task::spawn_blocking`.
   writes one ZIP and returns metadata about it. Returns `MissingVersion` if
   `metadata.version` is absent; run `skill_validator::validate` first.
 - `BuiltArtifact { name, version, tag, file_name, zip_path }` — `tag` is
-  always `"{name}-v{version}"` and matches what `skill_uploader` looks for on
+  always `"{name}-v{version}"` and matches what `skill_cli` looks for on
   GitHub.
 
 ## Example

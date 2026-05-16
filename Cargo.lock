@@ -1695,6 +1695,7 @@ dependencies = [
  "tokio-util",
  "tower-service",
  "tracing",
+ "url",
  "uuid",
 ]
 
@@ -2054,18 +2055,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "skill_parser"
-version = "0.1.0"
-dependencies = [
- "gray_matter",
- "serde",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "skill_uploader"
+name = "skill_cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -2079,6 +2069,17 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "walkdir",
+]
+
+[[package]]
+name = "skill_parser"
+version = "0.1.0"
+dependencies = [
+ "gray_matter",
+ "serde",
+ "thiserror",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

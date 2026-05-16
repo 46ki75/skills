@@ -20,7 +20,7 @@ issues/PRs aren't actively triaged.
    `SKILL.md` frontmatter.
 2. Push (or merge a PR) to `main`.
 
-`.github/workflows/release.yml` runs `skill_uploader upload`, which validates
+`.github/workflows/release.yml` runs `skill_cli upload`, which validates
 every skill, builds `<name>-v<version>.zip` into `dist/`, then for each
 artifact:
 
@@ -43,14 +43,14 @@ A `<name>-v<version>` release is immutable once published — bump
 
 ```bash
 # Validate every skill without writing files
-cargo run -p skill_uploader -- check
+cargo run -p skill_cli -- check
 
 # Build ZIPs into ./dist (does not upload)
-cargo run -p skill_uploader -- build
+cargo run -p skill_cli -- build
 
 # Dry-run upload (calls GitHub list API, logs planned actions)
 GITHUB_TOKEN=ghp_... \
-  cargo run -p skill_uploader -- upload --repo 46ki75/skills --dry-run
+  cargo run -p skill_cli -- upload --repo 46ki75/skills --dry-run
 
 # Markdown lint
 pnpm run lint
