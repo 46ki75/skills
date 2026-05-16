@@ -4,7 +4,7 @@ members = [
     "crates/skill_parser",
     "crates/skill_validator",
     "crates/skill_archiver",
-    "crates/skill_uploader",
+    "crates/skill_cli",
     "crates/mcp-server",
 ]
 

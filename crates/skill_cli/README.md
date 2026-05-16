@@ -1,4 +1,4 @@
-# skill_uploader
+# skill_cli
 
 CLI orchestrator that validates, archives, and publishes the skills under
 `skills/`. Built on top of `skill_parser`, `skill_validator`, and
@@ -42,12 +42,12 @@ CLI orchestrator that validates, archives, and publishes the skills under
 
 ```bash
 # CI uses this in .github/workflows/release.yml
-cargo run --release -p skill_uploader -- upload
+cargo run --release -p skill_cli -- upload
 
 # Local validation
-cargo run -p skill_uploader -- check
+cargo run -p skill_cli -- check
 
 # Local build + dry-run upload against a specific repo
 GITHUB_TOKEN=ghp_... \
-  cargo run -p skill_uploader -- upload --repo 46ki75/skills --dry-run
+  cargo run -p skill_cli -- upload --repo 46ki75/skills --dry-run
 ```

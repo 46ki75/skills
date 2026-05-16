@@ -55,4 +55,4 @@ jobs:
       - name: Check skills
         env:
           RUST_LOG: info
-        run: cargo run --release -p skill_uploader -- check
+        run: cargo run --release -p skill_cli -- check

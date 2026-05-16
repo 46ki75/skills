@@ -1,5 +1,5 @@
 [package]
-name = "skill_uploader"
+name = "skill_cli"
 description = "CLI that validates, archives, and publishes Agent Skills to GitHub Releases."
 readme = "README.md"
 version.workspace = true
