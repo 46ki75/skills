@@ -36,3 +36,23 @@ jobs:
 
       - name: Run Markdown Lint
         run: pnpm run lint
+
+  check:
+    name: Check Skills
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check skills
+        env:
+          RUST_LOG: info
+        run: cargo run --release -p skill_uploader -- check
