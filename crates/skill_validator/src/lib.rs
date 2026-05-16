@@ -266,23 +266,11 @@ mod tests {
 
     #[test]
     fn version_with_leading_zero_rejected() {
-        let s = make(
-            "markdown",
-            "markdown",
-            "lint md",
-            Some("X"),
-            Some("01.0.0"),
-        );
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("01.0.0"));
         let r = validate(&s);
         assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
 
-        let s = make(
-            "markdown",
-            "markdown",
-            "lint md",
-            Some("X"),
-            Some("1.02.0"),
-        );
+        let s = make("markdown", "markdown", "lint md", Some("X"), Some("1.02.0"));
         let r = validate(&s);
         assert!(matches!(r.errors[0], ValidationError::InvalidVersion(_)));
 
