@@ -12,8 +12,7 @@ use crate::Server;
 
 const EXAMPLE_RESOURCE_URI: &str = "mem://example";
 const EXAMPLE_RESOURCE_NAME: &str = "example";
-const EXAMPLE_RESOURCE_BODY: &str =
-    "Example in-memory resource served by the mcp-server skeleton.";
+const EXAMPLE_RESOURCE_BODY: &str = "Example in-memory resource served by the mcp-server skeleton.";
 
 const ECHO_RESOURCE_SCHEME: &str = "echo://";
 const ECHO_RESOURCE_TEMPLATE: &str = "echo://{message}";

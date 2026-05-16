@@ -117,8 +117,7 @@ async fn call_slow_count_synchronously_returns_the_target() -> anyhow::Result<()
         panic!("expected CallToolResult, got {response:?}");
     };
     assert!(!result.is_error.unwrap_or(false));
-    let text =
-        first_text(&result.content).expect("slow_count should return a text content block");
+    let text = first_text(&result.content).expect("slow_count should return a text content block");
     assert_eq!(text, "1");
 
     client_service.cancel().await?;

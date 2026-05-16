@@ -52,9 +52,7 @@ async fn wait_for_task_status(
         }
     })
     .await
-    .map_err(|_| {
-        anyhow::anyhow!("task {task_id} did not reach {target:?} within {within:?}")
-    })?
+    .map_err(|_| anyhow::anyhow!("task {task_id} did not reach {target:?} within {within:?}"))?
 }
 
 #[tokio::test]

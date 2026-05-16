@@ -43,9 +43,7 @@ pub async fn list_tasks(server: &Server) -> Result<ListTasksResult, McpError> {
         // Timeouts intentionally fall through to `Failed`.
         let status = match &result.result {
             Ok(_) => TaskStatus::Completed,
-            Err(e) if e.to_string().to_lowercase().contains("cancelled") => {
-                TaskStatus::Cancelled
-            }
+            Err(e) if e.to_string().to_lowercase().contains("cancelled") => TaskStatus::Cancelled,
             Err(_) => TaskStatus::Failed,
         };
         tasks.push(Task::new(

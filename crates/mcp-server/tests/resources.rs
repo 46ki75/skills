@@ -11,8 +11,8 @@ use mcp_server::Server;
 use rmcp::{
     ClientHandler, ServiceExt,
     model::{
-        ClientRequest, ListResourcesRequest, ReadResourceRequestParams, Request,
-        ResourceContents, ServerResult,
+        ClientRequest, ListResourcesRequest, ReadResourceRequestParams, Request, ResourceContents,
+        ServerResult,
     },
 };
 

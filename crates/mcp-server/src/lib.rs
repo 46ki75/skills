@@ -18,7 +18,8 @@ use rmcp::{
     model::*,
     prompt_handler,
     service::RequestContext,
-    task_handler, task_manager::OperationProcessor,
+    task_handler,
+    task_manager::OperationProcessor,
     tool_handler,
 };
 use tokio::sync::Mutex;

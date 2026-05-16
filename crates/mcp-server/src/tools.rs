@@ -95,9 +95,7 @@ impl Server {
                 .with_temperature(0.7),
             )
             .await
-            .map_err(|e| {
-                McpError::internal_error(format!("sampling request failed: {e}"), None)
-            })?;
+            .map_err(|e| McpError::internal_error(format!("sampling request failed: {e}"), None))?;
 
         let text = match response.message.content.iter().find_map(|c| c.as_text()) {
             Some(t) => t.text.clone(),
@@ -142,18 +140,22 @@ impl Server {
             Ok(None) => Ok(CallToolResult::success(vec![Content::text(
                 "Greeting skipped — no name was provided.",
             )])),
-            Err(ElicitationError::UserDeclined) => Ok(CallToolResult::success(vec![
-                Content::text("Greeting skipped — the user declined to share their name."),
-            ])),
-            Err(ElicitationError::UserCancelled) => Ok(CallToolResult::success(vec![
-                Content::text("Greeting cancelled — the user dismissed the prompt."),
-            ])),
-            Err(ElicitationError::CapabilityNotSupported) => Ok(CallToolResult::success(vec![
-                Content::text(
+            Err(ElicitationError::UserDeclined) => {
+                Ok(CallToolResult::success(vec![Content::text(
+                    "Greeting skipped — the user declined to share their name.",
+                )]))
+            }
+            Err(ElicitationError::UserCancelled) => {
+                Ok(CallToolResult::success(vec![Content::text(
+                    "Greeting cancelled — the user dismissed the prompt.",
+                )]))
+            }
+            Err(ElicitationError::CapabilityNotSupported) => {
+                Ok(CallToolResult::success(vec![Content::text(
                     "This client does not support elicitation, so the user could not be \
                      prompted for a name.",
-                ),
-            ])),
+                )]))
+            }
             Err(e) => Err(McpError::internal_error(
                 format!("elicitation failed: {e}"),
                 None,

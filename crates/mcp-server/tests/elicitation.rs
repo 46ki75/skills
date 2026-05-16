@@ -60,8 +60,8 @@ async fn declined_elicitation_returns_a_graceful_success() -> anyhow::Result<()>
          not is_error=true. Content: {:?}",
         result.content,
     );
-    let text = first_text(&result.content)
-        .expect("decline should be surfaced as a text content block");
+    let text =
+        first_text(&result.content).expect("decline should be surfaced as a text content block");
     assert!(
         text.contains("declined"),
         "expected the success message to mention 'declined', got: {text}",
