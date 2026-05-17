@@ -1,18 +1,19 @@
 ---
 name: mcp-knowledge
 description: >
-  Expert guidance for the Model Context Protocol (MCP) — a JSON-RPC 2.0 protocol
-  standardizing how LLM applications integrate with external data sources and tools.
-  Covers spec versions 2024-11-05 through 2025-11-25, architecture (host/client/server),
-  transports (stdio, HTTP+SSE, Streamable HTTP), server features (Resources, Prompts,
-  Tools), client features (Sampling, Roots, Elicitation), lifecycle, OAuth 2.1
-  authorization, and utilities (Logging, Pagination, Cancellation, Ping, Progress,
-  Tasks). Use when building or integrating MCP servers or clients; implementing tools,
-  resources, or prompts; working with transports or authorization; handling lifecycle
-  and capability negotiation; or implementing sampling, elicitation, or Tasks. Always
-  invoke for questions mentioning MCP, modelcontextprotocol, tools/list, tools/call,
-  resources/read, sampling/createMessage, elicitation/create, Streamable HTTP,
-  Mcp-Session-Id, or JSON-RPC in AI tool integration context.
+  Expert guidance for the Model Context Protocol (MCP), a JSON-RPC 2.0
+  protocol connecting LLM apps to external tools and data. Covers spec
+  versions 2024-11-05 through 2025-11-25: architecture, transports (stdio,
+  HTTP+SSE, Streamable HTTP), Resources, Prompts, Tools, Sampling, Roots,
+  Elicitation, Tasks, lifecycle, OAuth 2.1, and utilities (Logging,
+  Pagination, Cancellation, Ping, Progress). Also documents quirks of the
+  official TypeScript MCP SDK (`@modelcontextprotocol/sdk`), including the
+  `pkce-challenge` Vite/bundler resolver failure in browser builds. Use when
+  building MCP servers or clients, working with transports or OAuth, or
+  debugging TypeScript MCP SDK bundler errors. Always invoke for questions
+  mentioning MCP, modelcontextprotocol, tools/list, tools/call,
+  sampling/createMessage, elicitation/create, Streamable HTTP, Mcp-Session-Id,
+  or build errors involving `pkce-challenge` or `@modelcontextprotocol/sdk`.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
@@ -184,3 +185,17 @@ the official MDX source at `submodules/modelcontextprotocol/docs/specification/`
 | Progress notifications                     | `references/{version}/progress.md`                      |
 | Tasks (durable async)                      | `references/2025-11-25/tasks.md`                        |
 | Migrating between versions                 | `references/{target-version}/changelog.md`              |
+| TypeScript SDK build/bundler errors        | `references/typescript-sdk-quirks/pkce-challenge.md`    |
+
+## TypeScript SDK Implementation Notes
+
+Beyond the spec itself, the official **TypeScript** MCP SDK
+(`@modelcontextprotocol/sdk` npm package) has real-world integration quirks
+that aren't documented in the spec but are reliably encountered in production
+builds. These are TypeScript-SDK-specific — they do not apply to the Python,
+Rust, or other-language MCP SDKs. Each is captured as a focused reference
+file:
+
+| Quirk                                                                         | Read                                                 |
+| :---------------------------------------------------------------------------- | :--------------------------------------------------- |
+| Vite/Rollup/Webpack resolver error for `pkce-challenge` in browser/SSR builds | `references/typescript-sdk-quirks/pkce-challenge.md` |
