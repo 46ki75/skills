@@ -10,7 +10,7 @@ This file documents the surprising ones, why they fire, and what to do.
 Booleans built from a `QRL<...>` operand are rejected when captured into a
 child `$()` closure. The error message is misleading:
 
-```
+```text
 When referencing "hasPicker" inside a different scope ($), Qwik needs to
 serialize the value, however it is Symbol, which is not serializable.
 ```

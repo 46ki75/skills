@@ -480,16 +480,16 @@ its modal):
 2. Passes it down as a prop to the child.
 3. Child watches via `useTask$`:
 
-```tsx
-useTask$(async ({ track }) => {
-  if (!trigger) return; // optional prop guard
-  const payload = track(() => trigger.value);
-  if (payload === null) return;
-  trigger.value = null; // reset BEFORE the work so a re-trigger on the
-                        // same value still fires (track only sees changes)
-  await doTheThing(payload);
-});
-```
+   ```tsx
+   useTask$(async ({ track }) => {
+     if (!trigger) return; // optional prop guard
+     const payload = track(() => trigger.value);
+     if (payload === null) return;
+     trigger.value = null; // reset BEFORE the work so a re-trigger on the
+                           // same value still fires (track only sees changes)
+     await doTheThing(payload);
+   });
+   ```
 
 4. Parent invokes by writing: `trigger.value = somePayload;`
 
@@ -553,7 +553,7 @@ prevent-default, inlined per-signal gates for lexical-scope), and when an
 
 ### Cookbook recipes (read for specific "how do I" patterns)
 
-When the user asks _how to implement_ a specific common pattern, read the
+When the user asks *how to implement* a specific common pattern, read the
 matching file from `references/cookbook/`:
 
 | Pattern                      | File                                     |
