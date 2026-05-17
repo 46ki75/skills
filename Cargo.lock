@@ -2876,11 +2876,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ee5873ec9cce0195efcb7a4e9507a04cd49aec9c83d0389df45b1ef7ba2e649"
 
 [[package]]
-name = "skill_archiver"
+name = "skill-archiver"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "skill_parser",
+ "skill-parser",
  "thiserror",
  "tokio",
  "tracing",
@@ -2889,15 +2889,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "skill_cli"
+name = "skill-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
  "octocrab",
- "skill_archiver",
- "skill_parser",
- "skill_validator",
+ "skill-archiver",
+ "skill-parser",
+ "skill-validator",
  "thiserror",
  "tokio",
  "tracing",
@@ -2906,7 +2906,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "skill_parser"
+name = "skill-parser"
 version = "0.1.0"
 dependencies = [
  "gray_matter",
@@ -2917,10 +2917,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "skill_validator"
+name = "skill-validator"
 version = "0.1.0"
 dependencies = [
- "skill_parser",
+ "skill-parser",
  "thiserror",
  "tracing",
 ]

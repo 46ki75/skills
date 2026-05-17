@@ -1,6 +1,6 @@
 [package]
-name = "skill_parser"
-description = "Parses Agent Skill SKILL.md frontmatter and body."
+name = "skill-archiver"
+description = "Packages a validated Agent Skill into a ZIP archive."
 readme = "README.md"
 version.workspace = true
 edition.workspace = true
@@ -13,8 +13,12 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
-serde = { workspace = true }
-thiserror = { workspace = true }
-gray_matter = { workspace = true }
+skill-parser = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
+thiserror = { workspace = true }
+zip = { workspace = true }
+walkdir = { workspace = true }
+
+[dev-dependencies]
+anyhow = { workspace = true }

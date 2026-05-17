@@ -1,11 +1,11 @@
-# skill_parser
+# skill-parser
 
 Parses an Agent Skill's `SKILL.md` file: splits the YAML frontmatter from the
 markdown body using [`gray_matter`](https://crates.io/crates/gray_matter) and
 deserializes the frontmatter into typed Rust structs.
 
 This crate only parses. Rule enforcement (kebab-case names, mandatory
-`metadata.author`/`metadata.version`, etc.) lives in `skill_validator`.
+`metadata.author`/`metadata.version`, etc.) lives in `skill-validator`.
 
 ## API
 
@@ -15,7 +15,7 @@ This crate only parses. Rule enforcement (kebab-case names, mandatory
   [Agent Skills spec](https://agentskills.io/specification.md) plus the
   repo-local `metadata` block.
 - `Metadata { author, version }` — both `Option<String>`; required-ness is
-  enforced by `skill_validator`, not here.
+  enforced by `skill-validator`, not here.
 - `ParsedSkill { dir_name, dir_path, frontmatter, body }`.
 - `ParseError` — `MissingSkillMd`, `NoFrontmatter`, `InvalidFrontmatter`,
   `InvalidDirName`, `Io`.

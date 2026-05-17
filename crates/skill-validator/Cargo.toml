@@ -1,5 +1,5 @@
 [package]
-name = "skill_validator"
+name = "skill-validator"
 description = "Validates an Agent Skill against the spec and repo-local rules."
 readme = "README.md"
 version.workspace = true
@@ -13,6 +13,6 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
-skill_parser = { workspace = true }
+skill-parser = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }

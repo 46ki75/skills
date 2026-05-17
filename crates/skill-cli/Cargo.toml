@@ -1,5 +1,5 @@
 [package]
-name = "skill_cli"
+name = "skill-cli"
 description = "CLI that validates, archives, and publishes Agent Skills to GitHub Releases."
 readme = "README.md"
 version.workspace = true
@@ -13,9 +13,9 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
-skill_parser = { workspace = true }
-skill_validator = { workspace = true }
-skill_archiver = { workspace = true }
+skill-parser = { workspace = true }
+skill-validator = { workspace = true }
+skill-archiver = { workspace = true }
 
 tokio = { workspace = true }
 tracing = { workspace = true }
