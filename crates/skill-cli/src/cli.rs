@@ -8,7 +8,7 @@ use crate::pipeline::{self, BuildOutcome};
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "skill_cli",
+    name = "skill-cli",
     about = "Validate, archive, and publish Agent Skills"
 )]
 pub struct Cli {

@@ -1,6 +1,6 @@
-# skill_validator
+# skill-validator
 
-Validates a `ParsedSkill` (from `skill_parser`) against the Agent Skills spec
+Validates a `ParsedSkill` (from `skill-parser`) against the Agent Skills spec
 plus this repository's house rules. Errors are collected, not short-circuited,
 so a single pass over `skills/` surfaces every problem at once.
 

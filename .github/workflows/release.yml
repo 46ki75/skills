@@ -33,4 +33,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           RUST_LOG: info
-        run: cargo run --release -p skill_cli -- upload
+        run: cargo run --release -p skill-cli -- upload
