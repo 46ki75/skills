@@ -1,59 +1,136 @@
-<!-- markdownlint-disable -->
-# Summary of Custom Catalog negotiation changes in A2UI v0.8
+# A2UI v0.8 — Custom Catalog Negotiation
 
-This document summarizes the changes made to the A2UI protocol in v0.8 to support a more flexible and powerful custom catalog negotiation mechanism. It is intended as a guide for developers implementing these changes in agent or renderer libraries.
+v0.8 introduced a per-request capability handshake that replaces the older
+one-shot `clientUiCapabilities` message. Use this reference whenever you are
+implementing the agent or renderer side of catalog negotiation, building a
+custom catalog, or supporting `inlineCatalogs` for local development.
 
-The previous mechanism, which involved a single, one-time `clientUiCapabilities` message, has been deprecated. The new approach allows for a more dynamic, per-request declaration of capabilities, enabling a single client to support multiple catalogs and allowing the agent to choose the most appropriate one for each UI surface.
+## Why the change
 
-## Key changes to the protocol
+The earlier `clientUiCapabilities` message was a single, one-time declaration.
+The v0.8 mechanism:
 
-1.  **Agent capability advertisement (`supportedCatalogIds`, `acceptsInlineCatalogs`)**: The agent's role in negotiation has been expanded. It now can declare a list of supported catalog IDs, in addition to whether it is capable of processing catalogs defined "inline" by the client.
-    - **Relevant Doc**: [`a2ui_extension_specification.md`](./a2ui_extension_specification.md)
+- runs **on every request**, so capabilities can vary per call,
+- lets a single client advertise **multiple** pre-compiled catalogs,
+- allows the agent to pick the **right catalog per surface**,
+- supports `inlineCatalogs` so a client can ship a fresh catalog definition
+  at runtime (useful in local dev where you don't want to bake the catalog
+  into the agent).
 
-2.  **Client capabilities via A2A metadata**: The client now sends its capabilities in an `a2uiClientCapabilities` object. Crucially, this is no longer a standalone message but is included in the `metadata` field of **every** A2A message sent to the agent.
-    - This object contains `supportedCatalogIds` (an array of known catalog IDs) and an optional `inlineCatalogs` (an array of full catalog definitions).
-    - **Relevant doc**: The new process is explained in the [`a2ui_protocol.md`](./a2ui_protocol.md#catalog-negotiation) section on Catalog Negotiation.
-    - **Relevant schema**: [`a2ui_client_capabilities_schema.json`](../json/a2ui_client_capabilities_schema.json)
+## Key protocol changes
 
-3.  **Per-Surface catalog selection (`beginRendering`)**: The agent is now responsible for selecting which catalog to use for each UI surface. It signals its choice using the new optional `catalogId` field in the `beginRendering` message. If this field is omitted, the client must default to the Standard Catalog.
-    - **Relevant doc**: [`a2ui_protocol.md`](./a2ui_protocol.md#catalog-negotiation)
-    - **Relevant schema**: The change is reflected in [`server_to_client.json`](../json/server_to_client.json).
+### 1. Agent advertises capabilities
 
-4.  **Catalog definition ID (`catalogId`)**: To facilitate identification, the catalog definition schema itself now has a required `catalogId` field.
-    - **Relevant schema**: [`catalog_description_schema.json`](../json/catalog_description_schema.json)
+Inside the A2UI extension block of the Agent Card:
+
+- `supportedCatalogIds` — URIs of catalogs the agent can generate UI for.
+- `acceptsInlineCatalogs` — `true` if the agent can process catalogs the
+  client supplies at runtime.
+
+See `a2a-extension.md` for the full Agent Card schema.
+
+### 2. Client capabilities ride in A2A message metadata
+
+`a2uiClientCapabilities` is **no longer a standalone message** — it lives in
+the `metadata` field of **every** A2A `Message` the client sends:
+
+```json
+{
+  "metadata": {
+    "a2uiClientCapabilities": {
+      "supportedCatalogIds": [
+        "https://a2ui.org/specification/v0_8/standard_catalog_definition.json"
+      ],
+      "inlineCatalogs": []
+    }
+  }
+}
+```
+
+- `supportedCatalogIds` (required) — IDs of pre-compiled catalogs.
+- `inlineCatalogs` (optional) — array of complete catalog definition documents.
+
+Schema: `specification/v0_8/json/a2ui_client_capabilities_schema.json`.
+
+### 3. Per-surface catalog selection on `beginRendering`
+
+The agent declares which catalog applies to each surface:
+
+```json
+{
+  "beginRendering": {
+    "surfaceId": "s1",
+    "catalogId": "https://my-company.com/.../catalog.json",
+    "root": "root"
+  }
+}
+```
+
+If `catalogId` is omitted, the client **MUST** default to the v0.8 standard
+catalog (`https://a2ui.org/specification/v0_8/standard_catalog_definition.json`).
+
+Schema: `specification/v0_8/json/server_to_client.json`.
+
+### 4. Catalogs carry their own `catalogId`
+
+The Catalog Definition Schema now requires a top-level `catalogId` field, so
+inline catalogs are self-identifying.
+
+Schema: `specification/v0_8/json/catalog_description_schema.json`.
+
+## Implementation guide — Agent (server) developers
+
+Your job is to parse client capabilities and choose a catalog per surface.
+
+1. **Advertise capability** — in your Agent Card, declare
+   `supportedCatalogIds` and `acceptsInlineCatalogs: true` (if applicable)
+   inside the A2UI extension block.
+2. **Parse capabilities on every request** — read
+   `metadata.a2uiClientCapabilities` from each incoming A2A message to learn
+   what catalogs this client supports.
+3. **Choose a catalog** — for each surface you intend to render, pick a catalog
+   the client advertised (either via `supportedCatalogIds` or `inlineCatalogs`).
+4. **Specify the catalog on render** — set `catalogId` on the corresponding
+   `beginRendering` message. Omitting it implicitly requests the standard
+   catalog.
+5. **Generate compliant UI** — every component in subsequent `surfaceUpdate`
+   messages must conform to the property schema of the chosen catalog.
+
+Recommended workflow: resolve `server_to_client.json` against the chosen
+catalog at build time, and feed the resolved schema to the LLM as structured
+output, so the model only emits valid components and styles.
+
+## Implementation guide — Renderer (client) developers
+
+Your job is to declare capabilities and render each surface using the catalog
+the agent picked.
+
+1. **Inject capabilities on every request** — every outbound A2A message must
+   include `metadata.a2uiClientCapabilities`.
+2. **Populate `supportedCatalogIds`** — list every pre-compiled catalog you
+   support. Include the standard catalog ID explicitly if you support it:
+   `https://a2ui.org/specification/v0_8/standard_catalog_definition.json`.
+3. **(Optional) provide `inlineCatalogs`** — full catalog definitions you
+   generated or loaded at runtime. The agent must have advertised
+   `acceptsInlineCatalogs: true` for this to be honored.
+4. **Process `beginRendering.catalogId`** — when it arrives, look the catalog
+   up by ID:
+   - present → render the surface against that catalog,
+   - absent  → default to the v0.8 standard catalog.
+5. **Handle multiple catalogs in parallel** — different surfaces may use
+   different catalogs simultaneously. A `Map<surfaceId, catalog>` is the
+   common pattern.
+
+## Security note
+
+Pre-compile your supported catalogs into the client — do **not** fetch them
+at runtime. The spec calls this out explicitly: runtime catalog fetching
+opens a prompt-injection vector by letting external content reshape the
+agent's structured-output schema. `inlineCatalogs` are intended for local
+development workflows only.
 
 ---
 
-## Implementation guide for developers
-
-### For Agent (server) library developers
-
-Your responsibilities are to process the client's declared capabilities and make a rendering choice.
-
-1.  **Advertise capability**: In the agent's capability card, add the `supportedCatalogIds` array and the `acceptsInlineCatalogs: true` parameter within the A2UI extension block to declare which catalogs you support and whether you can handle dynamic ones.
-
-2.  **Parse client capabilities**: On every incoming A2A message, your library must parse the `metadata.a2uiClientCapabilities` object to determine which catalogs the client supports. You will get a list of `supportedCatalogIds` and potentially a list of `inlineCatalogs`.
-
-3.  **Choose a Catalog**: Before rendering a UI, decide which catalog to use. Your choice must be one of the catalogs advertised by the client in the capabilities object.
-
-4.  **Specify Catalog on render**: When sending the `beginRendering` message for a surface, set the `catalogId` field to the ID of your chosen catalog (e.g., `"https://my-company.com/inline_catalogs/my-custom-catalog"`). If you do not set this field, you are implicitly requesting the use of the standard catalog.
-
-5.  **Generate compliant UI**: Ensure that all components generated in subsequent `surfaceUpdate` messages for that surface conform to the properties and types defined in the chosen catalog.
-
-### For Renderer (client) library developers
-
-Your responsibilities are to accurately declare your capabilities and render surfaces using the catalog selected by the agent.
-
-1.  **Declare capabilities on every request**: For every A2A message your application sends, your library must inject the `a2uiClientCapabilities` object into the top-level `metadata` field.
-
-2.  **Populate `supportedCatalogIds`**: In the capabilities object, populate this array with the string identifiers of all pre-compiled catalogs your renderer supports. If your renderer supports the standard catalog for v0.8, you **should** include its ID: `https://a2ui.org/specification/v0_8/standard_catalog_definition.json`.
-
-3.  **Provide `inlineCatalogs` (optional)**: If your renderer supports dynamically generating or defining catalogs at runtime, include their full, valid Catalog Definition Documents in the `inlineCatalogs` array.
-
-4.  **Process `beginRendering`**: When your renderer receives a `beginRendering` message, it must inspect the new `catalogId` field.
-
-5.  **Select Catalog for surface**:
-    - If `catalogId` is present, use the corresponding catalog to render that surface. Your renderer must be able to look up the catalog from its pre-compiled list or from the inline definitions it just sent.
-    - If `catalogId` is **absent**, you **must** default to using the Standard Catalog for v0.8 for that surface.
-
-6.  **Manage multiple Catalogs**: Your renderer must be architected to handle multiple surfaces being rendered with different catalogs simultaneously. A dictionary mapping `surfaceId` to the chosen `catalog` is a common approach.
+Source: `submodules/A2UI/specification/v0_8/docs/custom_catalog_changes.md`
+(supplemented by the negotiation section of
+`submodules/A2UI/specification/v0_8/docs/a2ui_protocol.md`).

@@ -1,29 +1,29 @@
-<!-- markdownlint-disable -->
-# Defining Custom Functions
+# A2UI v0.9 — Custom Functions
 
-A2UI functions are defined inside a Catalog. When defining your own catalog, you can include custom functions that are specific to your application or design system.
+A2UI functions are first-class members of a Catalog alongside components. When
+you define a custom catalog, you can add functions that suit your application
+or design system — e.g. a string `trim` or a hardware-query helper like
+`getScreenResolution`.
 
-This guide demonstrates how to define a string `trim` function and a hardware query function (`getScreenResolution`) in your catalog.
+This reference walks through defining custom functions and wiring them in
+so validators recognise them.
 
-## 1. Define the Catalog
+## 1. Add functions to the catalog JSON Schema
 
-Create a JSON Schema file (e.g., `my_catalog.json`) that defines your
-function parameters.
-
-Use the `functions` property to define a map of function schemas.
+Use a `functions` map keyed by function name. Each entry is a schema for the
+`FunctionCall` shape — `call`, `args`, and `returnType`.
 
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.com/schemas/custom_catalog.json",
   "title": "Custom Function Catalog",
-  "description": "Extension catalog adding string trimming and screen resolution functions.",
   "functions": {
     "trim": {
       "type": "object",
       "description": "Removes whitespace (or other characters) from the beginning and end of a string.",
       "properties": {
-        "call": {"const": "trim"},
+        "call": { "const": "trim" },
         "args": {
           "type": "object",
           "properties": {
@@ -39,27 +39,28 @@ Use the `functions` property to define a map of function schemas.
           "required": ["value"],
           "unevaluatedProperties": false
         },
-        "returnType": {"const": "string"}
+        "returnType": { "const": "string" }
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
     },
+
     "getScreenResolution": {
       "type": "object",
       "description": "Queries hardware for screen resolution.",
       "properties": {
-        "call": {"const": "getScreenResolution"},
+        "call": { "const": "getScreenResolution" },
         "args": {
           "type": "object",
           "properties": {
             "screenIndex": {
               "$ref": "common_types.json#/$defs/DynamicNumber",
-              "description": "Optional. The index of the screen to query. Defaults to 0 (primary screen)."
+              "description": "Optional. Defaults to 0 (primary screen)."
             }
           },
           "unevaluatedProperties": false
         },
-        "returnType": {"const": "array"}
+        "returnType": { "const": "array" }
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
@@ -68,50 +69,91 @@ Use the `functions` property to define a map of function schemas.
 }
 ```
 
-## 2. Make the functions available
+Key conventions:
 
-The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-basic-catalog).
-In your catalog, you simply need to define the `anyFunction` reference:
+- `call` is a constant matching the function name — that's what the validator
+  uses as a discriminator.
+- `args` is an object with named properties; reuse `common_types.json` types
+  (`DynamicString`, `DynamicNumber`, …) so the same binding semantics work.
+- `returnType` is one of `string`, `number`, `boolean`, `array`, `object`,
+  `any`, `void`.
+- `unevaluatedProperties: false` everywhere keeps the LLM honest about not
+  emitting extra fields.
 
-```json
-{
-  "$defs": {
-    "anyFunction": {
-      "oneOf": [{"$ref": "#/functions/trim"}, {"$ref": "#/functions/getScreenResolution"}]
-    }
-  }
-}
-```
+## 2. Expose them via `anyFunction`
 
-If you want to incorporate functions defined in the [`basic_catalog.json`],
-those can be added too:
+The `FunctionCall` definition in the envelope refers to a catalog-agnostic
+`anyFunction`. Your catalog must define that reference to enumerate which
+functions actually exist:
 
 ```json
 {
   "$defs": {
     "anyFunction": {
       "oneOf": [
-        {"$ref": "#/functions/trim"},
-        {"$ref": "#/functions/getScreenResolution"},
-        {"$ref": "basic_catalog.json#/$defs/anyFunction"}
+        { "$ref": "#/functions/trim" },
+        { "$ref": "#/functions/getScreenResolution" }
       ]
     }
   }
 }
 ```
 
-## How Validation Works
+### Including the Basic Catalog's functions
+
+To extend rather than replace the built-ins (`required`, `regex`, `email`,
+`formatString`, …), `oneOf`-in the Basic Catalog's `anyFunction`:
+
+```json
+{
+  "$defs": {
+    "anyFunction": {
+      "oneOf": [
+        { "$ref": "#/functions/trim" },
+        { "$ref": "#/functions/getScreenResolution" },
+        { "$ref": "basic_catalog.json#/$defs/anyFunction" }
+      ]
+    }
+  }
+}
+```
+
+If you're producing a freestanding (no external `$ref`) catalog for production
+use, run `tools/build_catalog/assemble_catalog.py` to inline the dependencies.
+
+## 3. How validation works
 
 When a `FunctionCall` is validated:
 
-1. **Discriminator Lookup:** The validator looks at the `call` property of the
-   object.
-2. **Schema Matching:**
-   - If `call` is "length", it matches `Functions` -> `length`
-     and validates the named arguments in `args` against the length rules.
-   - If `call` is "trim", it matches `CustomFunctions` -> `trim` and
-     validates against your custom rules.
-   - If `call` is "unknownFunc", validation FAILS immediately (strict mode).
+1. **Discriminator lookup** — the validator reads `call`.
+2. **Schema matching** —
+   - `call: "length"` → matches the built-in `length` schema, validates `args`.
+   - `call: "trim"` → matches your custom `trim` schema.
+   - `call: "unknownFunc"` → fails immediately (strict mode).
+3. **Args validation** — the matched schema's `args` properties enforce types
+   on each named argument.
 
-This strict-by-default approach ensures typos are caught early, while the
-modular structure makes it easy to add new capabilities with full type safety.
+This strict-by-default approach catches typos early and lets you add
+capabilities with full type safety.
+
+## 4. Implementing the function (renderer side)
+
+The schema only describes the contract. The renderer must also provide a
+**runtime implementation** registered in its catalog (`FunctionImplementation`
+in the renderer architecture — see `renderer-guide.md`). The implementation
+receives statically resolved `args` and returns either a value or a reactive
+stream:
+
+- **Pure-logic functions** (e.g. `trim`) — synchronous, return a static value.
+- **External-state functions** (e.g. `getScreenResolution` that watches the
+  display) — return a reactive stream so changes propagate to the UI.
+- **Effect functions** (e.g. `openUrl`) — return `void`; triggered by user
+  actions, not interpolation.
+
+If the function returns a reactive stream, use an idiomatic listening mechanism
+that supports unsubscription — the binder layer disposes subscriptions on
+component unmount.
+
+---
+
+Source: `submodules/A2UI/specification/v0_9/docs/a2ui_custom_functions.md`.
