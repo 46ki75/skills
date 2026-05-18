@@ -18,7 +18,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # A2UI Skill
@@ -137,25 +137,25 @@ Read the appropriate reference as needed.
 
 ## When to Read Which Files
 
-| User is asking about…                                                | Read                                      |
-| :------------------------------------------------------------------- | :---------------------------------------- |
-| v0.9 message format / schema                                         | `references/v0.9/protocol.md`             |
-| v0.9 A2A integration                                                 | `references/v0.9/a2a-extension.md`        |
-| v0.8 → v0.9 migration / differences / which version to use           | `references/v0.9/evolution-guide.md`      |
-| Custom functions (defining, validating, registering)                 | `references/v0.9/custom-functions.md`     |
-| Rendering specific components (Text, Button, Card, Modal, …)         | `references/v0.9/basic-catalog-guide.md`  |
-| Building a client / renderer / MessageProcessor                      | `references/v0.9/renderer-guide.md`       |
-| Custom component catalog (define / register / negotiate / version)   | `references/v0.9/custom-catalog-guide.md` |
-| `supportedCatalogIds` / catalog negotiation handshake                | `references/v0.9/custom-catalog-guide.md` |
-| Catalog versioning, breaking changes, migration                      | `references/v0.9/custom-catalog-guide.md` |
-| Agent-side ADK integration (`SendA2uiToClientToolset`, etc.)         | `references/v0.9/custom-catalog-guide.md` |
-| Two-phase validation, graceful degradation                           | `references/v0.9/custom-catalog-guide.md` |
-| Leaf-Margin spacing strategy / color inheritance                     | `references/v0.9/basic-catalog-guide.md`  |
-| `formatString`, `${...}` interpolation                               | `references/v0.9/protocol.md`             |
-| `sendDataModel`, two-way binding, data sync                          | `references/v0.9/protocol.md`             |
-| v0.8 message format / schema                                         | `references/v0.8/protocol.md`             |
-| v0.8 A2A integration                                                 | `references/v0.8/a2a-extension.md`        |
-| v0.8 custom catalogs / `inlineCatalogs`                              | `references/v0.8/custom-catalog.md`       |
+| User is asking about…                                              | Read                                      |
+| :----------------------------------------------------------------- | :---------------------------------------- |
+| v0.9 message format / schema                                       | `references/v0.9/protocol.md`             |
+| v0.9 A2A integration                                               | `references/v0.9/a2a-extension.md`        |
+| v0.8 → v0.9 migration / differences / which version to use         | `references/v0.9/evolution-guide.md`      |
+| Custom functions (defining, validating, registering)               | `references/v0.9/custom-functions.md`     |
+| Rendering specific components (Text, Button, Card, Modal, …)       | `references/v0.9/basic-catalog-guide.md`  |
+| Building a client / renderer / MessageProcessor                    | `references/v0.9/renderer-guide.md`       |
+| Custom component catalog (define / register / negotiate / version) | `references/v0.9/custom-catalog-guide.md` |
+| `supportedCatalogIds` / catalog negotiation handshake              | `references/v0.9/custom-catalog-guide.md` |
+| Catalog versioning, breaking changes, migration                    | `references/v0.9/custom-catalog-guide.md` |
+| Agent-side ADK integration (`SendA2uiToClientToolset`, etc.)       | `references/v0.9/custom-catalog-guide.md` |
+| Two-phase validation, graceful degradation                         | `references/v0.9/custom-catalog-guide.md` |
+| Leaf-Margin spacing strategy / color inheritance                   | `references/v0.9/basic-catalog-guide.md`  |
+| `formatString`, `${...}` interpolation                             | `references/v0.9/protocol.md`             |
+| `sendDataModel`, two-way binding, data sync                        | `references/v0.9/protocol.md`             |
+| v0.8 message format / schema                                       | `references/v0.8/protocol.md`             |
+| v0.8 A2A integration                                               | `references/v0.8/a2a-extension.md`        |
+| v0.8 custom catalogs / `inlineCatalogs`                            | `references/v0.8/custom-catalog.md`       |
 
 ## Working Tips
 
