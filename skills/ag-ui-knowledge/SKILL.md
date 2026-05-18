@@ -19,7 +19,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # AG-UI Knowledge
@@ -33,11 +33,11 @@ user-facing applications in real time.
 AG-UI sits at the **Agent ↔ User Interaction** layer of the agentic-protocol
 stack, alongside two siblings:
 
-| Layer | Protocol | Purpose |
-| --- | --- | --- |
-| Agent ↔ Tools / Data | **MCP** (Model Context Protocol) | Securely connect agents to tools, workflows, and data sources |
-| Agent ↔ Agent | **A2A** (Agent to Agent) | Coordinate work across distributed agents |
-| **Agent ↔ User** | **AG-UI** | Stream events between an agent runtime and the user-facing app |
+| Layer                | Protocol                         | Purpose                                                        |
+| -------------------- | -------------------------------- | -------------------------------------------------------------- |
+| Agent ↔ Tools / Data | **MCP** (Model Context Protocol) | Securely connect agents to tools, workflows, and data sources  |
+| Agent ↔ Agent        | **A2A** (Agent to Agent)         | Coordinate work across distributed agents                      |
+| **Agent ↔ User**     | **AG-UI**                        | Stream events between an agent runtime and the user-facing app |
 
 A single agent often uses all three. AG-UI is built by CopilotKit in partnership
 with LangGraph and CrewAI.
@@ -81,17 +81,17 @@ same thread (time travel, alternative paths).
 
 ### Event categories
 
-| Category | Events |
-| --- | --- |
-| Lifecycle | `RUN_STARTED`, `RUN_FINISHED`, `RUN_ERROR`, `STEP_STARTED`, `STEP_FINISHED` |
-| Text message | `TEXT_MESSAGE_START`, `TEXT_MESSAGE_CONTENT`, `TEXT_MESSAGE_END`, `TEXT_MESSAGE_CHUNK` |
-| Tool call | `TOOL_CALL_START`, `TOOL_CALL_ARGS`, `TOOL_CALL_END`, `TOOL_CALL_RESULT`, `TOOL_CALL_CHUNK` |
-| State | `STATE_SNAPSHOT`, `STATE_DELTA`, `MESSAGES_SNAPSHOT` |
-| Activity (in-progress UI) | `ACTIVITY_SNAPSHOT`, `ACTIVITY_DELTA` |
-| Reasoning | `REASONING_START`, `REASONING_MESSAGE_START/CONTENT/END/CHUNK`, `REASONING_END`, `REASONING_ENCRYPTED_VALUE` |
-| Special | `RAW`, `CUSTOM` |
-| Draft | `META_EVENT` |
-| Deprecated (→ v1.0.0) | `THINKING_*` (replaced by `REASONING_*`) |
+| Category                  | Events                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Lifecycle                 | `RUN_STARTED`, `RUN_FINISHED`, `RUN_ERROR`, `STEP_STARTED`, `STEP_FINISHED`                                  |
+| Text message              | `TEXT_MESSAGE_START`, `TEXT_MESSAGE_CONTENT`, `TEXT_MESSAGE_END`, `TEXT_MESSAGE_CHUNK`                       |
+| Tool call                 | `TOOL_CALL_START`, `TOOL_CALL_ARGS`, `TOOL_CALL_END`, `TOOL_CALL_RESULT`, `TOOL_CALL_CHUNK`                  |
+| State                     | `STATE_SNAPSHOT`, `STATE_DELTA`, `MESSAGES_SNAPSHOT`                                                         |
+| Activity (in-progress UI) | `ACTIVITY_SNAPSHOT`, `ACTIVITY_DELTA`                                                                        |
+| Reasoning                 | `REASONING_START`, `REASONING_MESSAGE_START/CONTENT/END/CHUNK`, `REASONING_END`, `REASONING_ENCRYPTED_VALUE` |
+| Special                   | `RAW`, `CUSTOM`                                                                                              |
+| Draft                     | `META_EVENT`                                                                                                 |
+| Deprecated (→ v1.0.0)     | `THINKING_*` (replaced by `REASONING_*`)                                                                     |
 
 Two recurring patterns:
 
@@ -167,24 +167,24 @@ Agents may expose `getCapabilities(): Promise<AgentCapabilities>` for
 
 When implementing AG-UI, pick the role you're playing:
 
-| Role | When to use | Key abstractions |
-| --- | --- | --- |
-| **Server** | Building a new agent from scratch; want maximum control over emitted events | FastAPI/Express endpoint, `EventEncoder`, emit events directly |
+| Role           | When to use                                                                              | Key abstractions                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Server**     | Building a new agent from scratch; want maximum control over emitted events              | FastAPI/Express endpoint, `EventEncoder`, emit events directly                    |
 | **Middleware** | Adapting an existing framework or protocol (LangGraph, CrewAI, an internal SDK) to AG-UI | Extend `AbstractAgent`, translate framework events to AG-UI events inside `run()` |
-| **Client** | Building a UI (web, mobile, CLI) that talks to an AG-UI agent | `HttpAgent` or `AbstractAgent.subscribe`, handle the event stream |
+| **Client**     | Building a UI (web, mobile, CLI) that talks to an AG-UI agent                            | `HttpAgent` or `AbstractAgent.subscribe`, handle the event stream                 |
 
 Both server and middleware implementations expose the same HTTP contract:
 POST `RunAgentInput`, return an SSE (or binary) stream of `BaseEvent` objects.
 
 ## SDKs at a glance
 
-| Language | Package(s) | Status | Install |
-| --- | --- | --- | --- |
-| TypeScript / JavaScript | `@ag-ui/core`, `@ag-ui/client`, `@ag-ui/encoder`, `@ag-ui/proto` | 1st-party | `npm install @ag-ui/client` |
-| Python | `ag-ui-protocol` (`ag_ui.core`, `ag_ui.encoder`) | 1st-party | `pip install ag-ui-protocol` |
-| Rust | `ag-ui-client` crate | Community | `cargo add ag-ui-client` |
-| Java, Kotlin, Go, Dart, Ruby | various | Community | see upstream `sdks/community/` |
-| .NET, Nim, Flowise, Langflow, Cloudflare Agents | — | In progress | tracked as upstream issues |
+| Language                                        | Package(s)                                                       | Status      | Install                        |
+| ----------------------------------------------- | ---------------------------------------------------------------- | ----------- | ------------------------------ |
+| TypeScript / JavaScript                         | `@ag-ui/core`, `@ag-ui/client`, `@ag-ui/encoder`, `@ag-ui/proto` | 1st-party   | `npm install @ag-ui/client`    |
+| Python                                          | `ag-ui-protocol` (`ag_ui.core`, `ag_ui.encoder`)                 | 1st-party   | `pip install ag-ui-protocol`   |
+| Rust                                            | `ag-ui-client` crate                                             | Community   | `cargo add ag-ui-client`       |
+| Java, Kotlin, Go, Dart, Ruby                    | various                                                          | Community   | see upstream `sdks/community/` |
+| .NET, Nim, Flowise, Langflow, Cloudflare Agents | —                                                                | In progress | tracked as upstream issues     |
 
 Quick start: `npx create-ag-ui-app@latest` scaffolds a project.
 
@@ -195,40 +195,40 @@ question. Always prefer the most specific file.
 
 ### Concepts (`references/concepts/`)
 
-| Question | File |
-| --- | --- |
-| Full event schema, properties of every event type, draft/deprecated events | `concepts/events.md` |
-| Architecture overview, transport patterns, middleware layer | `concepts/architecture.md` |
-| `AbstractAgent` shape, agent capabilities (high-level), agent lifecycle | `concepts/agents.md` |
-| Message schemas (User/Assistant/System/Tool/Activity/Developer/Reasoning), multimodal input, vendor-neutrality | `concepts/messages.md` |
-| `STATE_SNAPSHOT` vs `STATE_DELTA`, RFC 6902 JSON Patch examples, CopilotKit `useCoAgent` | `concepts/state.md` |
-| Tool schema, frontend-defined tools, tool-call lifecycle, `useCopilotAction` | `concepts/tools.md` |
-| Interrupt-aware run lifecycle, `Interrupt` type, `resume` rules, tool-bound interrupts, approve-with-edits, parallel interrupts | `concepts/interrupts.md` |
-| Reasoning events, encrypted chain-of-thought, ZDR/store:false, migration from `THINKING_*` | `concepts/reasoning.md` |
-| `AgentCapabilities` and all ten typed sub-objects | `concepts/capabilities.md` |
-| Middleware pipeline mechanics (`use`, `MiddlewareFunction`, `Middleware` class), built-in `FilterToolCallsMiddleware` | `concepts/middleware.md` |
-| Stream compaction, branching with `parentRunId`, normalized input | `concepts/serialization.md` |
+| Question                                                                                                                        | File                        |
+| ------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Full event schema, properties of every event type, draft/deprecated events                                                      | `concepts/events.md`        |
+| Architecture overview, transport patterns, middleware layer                                                                     | `concepts/architecture.md`  |
+| `AbstractAgent` shape, agent capabilities (high-level), agent lifecycle                                                         | `concepts/agents.md`        |
+| Message schemas (User/Assistant/System/Tool/Activity/Developer/Reasoning), multimodal input, vendor-neutrality                  | `concepts/messages.md`      |
+| `STATE_SNAPSHOT` vs `STATE_DELTA`, RFC 6902 JSON Patch examples, CopilotKit `useCoAgent`                                        | `concepts/state.md`         |
+| Tool schema, frontend-defined tools, tool-call lifecycle, `useCopilotAction`                                                    | `concepts/tools.md`         |
+| Interrupt-aware run lifecycle, `Interrupt` type, `resume` rules, tool-bound interrupts, approve-with-edits, parallel interrupts | `concepts/interrupts.md`    |
+| Reasoning events, encrypted chain-of-thought, ZDR/store:false, migration from `THINKING_*`                                      | `concepts/reasoning.md`     |
+| `AgentCapabilities` and all ten typed sub-objects                                                                               | `concepts/capabilities.md`  |
+| Middleware pipeline mechanics (`use`, `MiddlewareFunction`, `Middleware` class), built-in `FilterToolCallsMiddleware`           | `concepts/middleware.md`    |
+| Stream compaction, branching with `parentRunId`, normalized input                                                               | `concepts/serialization.md` |
 
 ### Quickstart (`references/quickstart/`)
 
-| Question | File |
-| --- | --- |
-| Building a Python/FastAPI AG-UI endpoint from scratch (OpenAI example) | `quickstart/server.md` |
-| Building a JS/TS adapter that wraps an existing framework | `quickstart/middleware.md` |
-| Building a client (CLI/web) that consumes AG-UI events; Mastra + tools example | `quickstart/client.md` |
+| Question                                                                       | File                       |
+| ------------------------------------------------------------------------------ | -------------------------- |
+| Building a Python/FastAPI AG-UI endpoint from scratch (OpenAI example)         | `quickstart/server.md`     |
+| Building a JS/TS adapter that wraps an existing framework                      | `quickstart/middleware.md` |
+| Building a client (CLI/web) that consumes AG-UI events; Mastra + tools example | `quickstart/client.md`     |
 
 ### SDKs (`references/sdks/`)
 
-| Question | File |
-| --- | --- |
+| Question                                                                                                                                                    | File                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | TypeScript: `@ag-ui/client` (`AbstractAgent`, `HttpAgent`, middleware, `AgentSubscriber`), `@ag-ui/core` types and events, `@ag-ui/encoder`, `@ag-ui/proto` | `sdks/typescript.md` |
-| Python: `ag_ui.core` types/events, `ag_ui.encoder.EventEncoder`, FastAPI/SSE patterns, multimodal input | `sdks/python.md` |
-| Rust, Java, Kotlin, Go, Dart, Ruby — install hints and pointers into the upstream repo | `sdks/others.md` |
+| Python: `ag_ui.core` types/events, `ag_ui.encoder.EventEncoder`, FastAPI/SSE patterns, multimodal input                                                     | `sdks/python.md`     |
+| Rust, Java, Kotlin, Go, Dart, Ruby — install hints and pointers into the upstream repo                                                                      | `sdks/others.md`     |
 
 ### Integrations (`references/`)
 
-| Question | File |
-| --- | --- |
+| Question                                                                                                                                                                                                                                                              | File              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
 | Which agent frameworks support AG-UI (LangGraph, CrewAI, Mastra, Microsoft Agent Framework, Google ADK, AWS Strands, Bedrock AgentCore, Pydantic AI, Agno, LlamaIndex, AG2), which clients (CopilotKit), which related specs (A2A, MCP Apps, A2UI, Oracle Agent Spec) | `integrations.md` |
 
 ## Source
