@@ -151,7 +151,7 @@ async fn list_resources(
 }
 ```
 
-See `references/server/resources.md` for the full pattern.
+See `references/rust-sdk/server/resources.md` for the full pattern.
 
 ## Serving the result
 
@@ -160,7 +160,7 @@ See `references/server/resources.md` for the full pattern.
 `.waiting()` blocks until the transport closes or the service is
 cancelled. For the streamable HTTP transport, the equivalent is the
 axum integration shown in `crates/mcp-server/src/bin/http.rs:31-47` —
-see `references/server/transports.md`.
+see `references/rust-sdk/server/transports.md`.
 
 ## Capability advertisement and instructions
 
@@ -191,11 +191,11 @@ const-generic flag set; just call `.build()` when you're done.
 
 ## See also
 
-- `references/server/tools.md` — `#[tool]`, `Parameters<T>`,
+- `references/rust-sdk/server/tools.md` — `#[tool]`, `Parameters<T>`,
   `CallToolResult` shape
-- `references/server/prompts.md` — `#[prompt]`, message roles
-- `references/server/resources.md` — free-function dispatch, templates
-- `references/server/tasks.md` — `#[task_handler]`, the
+- `references/rust-sdk/server/prompts.md` — `#[prompt]`, message roles
+- `references/rust-sdk/server/resources.md` — free-function dispatch, templates
+- `references/rust-sdk/server/tasks.md` — `#[task_handler]`, the
   `OperationProcessor` and the `list_tasks` override
-- `references/server/transports.md` — stdio and Streamable HTTP wiring
+- `references/rust-sdk/server/transports.md` — stdio and Streamable HTTP wiring
 - `crates/mcp-server/src/lib.rs` — full canonical example

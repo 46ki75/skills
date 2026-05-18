@@ -134,7 +134,7 @@ didn't, `ctx.peer.elicit(...)` returns
 For a client *test* harness that needs to back the server's elicitation
 calls, override `ClientHandler::create_elicitation` and declare the
 capability via `ClientCapabilities::builder().enable_elicitation()` —
-see `references/client/elicitation.md`.
+see `references/rust-sdk/client/elicitation.md`.
 
 ## Form vs URL elicitation
 
@@ -188,13 +188,13 @@ user. Don't put secrets, tokens, or PII in field doc-comments.
 
 ## See also
 
-- `references/server/tools.md` — `RequestContext<RoleServer>` as a tool
+- `references/rust-sdk/server/tools.md` — `RequestContext<RoleServer>` as a tool
   parameter
-- `references/server/sampling.md` — the sibling server-to-client
+- `references/rust-sdk/server/sampling.md` — the sibling server-to-client
   request for LLM output
-- `references/server/roots.md` — the sibling server-to-client request
+- `references/rust-sdk/server/roots.md` — the sibling server-to-client request
   for workspace listing
-- `references/client/elicitation.md` — implementing the client side
+- `references/rust-sdk/client/elicitation.md` — implementing the client side
 - `crates/mcp-server/src/tools.rs:128-162` — `greet_user` worked example
 - `crates/mcp-server/tests/elicitation.rs` — regression test locking
   in the "decline is graceful" contract

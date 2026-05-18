@@ -145,7 +145,7 @@ to make sampling requests. If the client didn't declare it, the
 
 For a client *test* harness that needs to back the server's sampling
 calls, override `ClientHandler::create_message` and declare the
-capability — see `references/client/sampling.md`.
+capability — see `references/rust-sdk/client/sampling.md`.
 
 ## Common patterns
 
@@ -192,13 +192,13 @@ sampling), check the error string and substitute a fallback.
 
 ## See also
 
-- `references/server/tools.md` — `RequestContext<RoleServer>` as a tool
+- `references/rust-sdk/server/tools.md` — `RequestContext<RoleServer>` as a tool
   parameter
-- `references/server/elicitation.md` — the sibling server-to-client
+- `references/rust-sdk/server/elicitation.md` — the sibling server-to-client
   request for user input
-- `references/server/roots.md` — the sibling server-to-client request
+- `references/rust-sdk/server/roots.md` — the sibling server-to-client request
   for workspace listing
-- `references/client/sampling.md` — implementing the client side
+- `references/rust-sdk/client/sampling.md` — implementing the client side
 - `crates/mcp-server/src/tools.rs:81-117` — the `ask_llm` worked example
 - `submodules/mcp-rust-sdk/examples/servers/src/sampling_stdio.rs` —
   upstream example with multi-turn sampling

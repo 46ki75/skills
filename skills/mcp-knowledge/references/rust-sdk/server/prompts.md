@@ -181,7 +181,7 @@ you want it more or less visible.
 
 ## See also
 
-- `references/server/getting-started.md` — composing routers
-- `references/server/tools.md` — same macro shape, different primitive
+- `references/rust-sdk/server/getting-started.md` — composing routers
+- `references/rust-sdk/server/tools.md` — same macro shape, different primitive
 - `crates/mcp-server/src/prompts.rs` — three worked examples
 - `crates/mcp-server/tests/prompts.rs` — round-trip integration test

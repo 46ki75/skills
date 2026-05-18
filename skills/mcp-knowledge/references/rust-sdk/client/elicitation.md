@@ -148,7 +148,7 @@ it as `content`.
 The user fills out the form at the URL. When they finish, the server
 side surfaces the result via
 `on_url_elicitation_notification_complete` — see
-`references/client/handler.md` for that callback.
+`references/rust-sdk/client/handler.md` for that callback.
 
 ## `ElicitationAction` and `CreateElicitationResult`
 
@@ -165,7 +165,7 @@ object the user produced. For `Decline` and `Cancel`, leave it as
 The server's `Peer::elicit::<T>(...)` translates these back into
 `Ok(Some(T)) | Ok(None) | Err(ElicitationError::UserDeclined) |
 Err(ElicitationError::UserCancelled)` — see
-`references/server/elicitation.md` for the server-side contract that
+`references/rust-sdk/server/elicitation.md` for the server-side contract that
 your client must hold up.
 
 ## Schema validation
@@ -190,9 +190,9 @@ For tests, the three patterns are:
 
 ## See also
 
-- `references/server/elicitation.md` — what the server is doing on the
+- `references/rust-sdk/server/elicitation.md` — what the server is doing on the
   other end (`Peer::elicit<T>`, `ElicitationError` variants)
-- `references/client/handler.md` — the full `ClientHandler` method list
+- `references/rust-sdk/client/handler.md` — the full `ClientHandler` method list
 - `crates/mcp-server/tests/elicitation.rs` — `DecliningClient` in
   action
 - `submodules/mcp-rust-sdk/crates/rmcp/src/handler/client.rs:109-178`

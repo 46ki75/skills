@@ -124,7 +124,7 @@ let message = SamplingMessage {
 };
 ```
 
-The server side (see `references/server/sampling.md`) iterates content
+The server side (see `references/rust-sdk/server/sampling.md`) iterates content
 blocks via `as_text()` etc., so non-text content needs explicit
 handling on both sides.
 
@@ -185,10 +185,10 @@ and production clients should follow.
 
 ## See also
 
-- `references/server/sampling.md` — the server side that calls
+- `references/rust-sdk/server/sampling.md` — the server side that calls
   `create_message`
-- `references/client/handler.md` — the full `ClientHandler` method list
-- `references/client/elicitation.md` — sibling client-side request
+- `references/rust-sdk/client/handler.md` — the full `ClientHandler` method list
+- `references/rust-sdk/client/elicitation.md` — sibling client-side request
   handler
 - `submodules/mcp-rust-sdk/examples/clients/src/sampling_stdio.rs` —
   upstream mock-LLM client

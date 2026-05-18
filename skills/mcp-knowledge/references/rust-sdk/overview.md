@@ -1,47 +1,22 @@
----
-name: rmcp
-description: >
-  Expert guidance for the `rmcp` crate — the official Rust SDK for the
-  Model Context Protocol, pinned at `submodules/mcp-rust-sdk/`. Covers
-  Cargo features (`server`, `client`, `macros`, `elicitation`,
-  transport-* and TLS variants), the `ServerHandler` and `ClientHandler`
-  traits, the `#[tool_router]`, `#[prompt_router]`, `#[tool_handler]`,
-  `#[prompt_handler]`, and `#[task_handler]` macros, `Parameters`,
-  `RequestContext`, `ServiceExt::serve`, `RunningService`,
-  `OperationProcessor` and SEP-1319 tasks, server-to-client requests
-  (sampling, elicitation, roots), `rmcp::elicit_safe!`,
-  `ElicitationError`, the stdio and Streamable HTTP transports
-  (`StreamableHttpService`, `LocalSessionManager`), and the
-  `tokio::io::duplex` test harness. Always invoke for any question
-  mentioning `rmcp`, the listed traits or macros, `RoleServer`,
-  `RoleClient`, code under `submodules/mcp-rust-sdk/`, the example crate
-  `crates/mcp-server/`, or Rust code that imports `rmcp`. For
-  protocol-level questions, prefer the `mcp-knowledge` skill.
-license: MIT
-metadata:
-  author: "Ikuma Yamashita"
-  version: "1.0.0"
----
+# rmcp (Rust SDK for MCP)
 
-# rmcp (Rust SDK for MCP) Skill
-
-You are an expert on [`rmcp`](https://docs.rs/rmcp), the official Rust
-SDK for the [Model Context Protocol](https://modelcontextprotocol.io/).
-Your goal is to help users write correct, idiomatic `rmcp` code — servers,
-clients, tools, prompts, resources, tasks, transports, and test harnesses
-— without re-discovering the same macro contracts and trait shapes every
-time.
+Expert guidance on [`rmcp`](https://docs.rs/rmcp), the official Rust SDK
+for the [Model Context Protocol](https://modelcontextprotocol.io/). Goal:
+help users write correct, idiomatic `rmcp` code — servers, clients, tools,
+prompts, resources, tasks, transports, and test harnesses — without
+re-discovering the same macro contracts and trait shapes every time.
 
 `rmcp` is **fast-moving and lightly documented**. The repository at
 `submodules/mcp-rust-sdk/` is the source of truth: when a signature in
-this skill conflicts with what's in the pinned submodule, trust the
-submodule and update the skill. The reference files in this skill
-intentionally cite specific source paths so they stay grepable as the
-crate evolves.
+these reference files conflicts with what's in the pinned submodule, trust
+the submodule and update the files. The reference set intentionally cites
+specific source paths so they stay grepable as the crate evolves.
 
 For protocol-level questions (the JSON-RPC wire format, spec versions,
-what a `tools/call` request looks like across implementations), defer to
-`skills/mcp-knowledge/`. This skill stays Rust-specific.
+what a `tools/call` request looks like across implementations), use the
+per-spec-version reference files in sibling directories
+(`references/2024-11-05/`, `references/2025-03-26/`, `references/2025-06-18/`,
+`references/2025-11-25/`). This section stays Rust-specific.
 
 ## Workspace orientation
 
@@ -53,7 +28,7 @@ The `rmcp` workspace ships two crates plus a large set of examples:
 | `submodules/mcp-rust-sdk/crates/rmcp-macros/`   | The procedural-macros crate behind `#[tool_router]`, `#[tool_handler]`, `#[prompt_router]`, `#[prompt_handler]`, `#[task_handler]`. Re-exported by `rmcp` when the `macros` feature is on           |
 | `submodules/mcp-rust-sdk/examples/servers/src/` | One example server per primitive (calculator, counter, prompt, task, sampling, elicitation, completion, memory, structured output, OAuth)                                                           |
 | `submodules/mcp-rust-sdk/examples/clients/src/` | Example clients (stdio subprocess, streamable HTTP, sampling, task polling, progress, OAuth flows)                                                                                                  |
-| `crates/mcp-server/`                            | **Local** working server example built against `rmcp` 1.7. Covers every server-side primitive and ships an integration test per feature. This is the canonical reference cited throughout the skill |
+| `crates/mcp-server/`                            | **Local** working server example built against `rmcp` 1.7. Covers every server-side primitive and ships an integration test per feature. This is the canonical reference cited throughout this set  |
 
 Application code depends on `rmcp` (plus whichever transport feature it
 needs). `rmcp-macros` is pulled in transitively by the `macros` feature
@@ -61,7 +36,7 @@ needs). `rmcp-macros` is pulled in transitively by the `macros` feature
 
 ## Version and stability note
 
-The skill targets **`rmcp` 1.x** (the workspace pins 1.7 at
+This material targets **`rmcp` 1.x** (the workspace pins 1.7 at
 `Cargo.toml:49`). The SDK is officially Tier 2 conformance — most of the
 2025-11-25 MCP spec works, but pieces like prompt argument substitution,
 embedded resources in prompts, DNS-rebinding protection, and full
@@ -69,19 +44,19 @@ SEP-1330 enum inference are still in motion. Specific known limitations:
 
 - `OperationProcessor` does not yet expose per-task `created_at` /
   `last_updated_at` — `tasks/list` overrides have to fake the
-  timestamps. See `references/server/tasks.md`.
+  timestamps. See `references/rust-sdk/server/tasks.md`.
 - The macro-generated `list_tasks` only surfaces _running_ tasks; the
   canonical pattern (in `crates/mcp-server/src/tasks.rs`) is to override
   it and merge in `peek_completed()`.
 - Some `ServerResult::*` variants share wire shape after `serde`
   flattening (most prominently `CancelTaskResult` vs `GetTaskResult`),
   so the untagged enum may pick the wrong variant when deserializing.
-  Callers must accept either. See `references/client/requests.md`.
+  Callers must accept either. See `references/rust-sdk/client/requests.md`.
 - `Peer::elicit` returns `Err(ElicitationError::UserDeclined)` etc. for
   _user actions_, which are not service failures. Tools must
   pattern-match on `ElicitationError` and return
   `CallToolResult::success` for the user-action variants. See
-  `references/server/elicitation.md`.
+  `references/rust-sdk/server/elicitation.md`.
 
 When you hit something that looks broken, check the submodule first —
 `grep` for the symbol in `submodules/mcp-rust-sdk/crates/rmcp/src/`
@@ -121,7 +96,7 @@ rmcp = { version = "1.7", features = [
 ] }
 ```
 
-See `references/feature-flags.md` for the full list and the
+See `references/rust-sdk/feature-flags.md` for the full list and the
 `reqwest` TLS choice (which is easy to get wrong).
 
 ## Minimum-you-need-to-know — server
@@ -184,8 +159,8 @@ impl ServerHandler for Server { /* ... */ }
 Splitting them across multiple `impl` blocks is a compile error because
 each macro synthesizes a different subset of `ServerHandler`'s methods.
 The full annotated form is in `crates/mcp-server/src/lib.rs:62-93` —
-read it. The skill's `references/server/getting-started.md` walks
-through the composition step by step.
+read it. `references/rust-sdk/server/getting-started.md` walks through
+the composition step by step.
 
 ## Minimum-you-need-to-know — client
 
@@ -220,7 +195,7 @@ The reason this matters: every test in `crates/mcp-server/tests/` uses
 this exact harness pattern (with `tokio::io::duplex` as the transport)
 to drive the server from inside the same process. It's the cheapest way
 to write integration tests for any MCP server. See
-`references/client/testing.md`.
+`references/rust-sdk/client/testing.md`.
 
 If you need to advertise client capabilities (so the server can ask the
 user to elicit input, or sample the LLM, or list roots), override
@@ -247,43 +222,43 @@ And override the corresponding callback (`create_elicitation`,
 ## Reference files
 
 The reference set is split into shared topics, server features, and
-client features. Read the index at `references/doc-index.md` for a
-one-line summary of every file. Quick map below:
+client features. Read the index at `references/rust-sdk/doc-index.md`
+for a one-line summary of every file. Quick map below:
 
 ### Shared
 
-| File                          | Read when                                                                                                  |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `references/feature-flags.md` | Picking Cargo features, debugging missing-feature compile errors, choosing the right `reqwest` TLS variant |
+| File                                   | Read when                                                                                                  |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `references/rust-sdk/feature-flags.md` | Picking Cargo features, debugging missing-feature compile errors, choosing the right `reqwest` TLS variant |
 
 ### Server features
 
-| File                                   | Read when                                                                         |
-| -------------------------------------- | --------------------------------------------------------------------------------- |
-| `references/server/getting-started.md` | Composing `Server` with multiple routers; the stacked-handler-macros rule         |
-| `references/server/tools.md`           | Authoring `#[tool]` methods, `Parameters<T>`, `CallToolResult`, `task_support`    |
-| `references/server/prompts.md`         | `#[prompt_router]`, multi-arg prompt examples, `PromptMessageRole`                |
-| `references/server/resources.md`       | Static resources, URI templates, why there's no macro router for resources        |
-| `references/server/tasks.md`           | SEP-1319 task lifecycle, `OperationProcessor`, the `list_tasks` override pattern  |
-| `references/server/sampling.md`        | `ctx.peer.create_message(...)`, multimodal content handling                       |
-| `references/server/elicitation.md`     | `ctx.peer.elicit::<T>(...)`, `elicit_safe!`, the `ElicitationError` variants      |
-| `references/server/roots.md`           | `ctx.peer.list_roots()` for workspace-aware servers                               |
-| `references/server/transports.md`      | stdio and Streamable HTTP wiring, `StreamableHttpService` + `LocalSessionManager` |
+| File                                            | Read when                                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| `references/rust-sdk/server/getting-started.md` | Composing `Server` with multiple routers; the stacked-handler-macros rule         |
+| `references/rust-sdk/server/tools.md`           | Authoring `#[tool]` methods, `Parameters<T>`, `CallToolResult`, `task_support`    |
+| `references/rust-sdk/server/prompts.md`         | `#[prompt_router]`, multi-arg prompt examples, `PromptMessageRole`                |
+| `references/rust-sdk/server/resources.md`       | Static resources, URI templates, why there's no macro router for resources        |
+| `references/rust-sdk/server/tasks.md`           | SEP-1319 task lifecycle, `OperationProcessor`, the `list_tasks` override pattern  |
+| `references/rust-sdk/server/sampling.md`        | `ctx.peer.create_message(...)`, multimodal content handling                       |
+| `references/rust-sdk/server/elicitation.md`     | `ctx.peer.elicit::<T>(...)`, `elicit_safe!`, the `ElicitationError` variants      |
+| `references/rust-sdk/server/roots.md`           | `ctx.peer.list_roots()` for workspace-aware servers                               |
+| `references/rust-sdk/server/transports.md`      | stdio and Streamable HTTP wiring, `StreamableHttpService` + `LocalSessionManager` |
 
 ### Client features
 
-| File                                   | Read when                                                                                |
-| -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `references/client/getting-started.md` | Smallest viable `ClientHandler`, the `ServiceExt::serve` lifecycle                       |
-| `references/client/handler.md`         | Full `ClientHandler` method list, `ClientCapabilities` builder, notification callbacks   |
-| `references/client/requests.md`        | Sending `ClientRequest::*`, pattern-matching `ServerResult::*`, the untagged-enum gotcha |
-| `references/client/sampling.md`        | Overriding `create_message` to satisfy a server's sampling request                       |
-| `references/client/elicitation.md`     | Overriding `create_elicitation`, `ElicitationAction`, form vs URL elicitation            |
-| `references/client/roots.md`           | Overriding `list_roots` to expose workspace/filesystem roots                             |
-| `references/client/transports.md`      | Child-process transport, Streamable HTTP client (reqwest), in-memory duplex              |
-| `references/client/testing.md`         | The `tokio::io::duplex` harness — the standard way to unit-test an MCP server            |
+| File                                            | Read when                                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `references/rust-sdk/client/getting-started.md` | Smallest viable `ClientHandler`, the `ServiceExt::serve` lifecycle                       |
+| `references/rust-sdk/client/handler.md`         | Full `ClientHandler` method list, `ClientCapabilities` builder, notification callbacks   |
+| `references/rust-sdk/client/requests.md`        | Sending `ClientRequest::*`, pattern-matching `ServerResult::*`, the untagged-enum gotcha |
+| `references/rust-sdk/client/sampling.md`        | Overriding `create_message` to satisfy a server's sampling request                       |
+| `references/rust-sdk/client/elicitation.md`     | Overriding `create_elicitation`, `ElicitationAction`, form vs URL elicitation            |
+| `references/rust-sdk/client/roots.md`           | Overriding `list_roots` to expose workspace/filesystem roots                             |
+| `references/rust-sdk/client/transports.md`      | Child-process transport, Streamable HTTP client (reqwest), in-memory duplex              |
+| `references/rust-sdk/client/testing.md`         | The `tokio::io::duplex` harness — the standard way to unit-test an MCP server            |
 
-## Going further than this skill
+## Going further than this section
 
 For end-to-end runnable examples beyond what `crates/mcp-server/` covers
 (OAuth servers, completion, structured output, progress notifications,

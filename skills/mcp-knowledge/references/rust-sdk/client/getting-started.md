@@ -156,7 +156,7 @@ The transport is whatever implements `IntoTransport<RoleClient, ...>`:
 | In-memory duplex (tests)               | `tokio::io::duplex(4096)` — pass one half to the server and the other to the client                  |
 | Custom `(AsyncRead, AsyncWrite)`       | Any pair that implements `AsyncRead + AsyncWrite` (`transport-async-rw`)                             |
 
-See `references/client/transports.md` for the wiring details of each.
+See `references/rust-sdk/client/transports.md` for the wiring details of each.
 
 ## Lifecycle
 
@@ -177,11 +177,11 @@ the service down explicitly.
 
 ## See also
 
-- `references/client/handler.md` — every method on `ClientHandler` and
+- `references/rust-sdk/client/handler.md` — every method on `ClientHandler` and
   what overriding it does
-- `references/client/requests.md` — sending typed requests and matching
+- `references/rust-sdk/client/requests.md` — sending typed requests and matching
   on `ServerResult`
-- `references/client/testing.md` — the in-memory duplex test harness
-- `references/client/transports.md` — production transports
+- `references/rust-sdk/client/testing.md` — the in-memory duplex test harness
+- `references/rust-sdk/client/transports.md` — production transports
 - `crates/mcp-server/tests/tools.rs` — smallest runnable in-repo
   example

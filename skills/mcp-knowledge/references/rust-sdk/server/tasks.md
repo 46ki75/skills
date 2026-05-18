@@ -217,7 +217,7 @@ let task = match response {
 ```
 
 See `crates/mcp-server/tests/task.rs::list_tasks_reports_cancelled_status_for_cancelled_task`
-for the worked example, and `references/client/requests.md` for more
+for the worked example, and `references/rust-sdk/client/requests.md` for more
 on this pattern.
 
 ## Capability declaration
@@ -252,8 +252,8 @@ Pick the strategy that matches your tool:
 
 ## See also
 
-- `references/server/tools.md` — `execution(task_support = ...)` shape
-- `references/client/requests.md` — the `CancelTaskResult` /
+- `references/rust-sdk/server/tools.md` — `execution(task_support = ...)` shape
+- `references/rust-sdk/client/requests.md` — the `CancelTaskResult` /
   `GetTaskResult` ambiguity, polling patterns
 - `crates/mcp-server/src/tasks.rs` — the `list_tasks` override
 - `crates/mcp-server/tests/task.rs` — full lifecycle integration test

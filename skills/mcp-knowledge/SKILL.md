@@ -1,19 +1,21 @@
 ---
 name: mcp-knowledge
 description: >
-  Expert guidance for the Model Context Protocol (MCP), a JSON-RPC 2.0
+  Expert guidance for the Model Context Protocol (MCP), the JSON-RPC 2.0
   protocol connecting LLM apps to external tools and data. Covers spec
-  versions 2024-11-05 through 2025-11-25: architecture, transports (stdio,
-  HTTP+SSE, Streamable HTTP), Resources, Prompts, Tools, Sampling, Roots,
-  Elicitation, Tasks, lifecycle, OAuth 2.1, and utilities (Logging,
-  Pagination, Cancellation, Ping, Progress). Also documents quirks of the
-  official TypeScript MCP SDK (`@modelcontextprotocol/sdk`), including the
-  `pkce-challenge` Vite/bundler resolver failure in browser builds. Use when
-  building MCP servers or clients, working with transports or OAuth, or
-  debugging TypeScript MCP SDK bundler errors. Always invoke for questions
-  mentioning MCP, modelcontextprotocol, tools/list, tools/call,
-  sampling/createMessage, elicitation/create, Streamable HTTP, Mcp-Session-Id,
-  or build errors involving `pkce-challenge` or `@modelcontextprotocol/sdk`.
+  versions 2024-11-05 through 2025-11-25 (architecture, transports,
+  Resources, Prompts, Tools, Sampling, Roots, Elicitation, Tasks,
+  lifecycle, OAuth 2.1, utilities) plus the official language SDKs: the
+  Rust SDK `rmcp` (full guide — `ServerHandler`/`ClientHandler`,
+  `#[tool_router]`/`#[tool_handler]`/`#[task_handler]` macros,
+  `StreamableHttpService`, Cargo features, SEP-1319 tasks, `tokio::io::duplex`
+  test harness) and the TypeScript SDK `@modelcontextprotocol/sdk` (incl.
+  the `pkce-challenge` Vite/bundler resolver failure). Use when building
+  MCP servers or clients in any language, working with transports or
+  OAuth, or debugging SDK-specific issues. Always invoke for questions
+  mentioning MCP, modelcontextprotocol, `rmcp`, tools/list, tools/call,
+  sampling/createMessage, elicitation/create, Streamable HTTP,
+  Mcp-Session-Id, `pkce-challenge`, or `@modelcontextprotocol/sdk`.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
@@ -185,17 +187,37 @@ the official MDX source at `submodules/modelcontextprotocol/docs/specification/`
 | Progress notifications                     | `references/{version}/progress.md`                      |
 | Tasks (durable async)                      | `references/2025-11-25/tasks.md`                        |
 | Migrating between versions                 | `references/{target-version}/changelog.md`              |
-| TypeScript SDK build/bundler errors        | `references/typescript-sdk-quirks/pkce-challenge.md`    |
+| Rust SDK (`rmcp`) — anything Rust-specific | `references/rust-sdk/overview.md` (indexes the rest)    |
+| TypeScript SDK build/bundler errors        | `references/typescript-sdk/pkce-challenge.md`           |
 
-## TypeScript SDK Implementation Notes
+## Language SDK Guides
 
-Beyond the spec itself, the official **TypeScript** MCP SDK
-(`@modelcontextprotocol/sdk` npm package) has real-world integration quirks
-that aren't documented in the spec but are reliably encountered in production
-builds. These are TypeScript-SDK-specific — they do not apply to the Python,
-Rust, or other-language MCP SDKs. Each is captured as a focused reference
-file:
+Beyond the spec itself, this skill ships reference material for the official
+MCP SDKs. The depth differs by language: the Rust SDK has a full user guide;
+the TypeScript SDK currently only documents one well-known build-time quirk.
+These materials are language-specific — Rust guidance does not apply to
+TypeScript and vice versa.
 
-| Quirk                                                                         | Read                                                 |
-| :---------------------------------------------------------------------------- | :--------------------------------------------------- |
-| Vite/Rollup/Webpack resolver error for `pkce-challenge` in browser/SSR builds | `references/typescript-sdk-quirks/pkce-challenge.md` |
+| SDK                                       | Start here                                                                                 |
+| :---------------------------------------- | :----------------------------------------------------------------------------------------- |
+| Rust — `rmcp` crate (comprehensive guide) | `references/rust-sdk/overview.md`, then drill via `references/rust-sdk/doc-index.md`       |
+| TypeScript — `@modelcontextprotocol/sdk`  | `references/typescript-sdk/pkce-challenge.md` (Vite/bundler `pkce-challenge` resolver fix) |
+
+### Rust SDK (`rmcp`) at a glance
+
+`references/rust-sdk/overview.md` covers workspace orientation, version /
+stability notes (Tier 2 conformance — some 2025-11-25 features are still in
+motion), Cargo feature flags, and the smallest viable server and client.
+From there, `references/rust-sdk/doc-index.md` indexes every per-feature
+file: server primitives (tools, prompts, resources, tasks, sampling,
+elicitation, roots, transports), client features (handler, requests,
+sampling, elicitation, roots, transports, testing), and the shared Cargo
+`feature-flags.md`. The canonical local example is `crates/mcp-server/`;
+the pinned upstream source of truth is `submodules/mcp-rust-sdk/`.
+
+### TypeScript SDK (`@modelcontextprotocol/sdk`)
+
+Currently scoped to one entry — the Vite/Rollup/Webpack resolver error for
+`pkce-challenge` in browser/SSR builds, with a stub-alias workaround. See
+`references/typescript-sdk/pkce-challenge.md`. New TypeScript-SDK quirks
+should be added as sibling files under `references/typescript-sdk/`.

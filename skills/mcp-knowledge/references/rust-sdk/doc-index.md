@@ -1,9 +1,10 @@
-# rmcp documentation index
+# rmcp (Rust SDK) documentation index
 
-One-line summary of every reference file shipped with the `rmcp` skill.
-All paths are relative to `skills/rmcp/references/`. Code citations
-target either the local example crate (`crates/mcp-server/`) or the
-pinned upstream submodule (`submodules/mcp-rust-sdk/`).
+One-line summary of every reference file shipped under the Rust SDK section
+of the `mcp-knowledge` skill. Paths in the tables below are relative to
+`skills/mcp-knowledge/references/rust-sdk/`. Code citations target either
+the local example crate (`crates/mcp-server/`) or the pinned upstream
+submodule (`submodules/mcp-rust-sdk/`).
 
 ## Shared
 
@@ -87,10 +88,12 @@ pinned upstream submodule (`submodules/mcp-rust-sdk/`).
 - **Local working example** — `crates/mcp-server/` (server only). Every
   server reference file cites specific files and lines.
 - **Upstream rmcp source** — `submodules/mcp-rust-sdk/crates/rmcp/src/`
-  is the source of truth when this skill conflicts with reality.
+  is the source of truth when these reference files conflict with reality.
 - **Upstream examples** — `submodules/mcp-rust-sdk/examples/servers/`
-  and `submodules/mcp-rust-sdk/examples/clients/` cover scenarios this
-  skill mentions but the local example doesn't ship (OAuth flows,
+  and `submodules/mcp-rust-sdk/examples/clients/` cover scenarios these
+  files mention but the local example doesn't ship (OAuth flows,
   completion, structured output, sampling-tools, URL elicitation).
-- **MCP spec / protocol questions** — defer to `skills/mcp-knowledge/`.
-  This skill stays Rust-specific.
+- **MCP spec / protocol questions** — see the per-spec-version reference
+  files in sibling directories (`references/2024-11-05/`,
+  `references/2025-03-26/`, `references/2025-06-18/`,
+  `references/2025-11-25/`). This section stays Rust-specific.

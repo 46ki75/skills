@@ -244,7 +244,7 @@ internal store and surface a cursor.
 
 ## See also
 
-- `references/server/getting-started.md` — the `impl ServerHandler`
+- `references/rust-sdk/server/getting-started.md` — the `impl ServerHandler`
   block that delegates here
 - `crates/mcp-server/src/resources.rs` — full canonical example
 - `crates/mcp-server/tests/resources.rs` — round-trip integration tests
