@@ -1,72 +1,95 @@
-<!-- markdownlint-disable -->
-# Custom Component Catalog Guide (v0.9)
+# A2UI v0.9 — Custom Catalog Guide
 
-This guide explains how to define, implement, register, and negotiate custom component
-catalogs in A2UI v0.9. Use it when you need to go beyond the Basic Catalog and wire
-your own design system components to A2UI agents.
+This guide covers the **end-to-end** workflow for replacing or extending the
+Basic Catalog with your own application-specific catalog: defining the
+schema, registering components in the renderer, the catalog-negotiation
+handshake, versioning, validation, and graceful degradation.
 
----
+## Table of Contents
 
-## 1. Why Define Your Own Catalog?
+- [Why Define a Custom Catalog](#why-define-a-custom-catalog)
+- [Catalog Schema Anatomy](#catalog-schema-anatomy)
+- [Building a Catalog](#building-a-catalog)
+- [Authoring a Component (Schema → Implementation → Registration)](#authoring-a-component-schema--implementation--registration)
+- [Catalog Negotiation Handshake](#catalog-negotiation-handshake)
+- [Versioning and Migrations](#versioning-and-migrations)
+- [Validation Strategy](#validation-strategy)
+- [Graceful Degradation](#graceful-degradation)
+- [Security Considerations](#security-considerations)
+- [Agent-Side Integration (ADK)](#agent-side-integration-adk)
+- [Inline Catalogs](#inline-catalogs)
 
-Every A2UI surface is driven by a **Catalog** — a JSON Schema file that tells the agent
-which components, functions, and themes exist for a given client. The Basic Catalog is a
-sparse, general-purpose starting point; for production applications you should replace or
-extend it with a catalog that mirrors your design system.
+## Why Define a Custom Catalog
 
-| Use case | Recommendation |
-| :------- | :------------- |
-| Mature frontend with existing design system | Define a catalog that maps directly to your components. No adapters. |
-| Greenfield / prototype | Start with the Basic Catalog; evolve to your own as the app matures. |
+Every A2UI surface is driven by a Catalog — a JSON Schema file telling the
+agent which components, functions, and themes are available. The Basic
+Catalog is deliberately sparse to be implementable across renderers; most
+production apps replace it.
 
 Benefits:
 
-- **Design system alignment** — agents use only the components that exist in your app.
-- **Security** — only trusted, pre-registered components can be rendered.
-- **No mappers** — a catalog that directly names your components avoids mapping Generic→Custom at runtime.
+- **Design-system alignment** — restrict the agent to your real components,
+  not generic primitives.
+- **Security / type safety** — you register the entire catalog with the
+  client app, so only trusted components ever render.
+- **No mappers needed** — catalogs that mirror your component library beat
+  Basic-Catalog-plus-adapter every time. Since the LLM interprets the
+  catalog itself, you don't need a portable lingua franca across clients.
 
----
+| Use case | Recommendation | Effort |
+| :--- | :--- | :--- |
+| A2UI added to a mature frontend | Define a catalog mirroring your existing design system | Medium |
+| Greenfield app | Start with the Basic Catalog; evolve into your own as the app matures | Low (assuming a renderer exists) |
 
-## 2. Catalog JSON Schema Structure
+## Catalog Schema Anatomy
 
-A catalog is a JSON Schema object that conforms to this shape:
+The full catalog schema (excerpted from `client_capabilities.json`):
 
 ```json
 {
-  "$id": "https://example.com/catalogs/my-catalog/v1/catalog.json",
-  "components": {
-    "ComponentName": { /* JSON Schema object */ }
-  },
-  "functions": [ /* array of FunctionDefinition */ ],
-  "theme": { /* arbitrary JSON Schema for theming */ }
+  "Catalog": {
+    "type": "object",
+    "description": "A collection of component and function definitions.",
+    "properties": {
+      "catalogId":  { "type": "string", "description": "Unique identifier" },
+      "components": { "type": "object", "additionalProperties": { "$ref": "https://json-schema.org/draft/2020-12/schema" } },
+      "functions":  { "type": "array",  "items": { "$ref": "#/$defs/FunctionDefinition" } },
+      "theme":      { "type": "object", "additionalProperties": { "$ref": "https://json-schema.org/draft/2020-12/schema" } }
+    },
+    "required": ["catalogId"],
+    "additionalProperties": false
+  }
 }
 ```
 
-| Field | Required | Description |
-| :---- | :------- | :---------- |
-| `$id` (serves as `catalogId`) | Yes | URI used as the stable identifier for negotiation. Not fetched at runtime. |
-| `components` | No | Map of component name → JSON Schema object. |
-| `functions` | No | Array of function definitions callable by the agent. |
-| `theme` | No | Arbitrary JSON Schema for theme properties. |
+Key constraints:
 
-### Minimal catalog example
+- **Freestanding** — final catalogs MUST have no external `$ref`s. This
+  simplifies LLM inference and removes runtime dependencies. You **may** use
+  external `$ref`s during local development and bundle them with
+  `tools/build_catalog/assemble_catalog.py` before publishing.
+- **Validator-compliant types** — when a property references another
+  component by id, use
+  `"$ref": "common_types.json#/$defs/ComponentId"` (not raw `string`); for
+  lists/templates, use `ChildList`. Raw strings make validators treat the
+  field as static text and silently miss broken references.
+
+## Building a Catalog
+
+### Minimal example
+
+A catalog with one component:
 
 ```json
 {
-  "$id": "https://github.com/myorg/myapp/catalogs/v1/catalog.json",
+  "$id": "https://github.com/.../hello_world/v1/catalog.json",
   "components": {
     "HelloWorldBanner": {
       "type": "object",
       "description": "A simple banner greeting.",
       "properties": {
-        "message": {
-          "type": "string",
-          "description": "The banner text."
-        },
-        "backgroundColor": {
-          "type": "string",
-          "default": "#f0f0f0"
-        }
+        "message": { "type": "string", "description": "The banner text." },
+        "backgroundColor": { "type": "string", "default": "#f0f0f0" }
       },
       "required": ["message"]
     }
@@ -74,87 +97,35 @@ A catalog is a JSON Schema object that conforms to this shape:
 }
 ```
 
-When the agent uses this catalog it generates payloads that conform strictly to those
-component schemas:
+Generated payload:
 
 ```json
 [
-  {
-    "version": "v0.9",
-    "createSurface": {
-      "surfaceId": "my-surface",
-      "catalogId": "https://github.com/myorg/myapp/catalogs/v1/catalog.json"
-    }
-  },
-  {
-    "version": "v0.9",
-    "updateComponents": {
-      "surfaceId": "my-surface",
-      "components": [
-        {
-          "id": "root",
-          "component": "HelloWorldBanner",
-          "message": "Hello, A2UI!",
-          "backgroundColor": "#4CAF50"
-        }
-      ]
-    }
-  }
+  { "version": "v0.9",
+    "createSurface": { "surfaceId": "hello-world-surface",
+                       "catalogId": "https://github.com/.../hello_world/v1/catalog.json" } },
+  { "version": "v0.9",
+    "updateComponents": { "surfaceId": "hello-world-surface",
+                          "components": [
+                            { "id": "root", "component": "HelloWorldBanner",
+                              "message": "Hello, world!", "backgroundColor": "#4CAF50" }
+                          ] } }
 ]
 ```
 
----
-
-## 3. Building a Catalog
-
-### Freestanding requirement
-
-A2UI catalogs **must be standalone** (no unresolved `$ref` to external files). LLM inference
-does not resolve external references at runtime. During authoring you may use `$ref` for
-modularity; bundle everything before distribution using the assembly tool:
-
-```bash
-uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] \
-  --output-name my_catalog \
-  [--catalog-id <ID>] \
-  [--version 0.9] \
-  [--extend-basic-catalog] \
-  [--out-dir dist] \
-  [--verbose]
-```
-
-Options:
-
-| Option | Description |
-| :----- | :---------- |
-| `--output-name` | Base filename of the bundled catalog (`.json` appended automatically). |
-| `--catalog-id` | Override the `$id` / `catalogId`. Defaults to `urn:a2ui:catalog:<base_name>`. |
-| `--version` | A2UI spec version for official catalog fallbacks. `0.9` or `0.10`. Default `0.9`. |
-| `--extend-basic-catalog` | Includes the entire Basic Catalog automatically. |
-| `--out-dir` | Output directory. Default `dist`. |
-| `--verbose` | Debug logging. |
-
 ### Extending the Basic Catalog
-
-Import every component from the Basic Catalog and add your own:
 
 ```json
 {
-  "$id": "https://example.com/catalogs/extended/v1/catalog.json",
+  "$id": "https://github.com/.../my_app/v1/catalog.json",
   "components": {
     "allOf": [
       { "$ref": "basic_catalog_definition.json#/components" },
       {
         "SuggestionChips": {
           "type": "object",
-          "description": "A horizontal list of suggested prompts.",
-          "properties": {
-            "suggestions": {
-              "type": "array",
-              "description": "Suggested prompt strings.",
-              "items": { "type": "string" }
-            }
-          },
+          "description": "A list of suggested prompts",
+          "properties": { "suggestions": { "type": "array", "description": "The suggested prompts." } },
           "required": ["suggestions"]
         }
       }
@@ -163,15 +134,11 @@ Import every component from the Basic Catalog and add your own:
 }
 ```
 
-Run `assemble_catalog.py` to resolve the `$ref` before distributing.
-
-### Cherry-picking components
-
-Import only specific Basic Catalog components:
+### Cherry-picking from the Basic Catalog
 
 ```json
 {
-  "$id": "https://example.com/catalogs/popup/v1/catalog.json",
+  "$id": "https://github.com/.../popup_app/v1/catalog.json",
   "components": {
     "allOf": [
       { "$ref": "basic_catalog.json#/components/Text" },
@@ -179,9 +146,7 @@ Import only specific Basic Catalog components:
         "Popup": {
           "type": "object",
           "description": "A modal overlay that displays an icon and text.",
-          "properties": {
-            "text": { "$ref": "common_types.json#/$defs/ComponentId" }
-          },
+          "properties": { "text": { "$ref": "common_types.json#/$defs/ComponentId" } },
           "required": ["text"]
         }
       }
@@ -190,42 +155,54 @@ Import only specific Basic Catalog components:
 }
 ```
 
-Run `assemble_catalog.py` to resolve the `$ref` before distributing.
+### Bundling with `assemble_catalog.py`
 
-### Defining a richer component (with data binding)
+```bash
+uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] \
+  --output-name <OUTPUT_NAME> \
+  [--catalog-id <ID>] \
+  [--version 0.9 | 0.10] \
+  [--extend-basic-catalog] \
+  [--out-dir <DIR>] \
+  [--verbose]
+```
 
-Properties that support both literal values and data model paths use the `StringValue` /
-`literalArray` + `path` pattern (same primitives as the Basic Catalog):
+Key flags:
+
+- `--output-name` (required) — name of the combined catalog file.
+- `--catalog-id` — defaults to `urn:a2ui:catalog:<base_name>`.
+- `--version` — A2UI spec version for official fallbacks (`0.9` or `0.10`).
+- `--extend-basic-catalog` — automatically inline the entire
+  `basic_catalog.json` even if your inputs don't reference it.
+
+## Authoring a Component (Schema → Implementation → Registration)
+
+The four-step workflow, illustrated with the `rizzcharts` sample's `Chart`
+component (Angular renderer).
+
+### 1. Define the schema
+
+In `rizzcharts_catalog_definition.json`:
 
 ```json
 "Chart": {
   "type": "object",
-  "description": "An interactive doughnut or pie chart.",
+  "description": "An interactive chart that uses a hierarchical list of objects for its data.",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": ["doughnut", "pie"]
-    },
-    "title": {
-      "type": "object",
-      "properties": {
-        "literalString": { "type": "string" },
-        "path": { "type": "string" }
-      }
-    },
-    "chartData": {
-      "type": "object",
+    "type":  { "type": "string", "description": "The type of chart to render.", "enum": ["doughnut", "pie"] },
+    "title": { "type": "object",
+               "properties": { "literalString": {"type": "string"}, "path": {"type": "string"} } },
+    "chartData": { "type": "object",
       "properties": {
         "literalArray": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": { "type": "string" },
-              "value": { "type": "number" }
-            },
-            "required": ["label", "value"]
-          }
+          "items": { "type": "object",
+                     "properties": { "label": {"type": "string"}, "value": {"type": "number"},
+                                     "drillDown": { "type": "array",
+                                       "items": { "type": "object",
+                                                  "properties": { "label": {"type": "string"}, "value": {"type": "number"} },
+                                                  "required": ["label", "value"] } } },
+                     "required": ["label", "value"] }
         },
         "path": { "type": "string" }
       }
@@ -235,297 +212,317 @@ Properties that support both literal values and data model paths use the `String
 }
 ```
 
----
+### 2. Implement the component (Angular)
 
-## 4. Client-Side Implementation
-
-### Step 1 — Implement the component (Angular example)
-
-Extend `DynamicComponent` from `@a2ui/angular` to gain data binding resolution via
-`resolvePrimitive`:
+Extend `DynamicComponent` from `@a2ui/angular`:
 
 ```typescript
-import {DynamicComponent} from '@a2ui/angular';
+import { DynamicComponent } from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import {Component, computed, input} from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
-@Component({
-  selector: 'hello-world-banner',
-  template: `<div [style.background]="bg()"><h2>{{ message() }}</h2></div>`,
-})
-export class HelloWorldBanner extends DynamicComponent {
-  readonly message = input<string>();
-  readonly backgroundColor = input<string>('#f0f0f0');
-  protected readonly bg = computed(() => this.backgroundColor() ?? '#f0f0f0');
-}
-```
-
-For components with data-bound properties use `resolvePrimitive`:
-
-```typescript
 @Component({
   selector: 'a2ui-chart',
-  template: `<div><h2>{{ resolvedTitle() }}</h2></div>`,
+  template: `
+    <div>
+      <h2>{{ resolvedTitle() }}</h2>
+      <canvas baseChart [data]="currentData()" [type]="chartType()"></canvas>
+    </div>
+  `,
 })
 export class Chart extends DynamicComponent<Types.CustomNode> {
   readonly type = input.required<string>();
+  protected readonly chartType = computed(() => this.type() as ChartType);
+
   readonly title = input<Primitives.StringValue | null>();
-  protected readonly resolvedTitle = computed(
-    () => super.resolvePrimitive(this.title() ?? null)
-  );
+  protected readonly resolvedTitle = computed(() => super.resolvePrimitive(this.title() ?? null));
+
   readonly chartData = input.required<Primitives.StringValue | null>();
+  // ... data resolution logic using super.resolvePrimitive for data paths
 }
 ```
 
-### Step 2 — Register with the renderer catalog
+`super.resolvePrimitive` is the helper that turns A2UI `DynamicString` /
+`DynamicArray` shapes into real values, handling both literals and `path`
+bindings.
 
-Map component names (as the agent sends them) to lazy-loaded implementations and input bindings:
+### 3. Register in the client catalog
 
 ```typescript
-import {Catalog, DEFAULT_CATALOG} from '@a2ui/angular';
-import {inputBinding} from '@angular/core';
+import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
+import { inputBinding } from '@angular/core';
 
-export const MY_CATALOG = {
-  ...DEFAULT_CATALOG,  // keep Basic Catalog components
-  HelloWorldBanner: {
-    type: () => import('./hello_world_banner').then(r => r.HelloWorldBanner),
-    bindings: ({properties}) => [
-      inputBinding('message', () => properties['message'] || undefined),
-      inputBinding('backgroundColor', () => properties['backgroundColor'] || undefined),
-    ],
-  },
+export const RIZZ_CHARTS_CATALOG = {
+  ...DEFAULT_CATALOG,            // include the Basic Catalog
   Chart: {
-    type: () => import('./chart').then(r => r.Chart),
-    bindings: ({properties}) => [
-      inputBinding('type', () => properties['type'] || undefined),
-      inputBinding('title', () => properties['title'] || undefined),
-      inputBinding('chartData', () => properties['chartData'] || undefined),
+    type: () => import('./chart').then(r => r.Chart),   // lazy-loaded
+    bindings: ({ properties }) => [
+      inputBinding('type',      () => ('type' in properties && properties['type']) || undefined),
+      inputBinding('title',     () => ('title' in properties && properties['title']) || undefined),
+      inputBinding('chartData', () => ('chartData' in properties && properties['chartData']) || undefined),
     ],
   },
 } as Catalog;
 ```
 
-### Step 3 — Provide the catalog to `A2UI_RENDERER_CONFIG`
+### 4. Wire the agent (see "Agent-Side Integration" below)
 
-```typescript
-import {ApplicationConfig} from '@angular/core';
-import {A2UI_RENDERER_CONFIG, A2uiRendererService} from '@a2ui/angular/v0_9';
-import {MY_CATALOG} from './my-catalog';
+## Catalog Negotiation Handshake
 
-export const appConfig: ApplicationConfig = {
-  providers: [
-    {
-      provide: A2UI_RENDERER_CONFIG,
-      useValue: {
-        catalogs: [MY_CATALOG],
-        actionHandler: action => console.log('action:', action),
-      },
-    },
-    A2uiRendererService,
-  ],
-};
-```
+Three steps:
 
-### React renderer
+### Step 1 — Agent advertises support (optional)
 
-For React, pass your catalog to the `MessageProcessor`:
-
-```typescript
-import {MessageProcessor} from '@a2ui/react';
-import {MY_CATALOG} from './my-catalog';
-
-const processor = new MessageProcessor({catalogs: [MY_CATALOG]});
-```
-
----
-
-## 5. Catalog Negotiation
-
-Catalog negotiation is a three-step handshake between agent and client.
-
-### Step 1 — Agent advertises supported catalogs (optional)
-
-The agent can list supported catalogs in its A2A Agent Card. Clients can use this to check
-compatibility before opening a session, but it is informational only.
+A2A AgentCard hint:
 
 ```json
 {
+  "name": "Ecommerce Dashboard Agent",
   "capabilities": {
-    "extensions": [
-      {
-        "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
-        "params": {
-          "supportedCatalogIds": [
-            "https://a2ui.org/specification/v0_9/basic_catalog.json",
-            "https://github.com/myorg/myapp/catalogs/v1/catalog.json"
-          ]
-        }
+    "extensions": [{
+      "uri": "https://a2ui.org/a2a-extension/a2ui/v0.9",
+      "params": {
+        "supportedCatalogIds": [
+          "https://a2ui.org/specification/v0_9/basic_catalog.json",
+          "https://github.com/.../rizzcharts_catalog_definition.json"
+        ]
       }
-    ]
+    }]
   }
 }
 ```
 
-### Step 2 — Client advertises supported catalogs (required)
+Informational — helps the client know what to expect, doesn't bind the
+agent.
 
-The client **must** include `a2uiClientCapabilities` in the `metadata` of **every** A2A
-message it sends. The list is ordered by preference (most preferred first).
+### Step 2 — Client declares support (required, every message)
+
+Every outbound A2A message metadata carries `a2uiClientCapabilities` with a
+**preference-ordered** list:
 
 ```json
 {
-  "parts": [{"text": "Show me the dashboard."}],
+  "parts": [{ "text": "What is the current status of my flight?" }],
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "https://github.com/myorg/myapp/catalogs/v1/catalog.json",
-        "https://a2ui.org/specification/v0_9/basic_catalog.json"
+        "https://a2ui.org/specification/v0_9/basic_catalog.json",
+        "https://github.com/.../rizzcharts_catalog_definition.json"
       ]
     }
   }
 }
 ```
 
-`inlineCatalogs` (optional, not recommended for production): full catalog definition objects
-the client sends at runtime instead of pre-registered IDs.
+### Step 3 — Agent picks per-surface
 
-### Step 3 — Agent selects a catalog per surface
-
-When the agent creates a surface it picks the best match from the client's list. The chosen
-`catalogId` is locked for the lifetime of that surface. If no match is found, the agent
-sends no UI.
+When the agent creates a surface, it picks the best match from the client's
+list. Once chosen, the choice is **locked for the lifetime of that
+surface**. If no compatible catalog is found, the agent does not send UI.
 
 ```json
 {
-  "version": "v0.9",
   "createSurface": {
-    "surfaceId": "dashboard-surface",
-    "catalogId": "https://github.com/myorg/myapp/catalogs/v1/catalog.json"
+    "surfaceId": "salesDashboard",
+    "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
   }
 }
 ```
 
----
+## Versioning and Migrations
 
-## 6. Catalog Naming and Versioning
+### `catalogId` is a URI
 
-### URI convention
+Recommended pattern: `https://example.com/catalogs/mysurface/v1/catalog.json`.
 
-Use URIs as `catalogId`s to guarantee global uniqueness and human readability. The URI is
-**never fetched at runtime** — it is only an identifier.
+- The URI is **just an identifier** — no runtime fetch. The catalog
+  definition must be known to both agent and client beforehand (compile/
+  deploy time).
+- URIs make IDs globally unique and easy for humans to inspect.
 
-```
-https://example.com/catalogs/<name>/v<MAJOR>/catalog.json
-```
+### Breaking vs non-breaking
 
-### Breaking vs non-breaking changes
+The standard JSON parser ignores unknown fields, but in a server-driven UI
+silently dropping a *container* component drops its entire subtree. Update
+classification:
 
-| Change | Category | Action required |
-| :----- | :------- | :-------------- |
-| Add container component | Breaking | Bump major version |
-| Remove container component | Breaking | Bump major version |
-| Change a field type | Breaking | Bump major version |
-| Add a required property without default | Breaking | Bump major version |
-| Add leaf (non-container) component | Non-breaking | No version bump |
-| Add optional property | Non-breaking | No version bump |
-| Remove a property | Non-breaking | No version bump |
-| Add new functions or styles | Non-breaking | No version bump |
-| Update `description` fields | Non-breaking | No version bump |
+**Breaking (major version bump required)** — bump `v1` → `v2`:
 
-### Migration pattern (zero downtime)
+- Adding a container (old clients would render no children when the
+  container is dropped).
+- Removing a container.
+- Changing a property's type (validator failure on older clients).
+- Adding a required property without a default.
 
-1. **Client** updates `supportedCatalogIds` to include **both** old and new versions
-   (new first, old second).
-2. **Agent** is rebuilt with the v2 schema; when the client advertises v2 support the agent
-   prefers it.
-3. **Old agents** still match v1 in the client's list — no downtime.
+**Non-breaking (stay on current major)**:
 
----
+- Adding a leaf component (safe to ignore).
+- Adding an optional property.
+- Removing a property (clients can ignore if no longer sent).
+- Adding new functions or styles.
+- Doc-only changes (`description`, typo fixes).
 
-## 7. Schema Validation and Graceful Degradation
+### Migration playbook
 
-### Two-phase validation
+To roll out a new major version without downtime:
 
-1. **Agent-side (pre-send):** The agent runtime validates generated JSON against the catalog
-   before transmitting. On failure the agent can retry or fall back to plain text.
-2. **Client-side (on receive):** The client validates received JSON against its local copy of
-   the catalog. On failure it reports a `VALIDATION_FAILED` error back to the agent.
+1. **Client updates first** — clients advertise *both* versions
+   (`[".../v2/...", ".../v1/..."]`) in `supportedCatalogIds`.
+2. **Agents update** — rebuilt agents see v2 and prefer it.
+3. **Legacy support** — older agents that haven't been rebuilt still match
+   v1 in the client's list and remain functional.
 
-### Graceful degradation
+## Validation Strategy
 
-Clients **must not crash** on unknown components or properties. Instead:
+Two-phase, defense in depth:
 
-- Unknown component → render a safe "not supported" placeholder or skip the node.
-- Unknown property → silently ignore.
-- Entire surface fails → display a generic error message or raw text.
+### Agent-side (pre-send)
 
-### Client-to-server error reporting
+Before transmitting any UI payload, the agent runtime validates the
+generated JSON against the catalog.
+
+- **Purpose** — catch hallucinated properties or malformed structures at
+  the source.
+- **Outcome on failure** — agent attempts to fix/regenerate the JSON, or
+  gracefully degrades (e.g. plain text response).
+
+### Client-side
+
+The client library validates the payload against its local catalog
+definition before rendering.
+
+- **Purpose** — security + stability against version mismatches or
+  compromised agent outputs.
+- **Outcome on failure** — emit a `VALIDATION_FAILED` error back to the
+  agent:
 
 ```json
 {
   "version": "v0.9",
   "error": {
     "code": "VALIDATION_FAILED",
-    "surfaceId": "dashboard-surface",
-    "path": "/components/Chart/chartData",
-    "message": "Missing required property 'chartData' in component 'Chart'."
+    "surfaceId": "flight-status-card-123",
+    "path": "/components/FlightCard/flightNumber",
+    "message": "Missing required property 'flightNumber' in component 'FlightCard'."
   }
 }
 ```
 
----
+## Graceful Degradation
 
-## 8. Agent-Side Integration (ADK / Python)
+Even after schema validation passes, the renderer may hit runtime issues
+(missing asset, component implementation not loaded, platform limitation).
+**Don't crash.**
 
-Use `A2uiSchemaManager` to generate the system prompt with your catalog's schema and
-examples, and `SendA2uiToClientToolset` to give the agent a tool for sending A2UI payloads.
+- **Unknown components** — render a safe fallback (a generic card with the
+  component's debug name) or skip the node entirely.
+- **Text fallback** — if a whole surface fails to render, display the raw
+  text description (if available) or a generic message like
+  "This interface could not be displayed."
+
+Real-world version-skew scenarios:
+
+- **Old iOS client, newer agent** — agent sends a new `Badge` component;
+  the old client renders a placeholder/text fallback. Agent sends a new
+  property on `Button`; the old client ignores it. Agent removed a
+  component the old client supports; nothing breaks because the agent just
+  stops sending it.
+- **New web client, older agent** — client supports new `Badge` but the
+  agent never sends it; no issue. Client removed an old property and
+  ignores it if the agent still sends it. Client added new styles the
+  agent doesn't use; no issue.
+
+## Security Considerations
+
+1. **Allowlist components** — only register components you trust. Don't
+   expose components that offer dangerous capabilities (script execution,
+   `<iframe src="...">` with arbitrary URLs) unless they're tightly
+   constrained.
+2. **Validate properties** — always validate agent-supplied properties
+   against type constraints before rendering. Schema validation is the
+   first line; runtime validation is the second.
+3. **Sanitize text** — never render unsanitized agent-provided content
+   unless the rendering path is known-safe (e.g. the renderer's Markdown
+   pipeline does sanitization).
+4. **Pre-compile catalogs into the client** — do not fetch catalogs at
+   runtime from the network. Inline catalogs in `a2uiClientCapabilities`
+   exist for local dev only; production catalogs must be compile-time.
+
+## Agent-Side Integration (ADK)
+
+The Python ADK provides a turnkey path for wiring an agent to a custom
+catalog.
+
+### Session preparation (executor)
+
+Intercept the incoming message to detect A2UI activation and the catalog
+the client supports; resolve and stash it in session state:
 
 ```python
-from a2ui.schema.constants import VERSION_0_9
-from a2ui.schema.manager import A2uiSchemaManager
-
-schema_manager = A2uiSchemaManager(
-    version=VERSION_0_9,
-    catalogs=[my_catalog_config],  # your CatalogConfig pointing to the JSON file
-)
-
-A2UI_INSTRUCTION = schema_manager.generate_system_prompt(
-    role_description="You are a dashboard agent.",
-    ui_description="Use the Chart component for all data visualizations.",
-    include_schema=True,
-    include_examples=True,
-    validate_examples=True,
-)
-```
-
-In the executor, resolve the catalog at session start and save it to session state:
-
-```python
-from a2ui.adk.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEventConverter
-from a2ui.a2a_extension.utils import try_activate_a2ui_extension
-
 use_ui = try_activate_a2ui_extension(context)
 if use_ui:
-    catalog = schema_manager.get_selected_catalog(client_ui_capabilities=capabilities)
-    agent.tools = [SendA2uiToClientToolset(a2ui_catalog=catalog, a2ui_enabled=True)]
+    a2ui_catalog = self.schema_manager.get_selected_catalog(
+        client_ui_capabilities=capabilities
+    )
+    examples = self.schema_manager.load_examples(a2ui_catalog, validate=True)
 
-# In A2aAgentExecutorConfig, wire the event converter
+    await runner.session_service.append_event(
+        session,
+        Event(actions=EventActions(state_delta={
+            _A2UI_ENABLED_KEY: True,
+            _A2UI_CATALOG_KEY: a2ui_catalog,
+            _A2UI_EXAMPLES_KEY: examples,
+        })),
+    )
+```
+
+`A2uiSchemaManager` is responsible for choosing the right catalog from the
+client's advertised list and pre-loading validated examples for the LLM
+prompt.
+
+### Tool setup
+
+Expose `SendA2uiToClientToolset` so the LLM can emit A2UI payloads as tool
+calls:
+
+```python
+from a2ui.adk.send_a2ui_to_client_toolset import SendA2uiToClientToolset
+
+a2ui_catalog = self.schema_manager.get_selected_catalog(
+    client_ui_capabilities=capabilities
+)
+agent.tools = [
+    SendA2uiToClientToolset(
+        a2ui_catalog=a2ui_catalog,
+        a2ui_enabled=True,
+    )
+]
+```
+
+### Event converter
+
+Bridge the LLM's tool calls into A2A `DataPart`s with the A2UI mimeType:
+
+```python
+from a2ui.adk.send_a2ui_to_client_toolset import A2uiEventConverter
+
 config = A2aAgentExecutorConfig(event_converter=A2uiEventConverter())
 ```
 
-The `A2uiEventConverter` automatically translates `send_a2ui_json_to_client` tool calls
-into A2A `DataPart` messages with the A2UI payload, so the agent does not need explicit
-serialization logic.
+## Inline Catalogs
+
+`a2uiClientCapabilities.inlineCatalogs` lets the client supply a full
+catalog definition at runtime. **Supported, but not recommended in
+production** — it's intended for local dev, where round-tripping a catalog
+through the agent build is too slow. In production, pre-compile catalogs
+into the agent's deployment.
+
+The agent must have advertised `acceptsInlineCatalogs: true` (in
+`server_capabilities.json`) for an inline catalog to be honored.
 
 ---
 
-## 9. Security Considerations
-
-1. **Allowlist only trusted components.** Do not expose components that execute scripts or
-   access privileged APIs.
-2. **Validate all properties.** Run client-side JSON Schema validation on every incoming
-   component payload.
-3. **Sanitize text values.** Do not render agent-provided strings as raw HTML unless you
-   have sanitized them.
-4. **Pin catalog versions.** Clients should only accept `catalogId`s from their own
-   pre-registered list.
+Source: synthesized from `submodules/A2UI/docs/concepts/catalogs.md`,
+`submodules/A2UI/docs/guides/defining-your-own-catalog.md`, and
+`submodules/A2UI/docs/guides/authoring-components.md`.

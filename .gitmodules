@@ -13,3 +13,6 @@
 [submodule "submodules/mcp-rust-sdk"]
 	path = submodules/mcp-rust-sdk
 	url = https://github.com/modelcontextprotocol/rust-sdk
+[submodule "submodules/A2A"]
+	path = submodules/A2A
+	url = https://github.com/a2aproject/A2A.git
