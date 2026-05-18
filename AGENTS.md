@@ -29,21 +29,10 @@ metadata:
 
 You should run `markdownlint-cli2` after creating markdown files.
 
-Use following commands, it triggers npm scripts and runs lint.
+Use the following commands; they trigger the linter.
 
 ```bash
-# Install dependencies
-❯ pnpm i
-
-# Run lint
-❯ pnpm run lint
-
-> @ lint /home/ikuma/org/46ki75/skills
-> markdownlint-cli2 ./**/*.md
-
-markdownlint-cli2 v0.22.1 (markdownlint v0.40.0)
-Linting: 75 file(s)
-Summary: 0 error(s)
+just check
 ```
 
 ## Git Submodules
