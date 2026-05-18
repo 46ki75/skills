@@ -78,14 +78,14 @@ println!("{tools:#?}");
 ```
 
 Note that `ClientInfo` implements `ClientHandler` (see
-`references/client/handler.md`), so you can pass it directly to
+`references/rust-sdk/client/handler.md`), so you can pass it directly to
 `.serve(...)` for a "just talk to the server" client.
 
 ### Picking a TLS strategy
 
 Choose one of `reqwest`, `reqwest-native-tls`, or
 `reqwest-tls-no-provider` in your `Cargo.toml`. They're mutually
-exclusive — see `references/feature-flags.md`.
+exclusive — see `references/rust-sdk/feature-flags.md`.
 
 ### Custom headers / auth
 
@@ -130,7 +130,7 @@ let _ = server_handle.await;
 This is *the* canonical test harness — every test in
 `crates/mcp-server/tests/` uses it. The buffer (`4096`) is just the
 backpressure threshold; it's not a message-size limit. See
-`references/client/testing.md` for more.
+`references/rust-sdk/client/testing.md` for more.
 
 ## `IntoTransport` and BYO transport
 
@@ -180,9 +180,9 @@ again.
 
 ## See also
 
-- `references/feature-flags.md` — exact feature flags for each transport
-- `references/server/transports.md` — corresponding server-side wiring
-- `references/client/testing.md` — duplex transport in detail
+- `references/rust-sdk/feature-flags.md` — exact feature flags for each transport
+- `references/rust-sdk/server/transports.md` — corresponding server-side wiring
+- `references/rust-sdk/client/testing.md` — duplex transport in detail
 - `submodules/mcp-rust-sdk/examples/clients/src/everything_stdio.rs`
   — subprocess client driving the JS reference server
 - `submodules/mcp-rust-sdk/examples/clients/src/streamable_http.rs`

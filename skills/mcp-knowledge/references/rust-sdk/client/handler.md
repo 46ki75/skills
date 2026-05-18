@@ -130,10 +130,10 @@ clients (`()`) and "I just want to advertise capabilities" clients
 
 ## See also
 
-- `references/client/getting-started.md` — full minimum example
-- `references/client/sampling.md`,
-  `references/client/elicitation.md`,
-  `references/client/roots.md` — per-callback deep dives
+- `references/rust-sdk/client/getting-started.md` — full minimum example
+- `references/rust-sdk/client/sampling.md`,
+  `references/rust-sdk/client/elicitation.md`,
+  `references/rust-sdk/client/roots.md` — per-callback deep dives
 - `submodules/mcp-rust-sdk/crates/rmcp/src/handler/client.rs` — full
   trait source
 - `submodules/mcp-rust-sdk/crates/rmcp/src/model/capabilities.rs` —

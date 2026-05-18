@@ -155,7 +155,7 @@ let _ = server_handle.await;
 ```
 
 The buffer size (`4096`) only matters for backpressure — it's not the
-message size limit. See `references/client/testing.md` for the full
+message size limit. See `references/rust-sdk/client/testing.md` for the full
 test-harness pattern.
 
 ## Other transports
@@ -191,8 +191,8 @@ implement a custom `SessionManager` with TTL.
 
 ## See also
 
-- `references/feature-flags.md` — the transport-* feature matrix
-- `references/client/transports.md` — corresponding client-side wiring
-- `references/client/testing.md` — duplex-transport test pattern
+- `references/rust-sdk/feature-flags.md` — the transport-* feature matrix
+- `references/rust-sdk/client/transports.md` — corresponding client-side wiring
+- `references/rust-sdk/client/testing.md` — duplex-transport test pattern
 - `crates/mcp-server/src/bin/stdio.rs` — stdio binary
 - `crates/mcp-server/src/bin/http.rs` — Streamable HTTP binary

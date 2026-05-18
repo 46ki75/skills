@@ -126,9 +126,9 @@ to share. UI clients should:
 
 ## See also
 
-- `references/server/roots.md` — the server side that calls
+- `references/rust-sdk/server/roots.md` — the server side that calls
   `list_roots`
-- `references/client/handler.md` — the full `ClientHandler` method list
+- `references/rust-sdk/client/handler.md` — the full `ClientHandler` method list
   including `on_resource_*` notifications (analogous live updates)
 - `submodules/mcp-rust-sdk/crates/rmcp/src/handler/client.rs:102-107`
   — default implementation of `list_roots`

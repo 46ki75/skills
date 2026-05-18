@@ -224,7 +224,7 @@ methods.
 
 When a request can ambiguously deserialize (e.g.
 `CancelTaskResult` vs `GetTaskResult` — see
-`references/client/requests.md`), accept either variant:
+`references/rust-sdk/client/requests.md`), accept either variant:
 
 ```rust
 let task = match cancel_response {
@@ -260,9 +260,9 @@ no need to serialize tests against a global resource.
 
 ## See also
 
-- `references/client/getting-started.md` — the smallest viable client
-- `references/client/requests.md` — building `ClientRequest::*`
-- `references/client/transports.md` — production transport choices
+- `references/rust-sdk/client/getting-started.md` — the smallest viable client
+- `references/rust-sdk/client/requests.md` — building `ClientRequest::*`
+- `references/rust-sdk/client/transports.md` — production transport choices
 - `crates/mcp-server/tests/tools.rs` — list / call / typed args
 - `crates/mcp-server/tests/prompts.rs` — `GetPromptRequest`
 - `crates/mcp-server/tests/resources.rs` — list / read / template / error

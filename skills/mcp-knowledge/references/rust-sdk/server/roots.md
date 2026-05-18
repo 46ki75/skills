@@ -107,10 +107,10 @@ client's `ClientCapabilities::roots` field.
 
 ## See also
 
-- `references/server/tools.md` — `RequestContext<RoleServer>` as a tool
+- `references/rust-sdk/server/tools.md` — `RequestContext<RoleServer>` as a tool
   parameter
-- `references/server/sampling.md`,
-  `references/server/elicitation.md` — sibling server-to-client requests
-- `references/client/roots.md` — implementing the client side
+- `references/rust-sdk/server/sampling.md`,
+  `references/rust-sdk/server/elicitation.md` — sibling server-to-client requests
+- `references/rust-sdk/client/roots.md` — implementing the client side
 - `crates/mcp-server/src/tools.rs:167-190` — `list_workspace_roots`
   worked example

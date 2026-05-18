@@ -110,11 +110,11 @@ The three server-to-client request types each get their own dedicated
 reference file:
 
 - **Sampling** — `ctx.peer.create_message(...)` — see
-  `references/server/sampling.md`.
+  `references/rust-sdk/server/sampling.md`.
 - **Elicitation** — `ctx.peer.elicit::<T>(...)` — see
-  `references/server/elicitation.md`.
+  `references/rust-sdk/server/elicitation.md`.
 - **Roots** — `ctx.peer.list_roots()` — see
-  `references/server/roots.md`.
+  `references/rust-sdk/server/roots.md`.
 
 The pattern in `crates/mcp-server/src/tools.rs` (`ask_llm`,
 `greet_user`, `list_workspace_roots`) is the canonical reference for
@@ -146,7 +146,7 @@ Inspector at the time of writing) will hold the JSON-RPC request open
 until the tool finishes. Keep the sync path short, or mark the tool
 `"required"` so clients have to use the task path.
 
-See `references/server/tasks.md` for the `OperationProcessor` and the
+See `references/rust-sdk/server/tasks.md` for the `OperationProcessor` and the
 `list_tasks` override pattern.
 
 ## Calling `tools/list` programmatically
@@ -207,13 +207,13 @@ hand-rolled schema), and `annotations(...)` (declare hints like
 
 ## See also
 
-- `references/server/getting-started.md` — composing `Server` with
+- `references/rust-sdk/server/getting-started.md` — composing `Server` with
   multiple routers
-- `references/server/tasks.md` — `execution(task_support = ...)` and
+- `references/rust-sdk/server/tasks.md` — `execution(task_support = ...)` and
   the task processor
-- `references/server/sampling.md`,
-  `references/server/elicitation.md`,
-  `references/server/roots.md` — the three server-to-client request
+- `references/rust-sdk/server/sampling.md`,
+  `references/rust-sdk/server/elicitation.md`,
+  `references/rust-sdk/server/roots.md` — the three server-to-client request
   patterns
 - `crates/mcp-server/src/tools.rs` — five worked examples
   (`ping`, `slow_count`, `ask_llm`, `greet_user`, `list_workspace_roots`)

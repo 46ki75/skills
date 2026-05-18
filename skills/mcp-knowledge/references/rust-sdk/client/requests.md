@@ -197,11 +197,11 @@ There's no response and no `await` for the server's reply.
 
 ## See also
 
-- `references/client/handler.md` — what the server can request from the
+- `references/rust-sdk/client/handler.md` — what the server can request from the
   client
-- `references/server/tasks.md` — the server side of the
+- `references/rust-sdk/server/tasks.md` — the server side of the
   `CancelTaskResult` / `GetTaskResult` ambiguity
-- `references/client/testing.md` — full test-harness pattern using
+- `references/rust-sdk/client/testing.md` — full test-harness pattern using
   `send_request`
 - `crates/mcp-server/tests/task.rs` — `CancelTaskParams`,
   `ListTasksRequest`, polling-with-timeout
