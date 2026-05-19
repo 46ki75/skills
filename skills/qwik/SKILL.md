@@ -15,7 +15,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Qwik Skill (v1 & v2)
@@ -372,6 +372,54 @@ re-create it in `useVisibleTask$`.
 <Child isOpen={modal} />   // child receives Signal object, not boolean
 ```
 
+### Keying single-child renderers on a dynamic id
+
+Qwik reconciles children by JSX position when no `key` is present. The
+list iteration case (`{items.map((x) => <Row key={x.id} />)}`) makes the
+keyed pattern obvious. The non-obvious case is a **single-child renderer
+whose prop id swaps** based on parent state — a `Card` whose `child`
+rebinds from `"a"` to `"b"`, a `Modal` whose body component changes, a
+recursive renderer that descends into a different node:
+
+```tsx
+const renderChild = (childId: string) => (
+  <ComponentHost id={childId} basePath={path} />
+);
+```
+
+There is still exactly one `<ComponentHost>` at the same JSX position,
+so Qwik reuses the **same `component$` instance** with `props.id`
+swapped from `"a"` to `"b"`. Internal state carries over: `useSignal`
+latches keep their old values, `useTask$` does not re-run, and any
+subscription opened inside that task is still bound to the previous id.
+
+The fix is to put the prop id into the `key`:
+
+```tsx
+<ComponentHost key={childId} id={childId} basePath={path} />
+```
+
+This forces Qwik to unmount the previous instance (running its
+cleanups) and mount a fresh one. The signal slots reset, the task
+re-runs, the stale subscription is torn down by its own cleanup.
+
+Three things to internalise:
+
+- **`useSignal` is component-local but NOT id-local.** A "fresh" prop id
+  on the same `component$` instance still sees the previous signal
+  values.
+- **Subscriptions opened inside `useTask$` leak across the swap unless
+  the cleanup runs.** Cleanup only fires on unmount, or on the next
+  `track()` re-run. Re-tracking `props.id` inside the task is not a fix
+  — the closure capture of the previous id stays in flight until the
+  task body completes its current invocation.
+- **Per-row keys on list iteration cover this for `.map()` cases but not
+  for single-child slots.** `Card.child`, `Modal.body`, `Button.child`
+  style slots need the key applied at the recursion site too.
+
+Rule of thumb: if a component's identity is determined by a prop, that
+prop must be in the `key`.
+
 ### `bind:value` two-way binding
 
 ```tsx
@@ -446,6 +494,32 @@ context) queues a render that `await new Promise(r => setTimeout(r, ms))`
 will not pump. In production this Just Works; in tests, click a no-op
 `#btn-flush` button after waiting to flush the scheduler. Details in
 `references/qwik-core.md` ("Testing helper").
+
+### `isServer` is `true` inside `createDOM` tests
+
+`createDOM`'s test environment reports `isServer === true` from
+`@builder.io/qwik/build` (or `@qwik.dev/core/build` in v2), even though the
+test DOM is fully present. Any `useTask$` / `useVisibleTask$` body guarded
+with `if (isServer) return;` therefore takes the early exit and the entire
+setup block is skipped. Symptoms: subscriptions never wire up, signals
+never refresh, the component renders its initial state and never updates.
+
+```ts
+useTask$(({ cleanup }) => {
+  // ❌ Fires in createDOM tests; the body never runs
+  if (isServer) return;
+  // ✅ NoSerialize values are undefined on the server and populated on
+  //    both the client AND in createDOM tests — branch on the value
+  //    the task is actually waiting for
+  if (!surfaceModel) return;
+  // ... subscribe etc.
+});
+```
+
+Production Qwik happens to gate the same way and works, so the regression
+only appears once unit tests get added. Cleanest discipline: never branch
+on `isServer` inside a task that depends on a `NoSerialize` value — branch
+on the value itself.
 
 ### Programmatic value writes on form controls don't fire `onInput$`
 

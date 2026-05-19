@@ -407,6 +407,14 @@ Two-way binding shorthand:
 }
 ```
 
+The list-iteration pattern above is the obvious case. The subtler case
+is a single-child slot whose prop id rebinds to a different value (a
+`Card.child` swapping from `"a"` to `"b"`, a recursive renderer pointed
+at a new node). Without a `key` containing the dynamic id, Qwik reuses
+the same `component$` instance with the new prop, and internal state
+(`useSignal` latches, live subscriptions) carries over. See SKILL.md
+"Keying single-child renderers on a dynamic id".
+
 ---
 
 ## `isServer` / `isBrowser` guards
@@ -427,6 +435,14 @@ useTask$(() => {
 ```
 
 Use sparingly. Prefer `useVisibleTask$` for browser-only work instead.
+
+> **Testing gotcha:** `isServer` returns `true` inside `createDOM` tests
+> even though the test DOM is fully present. A `useTask$` body guarded
+> with `if (isServer) return;` silently skips its setup, breaking
+> subscriptions and reactivity in tests while still working in
+> production. Branch on the `NoSerialize` value the task depends on
+> instead. See SKILL.md "`isServer` is `true` inside `createDOM` tests"
+> for the full pattern.
 
 ---
 
