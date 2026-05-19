@@ -159,3 +159,52 @@ noisy without the disable, and silencing them without an explanation makes
 the next maintainer wonder.
 
 Reach for `sync$()` first; the lint rule exists for a reason.
+
+---
+
+## Per-iteration QRL handlers in JSX iteration
+
+Writing a per-row event handler inside a `.map()` like this looks natural:
+
+```tsx
+{rows.map((row) => (
+  <li key={row.id}>
+    <button onClick$={() => handleClick(row.id)}>{row.label}</button>
+  </li>
+))}
+```
+
+In Qwik v2 dev mode the optimizer creates a fresh QRL chunk **per
+iteration**, with the iteration-local `row` captured into each closure.
+Over-capture warnings fire (sometimes silently, sometimes as
+`qwik/valid-lexical-scope` violations), and on large lists the build
+slows visibly. Production builds often resolve the over-capture, but the
+dev-time noise and the lexical-scope rule still bite.
+
+### The fix: one wrapper handler + DOM delegation
+
+Hoist a single handler at component scope and read the per-row decision
+from a `data-*` attribute on the actual event target:
+
+```tsx
+const onRowClick$ = $((ev: Event, el: HTMLElement) => {
+  const id = el.dataset.rowId;
+  if (id) handleClick(id);
+});
+
+<ul onClick$={onRowClick$}>
+  {rows.map((row) => (
+    <li key={row.id}>
+      <button data-row-id={row.id}>{row.label}</button>
+    </li>
+  ))}
+</ul>;
+```
+
+One QRL chunk total, one capture, no per-iteration closure. The handler
+recovers its row id from the DOM, not from the closure.
+
+This is also the right pattern when the iteration body would otherwise
+capture a non-serializable iteration-local value (a class instance, a
+function reference) — moving the decision to a `data-*` attribute keeps
+the closure free of anything Qwik can't serialize.
