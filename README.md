@@ -10,9 +10,21 @@ issues/PRs aren't actively triaged.
 ## Layout
 
 - `skills/` — my published skills.
+- `plugins/` — Claude Code plugins distributed via the `46ki75-skills`
+  marketplace declared in `.claude-plugin/marketplace.json`.
 - `crates/` — Rust workspace that validates, archives, and publishes them.
 - `.agents/skills/` — skills authored by other providers (reference only).
 - `submodules/` — upstream repositories tracked as git submodules.
+
+## Plugin marketplace
+
+This repository doubles as a Claude Code plugin marketplace. Add it once and
+install any of the plugins under `plugins/`:
+
+```bash
+/plugin marketplace add 46ki75/skills
+/plugin install wsl-notification@46ki75-skills
+```
 
 ## Releasing
 
