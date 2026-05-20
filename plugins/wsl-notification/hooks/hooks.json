@@ -1,0 +1,16 @@
+{
+  "description": "Surfaces Claude Code Notification events as Windows toast notifications from WSL2.",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "Notification",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
