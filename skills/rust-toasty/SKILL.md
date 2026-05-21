@@ -19,7 +19,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Toasty (Rust ORM) Skill
@@ -240,6 +240,9 @@ releases.
 | MySQL setup and quirks                              | `references/guide/mysql.md`                                                    |
 | SQLite setup and quirks                             | `references/guide/sqlite.md`                                                   |
 | DynamoDB setup, indexes, scan vs query              | `references/guide/dynamodb.md`                                                 |
+| Amazon Aurora DSQL: constraints, IAM auth, patterns | `references/guide/aurora-dsql.md`                                              |
+| Writing a custom `Driver` (IAM/dynamic creds, etc.) | `references/guide/custom-driver.md`                                            |
+| Many-to-many: there's no macro — model the join     | `references/guide/relationships.md` (see "Many-to-many" section)               |
 | Crate layout / contributor onboarding               | `references/dev/README.md`, `references/dev/architecture/README.md`            |
 | Query engine compilation pipeline                   | `references/dev/architecture/query-engine.md`                                  |
 | Type system design                                  | `references/dev/architecture/type-system.md`                                   |
@@ -254,6 +257,14 @@ For a single-page map of every reference file with a one-line summary, see
 - **Always read the relevant reference page before writing code.** Don't
   reconstruct the macro syntax from memory; the attribute names and argument
   forms are easy to get subtly wrong.
+- **Verify type names against the actually-installed crate, not HEAD on
+  GitHub.** Toasty's public surface drifts across releases: identifiers
+  like `SchemaDiff` (0.6.1) vs `diff::Schema` (HEAD), the visibility of
+  `mod diff`, and helpers like `Migration::sql()` have moved between
+  point releases. Before writing code that touches `toasty-core` or
+  `toasty-sql` internals, run `ls ~/.cargo/registry/src/index.*/toasty-core-*/`
+  and read the source at that path. The installed version is the ground
+  truth; the GitHub `main` branch is not.
 - **Cite the reference path(s) you used at the end of your answer.** Even a
   short trailing line like "See also: `references/guide/dynamodb.md`" gives
   the user a clean handle to keep reading and signals which page grounds your
