@@ -271,6 +271,70 @@ efficiently:
 #[index(fields(org_id, team_id))]
 ```
 
+## Many-to-many
+
+Toasty has no `many_to_many` macro. You model it with an explicit join
+entity that holds two `BelongsTo` relations, plus a matching `HasMany` on
+each "endpoint" model:
+
+```rust,ignore
+#[derive(Debug, toasty::Model)]
+struct Image {
+    #[key] #[auto] id: uuid::Uuid,
+    url: String,
+    #[has_many] taggings: toasty::HasMany<Tagging>,
+}
+
+#[derive(Debug, toasty::Model)]
+struct Tag {
+    #[key] #[auto] id: uuid::Uuid,
+    #[unique] name: String,
+    #[has_many] taggings: toasty::HasMany<Tagging>,
+}
+
+/// Join row carrying the `Image` ⇆ `Tag` association. Becomes a real
+/// table; you can attach extra columns (`tagged_at`, `tagged_by_user_id`,
+/// confidence scores) to it like any other model.
+#[derive(Debug, toasty::Model)]
+struct Tagging {
+    #[key] #[auto] id: uuid::Uuid,
+
+    #[index] image_id: uuid::Uuid,
+    #[belongs_to(key = image_id, references = id)]
+    image: toasty::BelongsTo<Image>,
+
+    #[index] tag_id: uuid::Uuid,
+    #[belongs_to(key = tag_id, references = id)]
+    tag: toasty::BelongsTo<Tag>,
+}
+```
+
+Traversal is two hops, by design. There is no `image.tags()` accessor:
+
+```rust,ignore
+let taggings = image.taggings().exec(&mut db).await?;     // Vec<Tagging>
+for t in &taggings {
+    let tag = Tag::get_by_id(&mut db, &t.tag_id).await?;  // one per row
+    // ...
+}
+```
+
+Naively this is `O(N+1)`. For wider fan-out, batch with
+`Tag::filter(Tag::fields().id().in_set(ids))`, or use `.include()` on
+the first query to preload the taggings (see
+[Preloading Associations](./preloading-associations.md)).
+
+**Surrogate vs composite key on the join table.** The example above uses
+`#[key] #[auto] id: uuid::Uuid`; the composite alternative is
+`#[key(image_id, tag_id)]` on the struct (no surrogate column). Composite
+prevents duplicate `(image_id, tag_id)` rows at the DB layer for free.
+Surrogate is more flexible if you want to address a row cheaply or
+attach identity-bearing fields later.
+
+**`#[unique]` on the pair is not directly supported.** `#[unique]` is
+single-field. If you keep the surrogate key and still need uniqueness on
+the pair, the composite-`#[key]` approach above is the simplest fix.
+
 ## What the following chapters cover
 
 Each relationship type has its own chapter with full details on definition,

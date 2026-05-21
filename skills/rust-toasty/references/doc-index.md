@@ -71,10 +71,12 @@ sync with the submodule revision pinned at the repo root.
 
 | Path | Topic |
 | ---- | ----- |
-| `guide/postgresql.md` | PostgreSQL driver setup, type mappings, quirks |
+| `guide/postgresql.md` | PostgreSQL driver setup, type mappings, quirks, attribute→DDL cheat-sheet |
 | `guide/mysql.md` | MySQL driver setup, type mappings, quirks |
 | `guide/sqlite.md` | SQLite driver setup, type mappings, quirks |
 | `guide/dynamodb.md` | DynamoDB driver setup, primary key model, query vs scan |
+| `guide/aurora-dsql.md` | Amazon Aurora DSQL: constraints, IAM auth, OCC retry, patterns |
+| `guide/custom-driver.md` | Writing a custom `Driver` (IAM auth, dynamic creds, custom test harness) |
 
 ## Developer docs (`dev/`)
 
