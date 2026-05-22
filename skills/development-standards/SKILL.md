@@ -21,7 +21,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Development Standards
@@ -42,12 +42,12 @@ skill — defer there, not here.
 
 ### Rust — `references/rust/`
 
-| File             | When to read                                                                                                                                |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `general.md`     | Any Rust project: workspace inheritance, `rust-toolchain.toml`, `just` recipes, `cargo-llvm-cov`, integration test tiers.                   |
-| `web-openapi.md` | HTTP API with `axum` + `utoipa`: `OpenApiRouter`, Controller/UseCase/Repository layering, `ToSchema` DTOs, error mapping, Swagger UI.       |
-| `web-graphql.md` | _Stub — not yet documented._                                                                                                                |
-| `library.md`     | _Stub — not yet documented._                                                                                                                |
+| File             | When to read                                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `general.md`     | Any Rust project: workspace inheritance, `rust-toolchain.toml`, `just` recipes, `cargo-llvm-cov`, integration test tiers.             |
+| `web-openapi.md` | HTTP API with `axum` + `utoipa`: `OpenApiRouter`, Controller/UseCase/Repository layering, `ToSchema` DTOs, error mapping, Swagger UI. |
+| `web-graphql.md` | _Stub — not yet documented._                                                                                                          |
+| `library.md`     | _Stub — not yet documented._                                                                                                          |
 
 ### Planned but unwritten
 
