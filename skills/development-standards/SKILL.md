@@ -4,9 +4,11 @@ description: >
   Org-internal engineering standards for this organization's projects.
   Invoke whenever scaffolding a new repo, auditing an existing one,
   setting up CI, or configuring any of these tooling files: `Cargo.toml`,
-  `rust-toolchain.toml`, `justfile`, `.editorconfig`, `tsconfig.json`,
-  `package.json`, `bunfig.toml`, or `*.tf`. Also invoke for any work
-  involving `axum`, `utoipa`, `utoipa-axum`, or `utoipa-swagger-ui`.
+  `rust-toolchain.toml`, `justfile`, `.editorconfig`,
+  `.markdownlint-cli2.yaml`, `tsconfig.json`, `package.json`,
+  `bunfig.toml`, or `*.tf`. Also invoke for any work involving
+  `axum`, `utoipa`, `utoipa-axum`, `utoipa-swagger-ui`, or
+  `markdownlint-cli2`.
   Rust is currently the only fully documented language and covers Cargo
   workspace inheritance, MSRV pinning via `rust-toolchain.toml`, `just`
   as the task runner, `cargo-llvm-cov` coverage, the hermetic-vs-live
@@ -31,9 +33,9 @@ reference that matches the task, not the whole tree.
 
 ### Cross-cutting — `references/general/`
 
-| File                | When to read                                                  |
-| ------------------- | ------------------------------------------------------------- |
-| `git-repository.md` | New repo setup, configuring `.editorconfig`, baseline layout. |
+| File                | When to read                                                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `git-repository.md` | New repo setup, configuring `.editorconfig`, `markdownlint-cli2`, baseline layout, editor recommendations. |
 
 Commit-message conventions live in the separate `conventional-commits`
 skill — defer there, not here.
