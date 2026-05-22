@@ -15,7 +15,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # Qwik Skill (v1 & v2)
@@ -576,6 +576,61 @@ Constraints:
   re-trigger without writing a different intermediate value.
 - For one-shot signals that should re-fire even on writing the same value,
   use a nonce / counter field in a store instead.
+
+### CSR-only deployment (extension popup, embedded widget) — load qwikloader manually
+
+Qwik core never attaches DOM event listeners itself. On each render it writes
+`on:event=""` marker attributes and pushes the event names it needs into
+`globalThis.qwikevents` — the separate **qwikloader.js** script is what
+actually subscribes to `document` and dispatches matched events to handlers.
+
+In SSR mode the loader is inlined into the HTML automatically. In **CSR-only**
+mode (mounting via `render(root, <App/>)` with no SSR — typical for browser
+extension popups / side panels, electron windows, embedded widgets, anywhere
+without `qwikVite()` doing its build-time injection) the loader must be
+loaded by hand. Otherwise interactive UI renders but is **silently dead**:
+
+- `onClick$` / `onChange$` / `onInput$` listeners never run.
+- Only `useVisibleTask$` fires — Qwik core notifies visible tasks directly
+  through its internal `notifyTask()` path, so they're the one event hook
+  that doesn't depend on the loader.
+- No console errors. Checkboxes still toggle (native browser behaviour),
+  buttons still depress, links still navigate — but the handlers attached
+  to them never execute.
+
+Symptoms in user reports: "the popup doesn't save anything", "my button is
+dead", "state doesn't persist across reload". The state-persistence framing
+is the most misleading: a `useVisibleTask$` that reads from storage on mount
+works fine, so the load path looks healthy. Only the write side — the
+`onChange$` that's supposed to persist new state — is broken, and the
+disconnect is invisible until you actually inspect what got written.
+
+**The fix**: ship qwikloader as a separate non-module `<script>` BEFORE the
+entry module, with the source served as a real file (not inlined or
+imported):
+
+```html
+<!-- copy node_modules/@builder.io/qwik/dist/qwikloader.js into public/ -->
+<script src="/qwikloader.js"></script>
+<script type="module" src="./main.tsx"></script>
+```
+
+Two paths that look obvious but don't work:
+
+- **`import "@builder.io/qwik/qwikloader.js"` from `main.tsx`** — the
+  `@builder.io/qwik` package sets `"sideEffects": false` in `package.json`,
+  so Vite / Rolldown tree-shakes the effect-only import and the loader never
+  ends up in the bundle.
+- **`new Function(qwikloaderSource)()`** — Chrome MV3's default CSP is
+  `script-src 'self'; object-src 'self'`. Evaluating a string fails with
+  `EvalError: Evaluating a string as JavaScript violates the following
+  Content Security Policy directive because 'unsafe-eval' is not an allowed
+  source of script`. The error fires inside the loader bootstrap, the popup
+  remains uninteractive, and unless you scroll the popup console there's no
+  visible signal.
+
+A non-module `<script src=>` to a real file under the extension's public
+assets is the only loader path that works under MV3.
 
 ### ESLint plugin quirks
 

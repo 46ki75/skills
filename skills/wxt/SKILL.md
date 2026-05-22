@@ -17,7 +17,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # WXT Browser Extension Skill
@@ -345,6 +345,122 @@ export default defineConfig({ modules: ["@wxt-dev/module-solid"] });
 Each popup/options/sidepanel entrypoint needs its own app instance. Use a directory entrypoint with an `index.html` and framework-specific `main.tsx/ts`.
 
 **Router note**: Web extension pages can't use path-based routing. Configure your router to use **hash mode** (e.g., `createHashRouter` for React Router, `createWebHashHistory()` for Vue Router).
+
+**Qwik in CSR-only mode**: a `render(root, <App/>)` setup (no SSR) does *not* auto-inject qwikloader, and without it every `onClick$` / `onChange$`
+listener is silently dead — only `useVisibleTask$` fires. Copy `node_modules/@builder.io/qwik/dist/qwikloader.js` into `public/` and add
+`<script src="/qwikloader.js"></script>` before the module script in each Qwik entrypoint's `index.html`. You can't `import` the loader
+(Qwik's `"sideEffects": false` lets Vite tree-shake it) and you can't `new Function(source)()` it (MV3 CSP forbids `unsafe-eval`). The Qwik
+skill's "CSR-only deployment" section has the full diagnosis.
+
+## MV3 Content Security Policy gotchas
+
+MV3's default extension CSP is `script-src 'self'; object-src 'self'` — strictly **no `unsafe-eval`**. This silently breaks any code that does runtime code generation:
+
+- `new Function(source)()` — throws `EvalError: ... unsafe-eval`
+- `eval(...)` — same
+- Libraries that compile templates at runtime (older Vue runtime-compiler builds, some chart engines)
+- "Late-loading" tricks where a string is fetched then evaluated
+
+When you need a side-effect-only script that you'd normally import from `node_modules`, ship it as a real file under `public/` and pull it in via a
+non-module `<script src=>` from the entrypoint HTML. Vite copies `public/` into the output unchanged. Don't rely on `<script>` tag injection from
+JS either — MV3 also blocks `eval`-style script element creation for inline content.
+
+## E2E Testing with Playwright
+
+Driving an unpacked extension over CDP has several non-obvious gotchas. The working pattern, which any reliable `pnpm test:e2e`-style harness converges on:
+
+### Use Playwright's bundled chromium, not Google Chrome stable
+
+Recent Google Chrome stable releases (≳ v148) silently ignore `--load-extension` for unpacked extensions in headless mode — the flag is accepted,
+the extension never loads, `chrome://extensions` shows an empty list, and your test sees `ERR_BLOCKED_BY_CLIENT` or
+`chrome-error://chromewebdata/`. Playwright's bundled chromium loads them fine:
+
+```ts
+const chromePath =
+  process.env.E2E_CHROMIUM_PATH ||
+  "/home/<you>/.cache/ms-playwright/chromium-1200/chrome-linux64/chrome";
+```
+
+`chromium.executablePath()` is brittle here too — it hardcodes the path for whichever browser version Playwright thinks it should have,
+which may not be the one actually downloaded. Allow override via env var.
+
+### Compute the extension ID locally — don't wait for the SW
+
+Chrome derives an unpacked extension's ID **deterministically from the absolute path** of the load directory. No need to wait for the MV3
+service worker to register as a CDP target (it's lazy and doesn't appear until something wakes it):
+
+```ts
+import crypto from "node:crypto";
+
+const computeExtensionId = (absPath: string): string => {
+  const hex = crypto
+    .createHash("sha256")
+    .update(absPath)
+    .digest("hex")
+    .slice(0, 32);
+  const a = "a".charCodeAt(0);
+  return Array.from(hex, (c) =>
+    String.fromCharCode(a + parseInt(c, 16)),
+  ).join("");
+};
+```
+
+This is far more reliable than scraping the SW URL or the `chrome://extensions` DOM.
+
+### Launch shape: spawn + connectOverCDP, not launchPersistentContext
+
+`chromium.launchPersistentContext()` is finicky with extensions + headless mode (the SW often fails to register and event subscriptions to it
+never fire, even with `--headless=new`). Spawn Chrome directly and attach over CDP:
+
+```ts
+const proc = spawn(chromePath, [
+  "--headless=new",
+  "--disable-gpu",
+  "--no-sandbox",
+  "--no-first-run",
+  "--no-default-browser-check",
+  `--user-data-dir=${userDataDir}`,
+  `--remote-debugging-port=${port}`,
+  `--disable-extensions-except=${EXT_PATH}`,
+  `--load-extension=${EXT_PATH}`,
+]);
+// poll http://127.0.0.1:${port}/json/version until it answers, then:
+const browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`);
+const ctx = browser.contexts()[0]!;
+```
+
+Always pass `--disable-extensions-except` together with `--load-extension`. Without it, Chrome also loads its bundled extensions (Hangouts,
+Cast, etc.) and they pollute `ctx.serviceWorkers()` and the target list, making "find our SW" heuristics unreliable.
+
+### Open `chrome-extension://` URLs via raw CDP, not `page.goto`
+
+After `chromium.connectOverCDP()`, calling `page.goto("chrome-extension://<id>/popup.html")` on an existing tab fails with
+`ERR_BLOCKED_BY_CLIENT` — Playwright's CDP attach refuses the scheme. Spawn the popup as a brand-new CDP target via the JSON HTTP endpoint
+instead, and attach via the `page` event:
+
+```ts
+const evt = ctx.waitForEvent("page", { timeout: 10_000 });
+await fetch(`${cdpUrl}/json/new?${encodeURI(popupUrl)}`, { method: "PUT" });
+const page = await evt;
+```
+
+The `PUT` verb is required — Chrome rejects `GET` on `/json/new` with "Using unsafe HTTP verb GET to invoke /json/new. This action supports only PUT verb."
+
+### Debugging persistence: read storage directly
+
+When persistence is suspect (state appears to update but doesn't survive reload), read `chrome.storage.local` from inside the page to confirm
+what was actually written, rather than just asserting the DOM:
+
+```ts
+const stored = await page.evaluate(
+  () =>
+    new Promise<Record<string, unknown>>((r) =>
+      chrome.storage.local.get(null, r),
+    ),
+);
+```
+
+An empty object here when you expected a value usually means the framework's change handler didn't fire — and in CSR-mode Qwik that's the qwikloader symptom described above.
 
 ## Multi-Browser Targeting
 
