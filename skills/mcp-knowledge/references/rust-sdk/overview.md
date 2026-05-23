@@ -233,17 +233,17 @@ for a one-line summary of every file. Quick map below:
 
 ### Server features
 
-| File                                            | Read when                                                                         |
-| ----------------------------------------------- | --------------------------------------------------------------------------------- |
-| `references/rust-sdk/server/getting-started.md` | Composing `Server` with multiple routers; the stacked-handler-macros rule         |
-| `references/rust-sdk/server/tools.md`           | Authoring `#[tool]` methods, `Parameters<T>`, `CallToolResult`, `task_support`    |
-| `references/rust-sdk/server/prompts.md`         | `#[prompt_router]`, multi-arg prompt examples, `PromptMessageRole`                |
-| `references/rust-sdk/server/resources.md`       | Static resources, URI templates, why there's no macro router for resources        |
-| `references/rust-sdk/server/tasks.md`           | SEP-1319 task lifecycle, `OperationProcessor`, the `list_tasks` override pattern  |
-| `references/rust-sdk/server/sampling.md`        | `ctx.peer.create_message(...)`, multimodal content handling                       |
-| `references/rust-sdk/server/elicitation.md`     | `ctx.peer.elicit::<T>(...)`, `elicit_safe!`, the `ElicitationError` variants      |
-| `references/rust-sdk/server/roots.md`           | `ctx.peer.list_roots()` for workspace-aware servers                               |
-| `references/rust-sdk/server/transports.md`      | stdio and Streamable HTTP wiring, `StreamableHttpService` + `LocalSessionManager` |
+| File                                            | Read when                                                                                                                               |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `references/rust-sdk/server/getting-started.md` | Composing `Server` with multiple routers; the stacked-handler-macros rule                                                               |
+| `references/rust-sdk/server/tools.md`           | Authoring `#[tool]` methods, `Parameters<T>`, `CallToolResult`, `task_support`, `annotations(...)` (declare or get default-destructive) |
+| `references/rust-sdk/server/prompts.md`         | `#[prompt_router]`, multi-arg prompt examples, `PromptMessageRole`                                                                      |
+| `references/rust-sdk/server/resources.md`       | Static resources, URI templates, why there's no macro router for resources                                                              |
+| `references/rust-sdk/server/tasks.md`           | SEP-1319 task lifecycle, `OperationProcessor`, the `list_tasks` override pattern                                                        |
+| `references/rust-sdk/server/sampling.md`        | `ctx.peer.create_message(...)`, multimodal content handling                                                                             |
+| `references/rust-sdk/server/elicitation.md`     | `ctx.peer.elicit::<T>(...)`, `elicit_safe!`, the `ElicitationError` variants                                                            |
+| `references/rust-sdk/server/roots.md`           | `ctx.peer.list_roots()` for workspace-aware servers                                                                                     |
+| `references/rust-sdk/server/transports.md`      | stdio and Streamable HTTP wiring, `StreamableHttpService` + `LocalSessionManager`                                                       |
 
 ### Client features
 

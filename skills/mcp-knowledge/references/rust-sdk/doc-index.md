@@ -22,12 +22,12 @@ submodule (`submodules/mcp-rust-sdk/`).
 
 ### Primitives
 
-| Path                  | Topic                                                                                                                                                                                               |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `server/tools.md`     | `#[tool_router]`, `#[tool(description = ...)]`, `Parameters<T>` with `schemars::JsonSchema`, `CallToolResult` shape, `execution(task_support = ...)`                                                |
-| `server/prompts.md`   | `#[prompt_router]`, no-arg + single-arg + multi-arg prompts, `PromptMessageRole`, `GetPromptResult::with_description`                                                                               |
-| `server/resources.md` | Why there is no macro router for resources; `list_resources` / `read_resource` / `list_resource_templates`; URI scheme dispatch with `strip_prefix`; `RawResource` / `RawResourceTemplate` builders |
-| `server/tasks.md`     | SEP-1319 lifecycle, `OperationProcessor`, `#[task_handler]` macro contract, the canonical `list_tasks` override, cancellation string-matching, timestamp limitation                                 |
+| Path                  | Topic                                                                                                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `server/tools.md`     | `#[tool_router]`, `#[tool(description = ...)]`, `Parameters<T>` with `schemars::JsonSchema`, `CallToolResult` shape, `execution(task_support = ...)`, `annotations(...)` and the default-destructive trap |
+| `server/prompts.md`   | `#[prompt_router]`, no-arg + single-arg + multi-arg prompts, `PromptMessageRole`, `GetPromptResult::with_description`                                                                                     |
+| `server/resources.md` | Why there is no macro router for resources; `list_resources` / `read_resource` / `list_resource_templates`; URI scheme dispatch with `strip_prefix`; `RawResource` / `RawResourceTemplate` builders       |
+| `server/tasks.md`     | SEP-1319 lifecycle, `OperationProcessor`, `#[task_handler]` macro contract, the canonical `list_tasks` override, cancellation string-matching, timestamp limitation                                       |
 
 ### Server-to-client requests
 
