@@ -199,11 +199,49 @@ impl ServerHandler for Server {}
 
 ### Tool annotations
 
-Beyond `description`, `#[tool(...)]` supports `name = "..."` (override
+Beyond `description`, `#[tool(...)]` accepts `name = "..."` (override
 the auto-derived snake_case name), `input_schema = ...` (provide a
-hand-rolled schema), and `annotations(...)` (declare hints like
-`destructive_hint = true`). The full attribute syntax lives in
+hand-rolled schema), and `annotations(...)` (declare behavioral hints
+the client surfaces in its UI). The full attribute syntax lives in
 `submodules/mcp-rust-sdk/crates/rmcp-macros/src/tool.rs`.
+
+**Declare annotations for every tool — especially read-only ones.**
+When you omit `annotations(...)`, the client falls back to the MCP
+spec defaults, which are:
+
+| Hint               | Spec default | Meaning when true                         |
+| ------------------ | ------------ | ----------------------------------------- |
+| `read_only_hint`   | `false`      | Tool performs no state changes            |
+| `destructive_hint` | `true`       | Tool may make irreversible changes        |
+| `idempotent_hint`  | `false`      | Repeat calls with same args are safe      |
+| `open_world_hint`  | `true`       | Tool may interact with external systems   |
+
+The defaults are calibrated for the worst case — a stateful,
+destructive, non-idempotent, open-world tool. So a read-only
+HTTP-GET tool that forgets to declare anything shows up in clients
+(MCP Inspector, Claude Code's tool-permission prompts, etc.) as
+"destructive" and "not idempotent". Users may be asked to confirm
+every call, or the host may downrank the tool when picking which to
+invoke. The fix is one block per tool:
+
+```rust
+#[tool(
+    description = "Fetch a docs.rs page and return Markdown.",
+    annotations(
+        read_only_hint = true,
+        destructive_hint = false,
+        idempotent_hint = true,
+        open_world_hint = true,
+    )
+)]
+async fn get_crate_docs(/* ... */) -> Result<CallToolResult, McpError> { /* ... */ }
+```
+
+Per the spec, `destructive_hint` is only meaningful when
+`read_only_hint = false`, but declaring it explicitly costs nothing
+and removes any ambiguity in the client UI. Keep `open_world_hint =
+true` for anything that talks to the network — that's exactly what
+the hint is for, not a mark of shame.
 
 ## See also
 
