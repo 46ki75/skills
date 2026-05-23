@@ -142,6 +142,72 @@ Caveats:
 - Branch coverage requires nightly on `cargo-llvm-cov`; on stable, expect line/region coverage only.[[3]](https://mcpmarket.com/tools/skills/rust-code-coverage-cargo-llvm-cov)
 - Coverage % is a floor signal, not a quality signal. Treat it as a guardrail (e.g. fail CI if coverage drops by more than X points), not a target to maximize.
 
+## Async traits with `Arc<dyn>`
+
+Layered designs (Repository → UseCase → Controller in HTTP code, or the same pattern in MCP servers, CLIs, and other plumbing) usually expose abstractions as `Arc<dyn FooRepository>` so the UseCase can swap real and stub implementations. `dyn Trait` requires the trait to be dyn-compatible, and the compiler can't make `async fn` dyn-compatible on its own — the returned future is unsized.
+
+### Default — boxed futures returned explicitly
+
+```rust
+use std::future::Future;
+use std::pin::Pin;
+
+pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
+
+pub trait FooRepository: Send + Sync + 'static {
+    fn get_foo(
+        &self,
+        input: GetFooInput,
+    ) -> BoxFuture<'_, Result<GetFooOutput, FooRepositoryError>>;
+}
+
+impl FooRepository for FooRepositoryImpl {
+    fn get_foo(
+        &self,
+        input: GetFooInput,
+    ) -> BoxFuture<'_, Result<GetFooOutput, FooRepositoryError>> {
+        Box::pin(async move {
+            // method body
+        })
+    }
+}
+```
+
+This is exactly what `#[async_trait]` desugars to. Writing it directly:
+
+- Avoids the proc-macro dependency and the compile-time cost it carries.
+- Surfaces the `Send + 'a` bounds in the signature, so the dyn-compatibility contract is visible at the API rather than hidden inside a macro.
+- Stays close to the eventual stable lowering of native dyn-compatible async fns, so the trait shape won't need to change when that lands.
+
+### `#[async_trait::async_trait]` as ergonomic sugar
+
+```rust
+#[async_trait::async_trait]
+pub trait FooRepository: Send + Sync + 'static {
+    async fn get_foo(
+        &self,
+        input: GetFooInput,
+    ) -> Result<GetFooOutput, FooRepositoryError>;
+}
+```
+
+Pulls in the `async-trait` crate. Reasonable when a trait has many methods and the `Box::pin(async move { ... })` boilerplate becomes the noisiest part of the file.
+
+### Choosing
+
+| Situation                                                                            | Default       |
+| ------------------------------------------------------------------------------------ | ------------- |
+| ≤ ~3 methods on the trait                                                            | Boxed futures |
+| Many methods, evolving rapidly                                                       | `async_trait` |
+| Trait surface is part of a published library API                                     | Boxed futures (no proc-macro dep in the public ABI) |
+| You need fine control over the future's `Send`/`'a` bounds at specific call sites    | Boxed futures |
+
+Don't mix the two within one trait — pick one and apply it to every method, so impl blocks and call sites stay grep-able.
+
+### Native `async fn` in traits
+
+Native `async fn` in traits (stable since Rust 1.75) is **dyn-incompatible** by default — `Arc<dyn FooRepository>` won't compile if the trait uses bare `async fn`. The `#[trait_variant::make]` macro and the `return_type_notation` feature partially close this gap, but neither is stable as of Rust 1.90.[[1]](https://blog.rust-lang.org/inside-rust/2024/05/01/dyn-async-traits-call-for-proposals/) Until native dyn-compatible async fn lands on stable, the boxed-future form above is the most forward-compatible choice.
+
 ## Integration tests
 
 Split integration tests into two tiers:
