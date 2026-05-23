@@ -84,12 +84,16 @@ Contains all I/O (database, HTTP clients, filesystem). Cannot be unit-tested dir
 - All methods return `Result<_, FooRepositoryError>` (defined with `thiserror`). See the **Errors** section below for variant conventions.
 
 ```rust
-#[async_trait::async_trait]
+// `BoxFuture` is the standard alias defined in general.md.
 pub trait FooRepository: Send + Sync + 'static {
-	async fn get_foo(&self, input: GetFooRepositoryInput)
-		-> Result<GetFooRepositoryOutput, FooRepositoryError>;
+	fn get_foo(
+		&self,
+		input: GetFooRepositoryInput,
+	) -> BoxFuture<'_, Result<GetFooRepositoryOutput, FooRepositoryError>>;
 }
 ```
+
+The boxed-future form is the default trait shape across the org — see [`general.md` § _Async traits with `Arc<dyn>`_](general.md#async-traits-with-arcdyn) for the rationale, the `BoxFuture` definition, and when reaching for `#[async_trait::async_trait]` is OK instead.
 
 ### UseCase
 
