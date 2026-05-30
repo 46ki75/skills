@@ -11,7 +11,7 @@ work without any modification.
 
 ## TL;DR for the feasibility question
 
-Toasty 0.6+ works with DSQL when you observe three constraints:
+Toasty 0.6+ (including 0.7) works with DSQL when you observe three constraints:
 
 1. **Use `#[auto] id: uuid::Uuid` for primary keys.** Never `#[auto]` on
    integers — DSQL has no sequences and rejects

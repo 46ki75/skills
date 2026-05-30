@@ -32,10 +32,16 @@ pub trait Driver: Debug + Send + Sync + 'static {
     fn capability(&self) -> &'static Capability;
     async fn connect(&self) -> Result<Box<dyn Connection>>;
     fn max_connections(&self) -> Option<usize> { None }
-    fn generate_migration(&self, diff: &SchemaDiff<'_>) -> Migration;
+    fn generate_migration(&self, diff: &schema::diff::Schema<'_>) -> Migration;
     async fn reset_db(&self) -> Result<()>;
 }
 ```
+
+In Toasty 0.7, the schema-diff types live under
+`toasty_core::schema::diff::*` — `diff::Schema` replaces what 0.6 called
+`schema::db::SchemaDiff`. The example below still uses the 0.6 path;
+update both the trait signature and the `generate_migration`
+implementation to the new path when targeting 0.7.
 
 Of these, `connect()` is the only method you typically need to override when
 wrapping a stock driver. Everything else can be delegated to a "template"
@@ -109,7 +115,7 @@ impl Driver for DynamicCredsDriver {
 
     fn generate_migration(
         &self,
-        diff: &toasty_core::schema::db::SchemaDiff<'_>,
+        diff: &toasty_core::schema::diff::Schema<'_>,
     ) -> toasty_core::schema::db::Migration {
         self.template.generate_migration(diff)
     }
@@ -208,9 +214,10 @@ verify the trait surface against the actually-installed source:
 ls ~/.cargo/registry/src/index.*/toasty-core-*/src/driver.rs
 ```
 
-Read that file, not the GitHub `main` branch. The `Migration`/`SchemaDiff`
-identifiers and the module layout of `toasty_core::schema` have moved
-across point releases.
+Read that file, not the GitHub `main` branch. The schema-diff types in
+particular have moved across point releases (`schema::db::SchemaDiff` in
+0.6 → `schema::diff::Schema` in 0.7), and `Migration` exposure was
+reorganized in the same window — the installed source is the truth.
 
 ## See also
 

@@ -62,7 +62,7 @@ Enable feature flags in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-toasty = { version = "{{toasty_version}}", features = ["sqlite", "jiff"] }
+toasty = { version = "0.7", features = ["sqlite", "jiff"] }
 ```
 
 ## Optional fields

@@ -14,13 +14,13 @@ Add the following dependencies to `Cargo.toml`:
 
 ```toml
 [dependencies]
-toasty = { version = "{{toasty_version}}", features = ["sqlite"] }
+toasty = { version = "0.7", features = ["sqlite"] }
 tokio = { version = "1", features = ["full"] }
 ```
 
 The `sqlite` feature enables the SQLite driver. Toasty also supports
-`postgresql`, `mysql`, and `dynamodb` — swap the feature flag to use a
-different database.
+`postgresql`, `mysql`, `turso`, and `dynamodb` — swap the feature flag to use
+a different database.
 
 ## Define a model
 

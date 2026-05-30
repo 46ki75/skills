@@ -496,5 +496,3 @@ on `contact_country`. The same rules from
 
 Indexes on data-carrying enum variant fields work the same way. The index is
 created on the nullable column for that variant's field.
-
-See also: tested code at `crates/toasty-app/tests/embedded.rs`.
