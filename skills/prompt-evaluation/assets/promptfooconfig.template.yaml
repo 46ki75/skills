@@ -1,0 +1,58 @@
+# promptfoo eval template.
+#
+# Replace the placeholders, then run:
+#   export ANTHROPIC_API_KEY=...
+#   npx promptfoo@latest eval
+#   npx promptfoo@latest view
+
+description: "REPLACE WITH ONE-LINE DESCRIPTION OF THE TASK"
+
+# Either: load prompt-builder functions from a Python file
+prompts:
+  - prompts.py:v1_prompt
+  - prompts.py:v2_prompt
+# Or: inline Nunjucks templates (uncomment to use)
+# prompts:
+#   - >-
+#     Classify the following complaint into one of:
+#     Software Bug, Hardware Malfunction, User Error, Feature Request,
+#     Service Outage. Respond with only the category name.
+#     Complaint: {{complaint}}
+#     Classification:
+
+providers:
+  - id: anthropic:messages:claude-haiku-4-5-20251001
+    label: "Haiku 4.5"
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: "Sonnet 4.6"
+
+# Either: load tests from a CSV (columns become vars; __expected for
+# simple per-row assertions)
+tests: dataset.csv
+# Or: inline tests
+# tests:
+#   - vars:
+#       complaint: "The app crashes when I upload a photo"
+#     assert:
+#       - type: equals
+#         value: "Software Bug"
+
+defaultTest:
+  # Optional: transform every model output before assertions run.
+  # Useful for stripping <answer>...</answer> tags from CoT outputs.
+  options:
+    transform: file://transform.py
+
+  # Assertions applied to every test. Mix code-graded and model-graded.
+  assert:
+    # Custom Python grader (see grader.py)
+    - type: python
+      value: file://grader.py
+
+    # Built-in LLM-as-judge — one criterion per assertion.
+    - type: llm-rubric
+      provider: anthropic:messages:claude-opus-4-7
+      value: "Response is polite and avoids blaming the user"
+
+# Optional: persist the run for diffing
+# outputPath: ./results.json
