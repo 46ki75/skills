@@ -43,18 +43,24 @@ proceeding to judges.
 
 Subagents share the user's rate-limit budget with the main
 session. There is no published per-message cap on parallel
-`Agent` calls, but in practice:
+`Agent` calls. Observed behavior:
 
 | Fan-out | Behavior |
 | --- | --- |
 | 1–5 | Reliable; no rate-limit hits |
-| 5–10 | Usually fine; occasional rate-limit retry |
-| 10–20 | Increasing failure rate; watch for HTTP 429 inside subagents |
-| > 20 | Don't. Batch into multiple messages |
+| 5–15 | Reliable in practice; 15 candidates + 15 judges in two consecutive messages is field-confirmed |
+| 15–25 | Usually works on Pro / higher tiers; watch for HTTP 429 inside subagents |
+| > 25 | Batch into multiple messages |
 
-For an eval set of 30 samples, send 3 batches of 10 — one message
-per batch. The main session waits for each batch to fully complete
-before sending the next.
+The conservative ceiling used to be 10. Field experience pushed
+that up: a 15-parallel candidate fan-out followed by a 15-parallel
+judge fan-out (one assistant message per phase) completes reliably
+on standard subscriptions without 429s. Bump cautiously and
+verify on your tier before committing to larger fan-outs.
+
+For an eval set of 30 samples, the cheapest pattern is now two
+batches of 15, not three batches of 10. The main session waits
+for each batch to fully complete before sending the next.
 
 ## Cost shape
 
