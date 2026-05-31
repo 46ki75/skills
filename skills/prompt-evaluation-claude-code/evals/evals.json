@@ -1,0 +1,40 @@
+{
+  "skill_name": "prompt-evaluation-claude-code",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have this prompt for a customer-support triage classifier and I want to test it inside Claude Code without writing any Python. Can you spawn subagents to run it on a few inputs and grade the results?",
+      "expected_output": "Skill should propose the subagent-based workflow: eval set as JSONL, candidate subagents with file-output contract and tool restrictions, binary judge subagents with verdict JSON, parallel fan-out via multi-Agent message, and a workspace layout with iteration-N/eval-N directories.",
+      "assertions": [
+        {"text": "Recommends spawning candidate subagents with file-based output (Write tool, return DONE) — not summary-in-return-message", "passed": null, "evidence": ""},
+        {"text": "Recommends restricting subagent tools to Write only (blocks Bash, Read, Web, etc.)", "passed": null, "evidence": ""},
+        {"text": "Recommends binary verdicts in JSON files (not Likert / numeric scales)", "passed": null, "evidence": ""},
+        {"text": "Recommends parallel fan-out via multiple Agent calls in one assistant message", "passed": null, "evidence": ""},
+        {"text": "Workspace layout includes iteration-N/eval-N/ directory structure", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm A/B testing two versions of a prompt and want to use a judge to pick the winner per input. What's the right way to do this with subagents in Claude Code?",
+      "expected_output": "Skill should recommend pairwise judge with mandatory position swap and agreement gate, citing Claude's 75% first-position bias. Should mention the 2x cost vs pointwise and explain when pairwise is preferable.",
+      "assertions": [
+        {"text": "Recommends pairwise judge", "passed": null, "evidence": ""},
+        {"text": "Mandates position swap (calling the judge twice with reversed positions)", "passed": null, "evidence": ""},
+        {"text": "Mandates agreement gate (count only when both calls agree; otherwise tie)", "passed": null, "evidence": ""},
+        {"text": "Notes Claude's first-position bias (around 75%) as the reason", "passed": null, "evidence": ""},
+        {"text": "Notes 2x cost vs pointwise", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I want to set up a reproducible regression suite for my prompt that runs in CI without anyone at the keyboard. Should I use this Claude Code subagent approach?",
+      "expected_output": "Skill should honestly steer the user toward the SDK-based prompt-evaluation skill instead, citing the need for CI/no-human-in-the-loop reproducibility, exact API semantics, and portability outside Claude Code. Should note this skill is for exploratory iteration and offer to help port once the prompt is approaching ship-readiness.",
+      "assertions": [
+        {"text": "Recommends porting to the SDK-based prompt-evaluation skill (promptfoo / Python) for CI use", "passed": null, "evidence": ""},
+        {"text": "Cites the reason: CI needs reproducibility / no human at the keyboard / exact API semantics", "passed": null, "evidence": ""},
+        {"text": "Does NOT recommend this skill as the primary tool for CI/regression purposes", "passed": null, "evidence": ""},
+        {"text": "Frames this skill as exploratory; mentions porting once ready", "passed": null, "evidence": ""}
+      ]
+    }
+  ]
+}
