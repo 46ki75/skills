@@ -89,6 +89,12 @@ Lock the eval set between iterations. Don't add or remove
 samples; don't sharpen the criterion. The pass rate comparison
 is only meaningful if the measurement instrument hasn't changed.
 
+If you genuinely need to add or modify cases, **bump the eval-set
+version** (`eval-set-v1.jsonl` → `eval-set-v2.jsonl`) and stamp
+the iteration's `results.md` with the version you ran against.
+See `eval_set.md` → Versioning for the convention. Pass rates
+from different eval-set versions are not directly comparable.
+
 Spawn N candidate subagents for v(N+1) (and optionally re-spawn
 v(N) for stability), then judges. Compute the per-sample diff:
 
@@ -142,6 +148,61 @@ Two things can cause an unexplained delta:
 If the delta is within the noise band of these two sources,
 don't celebrate or panic. Run a third iteration and look at the
 trend.
+
+## Per-iteration `results.md` and the cumulative record
+
+Every iteration produces a `results.md` in its directory. The
+minimum it should record:
+
+```text
+# Iteration N
+
+- Candidate(s) run: candidate-vX, candidate-vY
+- Eval set version: eval-set-vZ.jsonl
+- Pass rate this iteration: X/Y for each candidate
+- New failure modes surfaced
+- Edits proposed for the next iteration
+```
+
+In addition, once you have ≥ 2 iterations, keep a **combined
+record** at the top of each new `results.md`. The combined record
+is the cumulative tally of cases the current shipping candidate
+has passed across iterations on the same (or version-tracked)
+eval set.
+
+```text
+# Iteration 5
+
+## Combined record
+- candidate-v3 vs eval-set-v2.jsonl:
+  - 12 / 12 from iter-1 sweep
+  - 6 / 6 from iter-3 adversarial cases
+  - 4 / 4 from iter-4 changed/new-knowledge cases
+  - = 22 / 22 cumulative
+
+## This iteration
+- Full regression sweep of the 15 cases not yet retested
+  against candidate-v3 on eval-set-v2.
+- 15 / 15 correct. No regressions.
+```
+
+The combined record matters because **iteration sweeps are usually
+partial**. You rarely re-run every case every iteration — it's too
+expensive and most aren't load-bearing for the question at hand.
+The combined record lets you make claims like "v3 is 22/22 on the
+full set" without re-running 22 cases each time. It's a running
+ledger that survives across iterations and protects against
+forgetting which cases have been validated against the current
+candidate.
+
+Two invariants the ledger relies on:
+
+1. **The eval-set version doesn't silently change underneath it.**
+   If you bump from `v2` to `v3`, the ledger resets — cases passed
+   against v2 are not automatically passed against v3. Re-run.
+2. **Cases keep stable IDs across eval-set versions.** Otherwise
+   "eval-7 passed in iteration 3" is meaningless once `eval-7`
+   means a different case.
 
 ## When to stop iterating
 

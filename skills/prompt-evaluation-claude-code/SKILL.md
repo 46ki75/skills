@@ -20,7 +20,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Prompt Evaluation — Claude Code
@@ -78,12 +78,13 @@ the cross-skill pointers.
 
 ## What you (Claude Code) actually do
 
-For each invocation you produce four artifacts in the user's
-working directory:
+For each invocation you produce four kinds of artifact in the
+user's working directory:
 
 ```text
 <workspace>/
-├── eval_set.jsonl                      ← the test inputs
+├── eval-set-v1.jsonl                   ← the test inputs (versioned)
+├── eval-set-v2.jsonl                   ← bumped when cases change
 ├── prompts/
 │   ├── candidate-v1.md                 ← the prompt under test
 │   └── candidate-v2.md                 ← the proposed revision
@@ -94,9 +95,18 @@ working directory:
 │   │   ├── judge-v1.json               ← {verdict, reasoning}
 │   │   └── judge-v2.json
 │   ├── ...
-│   └── results.md                      ← aggregated, with failures
+│   └── results.md                      ← stamps eval-set version,
+│                                         pass rate, failure modes,
+│                                         cumulative combined record
 └── iteration-2/...                     ← after one refinement loop
 ```
+
+Two orthogonal version axes — **prompt** (`candidate-vX.md`) and
+**eval set** (`eval-set-vY.jsonl`) — are tracked separately so
+that runs are unambiguous: every iteration is "candidate-vX ran
+against eval-set-vY". See `references/eval_set.md` → Versioning
+for the bump-don't-mutate rule and the cumulative-record pattern
+in `references/iteration_loop.md`.
 
 You orchestrate the loop. Subagents do the per-sample work. Files
 are the interface.
@@ -136,8 +146,12 @@ are the interface.
    `judge-*.json` from each `eval-*/`. Compute pass rate. List
    failed inputs with one-line reasoning. Cluster the failures
    into 2–4 themes. Propose a single targeted edit to the prompt.
-   Write `iteration-N/results.md`. Ask the user to greenlight
-   `candidate-v(N+1).md`, then re-run on the same eval set.
+   Write `iteration-N/results.md` stamped with the eval-set
+   version used and (after iteration 2) a cumulative combined
+   record showing which cases the current shipping candidate has
+   passed across iterations. Ask the user to greenlight
+   `candidate-v(N+1).md`, then re-run on the same eval-set
+   version.
 
 That is the whole loop. Subsequent sections drill into the
 mechanics.
@@ -236,9 +250,11 @@ roughly 2× the slowest sample, not N× the average.
 
 Two practical caveats:
 
-- **Don't exceed model rate limits.** For most subscriptions a
-  parallel fan-out of 5–10 is the practical ceiling. If your eval
-  set is 30 inputs, batch into 3 messages of 10.
+- **Don't exceed model rate limits.** Fan-out of ~15 in a single
+  message is field-confirmed reliable on standard subscriptions;
+  bump above that cautiously and watch for 429s inside subagents.
+  If your eval set is 30 inputs, two batches of 15 is the typical
+  shape. See `references/parallel_execution.md` for the full table.
 - **Don't fan out beyond your patience for failures.** If a
   candidate prompt has a fundamental issue, all 30 subagents will
   hit it. Run 3–5 first, eyeball the outputs, then fan out.

@@ -169,10 +169,11 @@ but you also "improved" the eval-set criteria mid-way.
 ambiguity in the criterion. The new rubric is easier to pass.
 
 **Mitigation.** Lock the eval set and the criteria between
-iterations. If you must change the rubric, re-run v1 on the new
-rubric to re-establish the baseline. Snapshot
-`eval-set-snapshot.jsonl` into the iteration directory so the
-record is honest.
+iterations. If you must change either, **bump the eval-set
+version** (`eval-set-v1.jsonl` → `eval-set-v2.jsonl`) and re-run
+the current candidate against the new version to re-establish a
+fair baseline. Stamp every iteration's `results.md` with the
+eval-set version it used. See `eval_set.md` → Versioning.
 
 (Source: Shankar et al., *Who Validates the Validators?* —
 criteria drift is the most common form of self-deception in

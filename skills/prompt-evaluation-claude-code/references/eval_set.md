@@ -104,20 +104,69 @@ runner to the SDK-based skill so it can run in CI).
 
 ## Versioning
 
-The eval set is content. Keep it under git:
+The eval set is the measurement instrument. Pass rates are only
+comparable across iterations when they were measured against the
+**same** set. The cheapest way to enforce that is a version-numbered
+filename, bumped any time you add, remove, or modify a case.
 
 ```text
 <workspace>/
-├── eval_set.jsonl              ← the current set
+├── eval-set-v1.jsonl           ← initial set
+├── eval-set-v2.jsonl           ← after adding adversarial cases
+├── eval-set-v3.jsonl           ← after fixing a criterion
 ├── eval_set.jsonl.notes.md     ← optional: provenance per sample
 └── iteration-N/
-    └── eval-set-snapshot.jsonl ← snapshot at the time of this run
+    └── results.md              ← records: "ran candidate-vX against
+                                  eval-set-v2.jsonl, pass rate = …"
 ```
 
-When you change the eval set (add cases, fix criteria), keep the
-diff in git history. Per-iteration snapshots are insurance: if
-the set drifted between iterations, the snapshot tells you what
-the iteration-1 pass rate was actually measured against.
+The discipline:
+
+- **Bump the file (don't mutate)** when you change the eval set —
+  even by one sample, even just sharpening a criterion. The old
+  file stays on disk; the new file is what subsequent iterations
+  run against.
+- **Stamp every iteration's `results.md` with the eval-set version
+  it used.** This is the single most important thing for honest
+  prompt-version comparisons: a v3 prompt scoring 24/26 on
+  `eval-set-v3` is not "better than" a v2 prompt scoring 22/22
+  on `eval-set-v2` — they were measured against different
+  instruments.
+- **Reset baselines when the eval set bumps.** When you go from
+  `eval-set-vN` to `eval-set-v(N+1)`, re-run the current
+  candidate prompt against `eval-set-v(N+1)` so the next
+  iteration has a fair baseline to compare against.
+- **Cases keep stable IDs across versions.** `eval-7` in v2 and
+  `eval-7` in v3 must refer to the same case. If a case is
+  retired, mark it (`"retired": true`) but keep the slot; don't
+  reuse the ID.
+
+A separate per-iteration snapshot (`eval-set-snapshot.jsonl` copied
+into the iteration directory) is optional belt-and-braces. The
+versioned filename is the primary record; the snapshot is insurance
+against accidental mid-iteration edits.
+
+### Concrete example
+
+```text
+iteration-3/results.md:
+  candidate-v2 on eval-set-v1.jsonl (12 cases) — 11/12 pass
+  → failure mode: "stale-knowledge trap"
+  → action: added 4 adversarial cases as eval-set-v2.jsonl
+
+iteration-4/results.md:
+  candidate-v2 on eval-set-v2.jsonl (16 cases) — 11/16 pass
+  candidate-v3 on eval-set-v2.jsonl (16 cases) — 15/16 pass
+  → v3 is the new shipping baseline
+
+iteration-5/results.md:
+  candidate-v3 on eval-set-v2.jsonl — 22/22 pass after regression
+  sweep (combined record across cases first introduced in v1)
+```
+
+The shape that's *not* allowed: comparing "v2 at 11/12 on v1"
+against "v3 at 15/16 on v2" and declaring a +33 % improvement.
+The denominators are different sets.
 
 ## Common mistakes
 
