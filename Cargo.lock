@@ -246,9 +246,9 @@ dependencies = [
 
 [[package]]
 name = "btoi"
-version = "0.4.3"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9dd6407f73a9b8b6162d8a2ef999fe6afd7cc15902ebf42c5cd296addf17e0ad"
+checksum = "3b5ab9db53bcda568284df0fd39f6eac24ad6f7ba7ff1168b9e76eba6576b976"
 dependencies = [
  "num-traits",
 ]
@@ -1036,8 +1036,6 @@ version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
 dependencies = [
- "allocator-api2",
- "equivalent",
  "foldhash 0.2.0",
 ]
 
@@ -1228,7 +1226,7 @@ dependencies = [
  "hyper",
  "libc",
  "pin-project-lite",
- "socket2 0.6.3",
+ "socket2",
  "tokio",
  "tower-service",
  "tracing",
@@ -1591,15 +1589,6 @@ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
 name = "lru"
-version = "0.16.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f66e8d5d03f609abc3a39e6f08e4164ebf1447a732906d39eb9b99b7919ef39"
-dependencies = [
- "hashbrown 0.16.1",
-]
-
-[[package]]
-name = "lru"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a860605968fce16869fd239cf4237a82f3ac470723415db603b0e8b6c8d4fb9"
@@ -1683,26 +1672,26 @@ dependencies = [
 
 [[package]]
 name = "mysql_async"
-version = "0.36.2"
+version = "0.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1d9585dc9058886ff3a1f48a23024dd1d054264dee7c5ae0e4bd640c953bee5"
+checksum = "3519e91b0d254ac1ffa495bc42053286cb2172ad7241d5b3b1b9f8a891f21ee2"
 dependencies = [
  "bytes",
  "crossbeam-queue",
+ "crossbeam-utils",
  "flate2",
  "futures-core",
  "futures-sink",
  "futures-util",
  "keyed_priority_queue",
- "lru 0.16.4",
+ "lru",
  "mysql_common",
  "native-tls",
  "pem",
  "percent-encoding",
- "rand 0.9.4",
+ "rand 0.10.1",
  "serde",
- "serde_json",
- "socket2 0.5.10",
+ "socket2",
  "thiserror",
  "tokio",
  "tokio-native-tls",
@@ -1713,9 +1702,9 @@ dependencies = [
 
 [[package]]
 name = "mysql_common"
-version = "0.35.5"
+version = "0.37.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbb9f371618ce723f095c61fbcdc36e8936956d2b62832f9c7648689b338e052"
+checksum = "4b42ced54aa8ac97226486337973f9bc3956e24f03a23e88a6e18f640959d6e2"
 dependencies = [
  "base64",
  "bitflags",
@@ -2220,18 +2209,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a"
 dependencies = [
  "libc",
- "rand_chacha 0.3.1",
+ "rand_chacha",
  "rand_core 0.6.4",
-]
-
-[[package]]
-name = "rand"
-version = "0.9.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44c5af06bb1b7d3216d91932aed5265164bf384dc89cd6ba05cf59a35f5f76ea"
-dependencies = [
- "rand_chacha 0.9.0",
- "rand_core 0.9.5",
 ]
 
 [[package]]
@@ -2256,31 +2235,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "rand_chacha"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
-dependencies = [
- "ppv-lite86",
- "rand_core 0.9.5",
-]
-
-[[package]]
 name = "rand_core"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom 0.2.17",
-]
-
-[[package]]
-name = "rand_core"
-version = "0.9.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
-dependencies = [
- "getrandom 0.3.4",
 ]
 
 [[package]]
@@ -2960,16 +2920,6 @@ dependencies = [
 
 [[package]]
 name = "socket2"
-version = "0.5.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678"
-dependencies = [
- "libc",
- "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "socket2"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
@@ -3083,7 +3033,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.2",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
@@ -3197,9 +3147,9 @@ dependencies = [
 
 [[package]]
 name = "toasty"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45ceadb6b554b29f2a29d23026d98c267b7e5635203a54be69b0d62a0bff33b2"
+checksum = "17bd9e42ba3c1aa195101d150ba281f3d426439e0d2b5991b4c7c6290204348f"
 dependencies = [
  "async-trait",
  "bit-set",
@@ -3235,9 +3185,9 @@ dependencies = [
 
 [[package]]
 name = "toasty-core"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9582e63e379b54cf2e4940cedb3adfe1642c1ea4d7a71ca7cae7daa222852c0d"
+checksum = "7f06ecf2a9091a814d7cfa7edc39c24a791460431f55a0ee19c1b2cb4a15b98c"
 dependencies = [
  "async-trait",
  "bit-set",
@@ -3251,9 +3201,9 @@ dependencies = [
 
 [[package]]
 name = "toasty-driver-mysql"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d7e3bbd056596c97d42a1af8a1067e47ed4f22695a2b6342c66e174fa83995f"
+checksum = "3f916b8020c7834fbb855557f667e3a8ae4d1c3d561cdacc27da1c0a995ef556"
 dependencies = [
  "async-trait",
  "mysql_async",
@@ -3268,14 +3218,14 @@ dependencies = [
 
 [[package]]
 name = "toasty-driver-postgresql"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03757919a8d02176c451e903a05f906f570013702c405d053f92e09ef3e22fdd"
+checksum = "640ba7f423e027aa6f2088df3bbccb3ebb8f1c988b2d0796bb64e80fc1efa747"
 dependencies = [
  "async-trait",
  "fallible-iterator 0.2.0",
  "hashbrown 0.17.1",
- "lru 0.18.0",
+ "lru",
  "percent-encoding",
  "postgres-protocol",
  "postgres-types",
@@ -3283,23 +3233,21 @@ dependencies = [
  "rustls-pemfile",
  "rustls-platform-verifier",
  "rustls-webpki",
- "sha2 0.11.0",
  "toasty-core",
  "toasty-sql",
  "tokio",
  "tokio-postgres",
- "tokio-rustls",
+ "tokio-postgres-rustls",
  "tracing",
  "url",
  "uuid",
- "x509-cert",
 ]
 
 [[package]]
 name = "toasty-driver-sqlite"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8b8e225927f95fe09f471981aed6e34cf9539c640c59171245eb4e1c2b0784a"
+checksum = "fd09e84ccfbd608949bc501c30e1c62334ddf07eb1c30976b2c470dfd19aef3e"
 dependencies = [
  "async-trait",
  "rusqlite",
@@ -3314,9 +3262,9 @@ dependencies = [
 
 [[package]]
 name = "toasty-macros"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2e5ba9925ad344bf1f679cac1fb01db46929ac9c10c5a9b42623255d65603c1"
+checksum = "1d27469a13c35b53f3080ca24e4585f5cd2d1ba4dd71432125aa376759439131"
 dependencies = [
  "hashbrown 0.17.1",
  "heck",
@@ -3329,9 +3277,9 @@ dependencies = [
 
 [[package]]
 name = "toasty-sql"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c37a2fb6d63578ea9231425fd1230a504b2438033fe01b08931c653402bf0f22"
+checksum = "2848a892303d9d63485a8f16d9c1b692b145c09940d2cdeefaf0f837e1bf6a49"
 dependencies = [
  "serde_json",
  "toasty-core",
@@ -3349,7 +3297,7 @@ dependencies = [
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
- "socket2 0.6.3",
+ "socket2",
  "tokio-macros",
  "windows-sys 0.61.2",
 ]
@@ -3395,10 +3343,24 @@ dependencies = [
  "postgres-protocol",
  "postgres-types",
  "rand 0.10.1",
- "socket2 0.6.3",
+ "socket2",
  "tokio",
  "tokio-util",
  "whoami",
+]
+
+[[package]]
+name = "tokio-postgres-rustls"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c2ad44aa0ae96db89c4742212ed41645b2f597311ff6e1945542a4d9fadc2fb"
+dependencies = [
+ "rustls",
+ "sha2 0.11.0",
+ "tokio",
+ "tokio-postgres",
+ "tokio-rustls",
+ "x509-cert",
 ]
 
 [[package]]
