@@ -19,7 +19,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Toasty (Rust ORM) Skill
@@ -46,6 +46,15 @@ the JSON wrapper (`Json<T>` vs. `#[serialize(json)]`), the deferred field
 form (`Deferred<T>` field vs. `#[deferred]` attribute), and the
 schema-diff module path (`schema::diff::Schema` vs. `schema::db::SchemaDiff`)
 all moved. Confirm the version before quoting macro syntax.
+
+> **Maintainer note (when bumping the pinned Toasty version).** This skill is
+> anchored to a compile-checked companion crate at `crates/toasty-app/`. When
+> you raise the version above — in this file and across `references/guide/` —
+> migrate that crate to the new API and run `cargo test -p toasty-app` and
+> `cargo clippy -p toasty-app --all-targets` in the **same** change. The crate
+> silently drifted to 0.6 syntax during the 0.7 bump because it wasn't
+> migrated in lockstep; keeping the version references and the crate in one
+> commit is what stops the documented examples from rotting.
 
 ## Workspace orientation
 
