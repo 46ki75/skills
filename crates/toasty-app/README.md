@@ -10,17 +10,17 @@ The crate ships four models — `User`, `Todo`, `Profile`, `Article` — plus
 an embedded `Address` struct. Together they exercise the primitives the
 skill talks about most:
 
-| Primitive                        | Example                                  | File                |
-| -------------------------------- | ---------------------------------------- | ------------------- |
-| `#[key] #[auto]`                 | `User::id: uuid::Uuid`                   | `src/models.rs`     |
-| `#[unique]`                      | `User::email`                            | `src/models.rs`     |
-| `Option<T>` field                | `User::motto`                            | `src/models.rs`     |
-| `Vec<scalar>` field              | `User::tags: Vec<String>`                | `src/models.rs`     |
-| `#[has_many]`                    | `User::todos: HasMany<Todo>`             | `src/models.rs`     |
-| `#[has_one]` (optional)          | `User::profile: HasOne<Option<Profile>>` | `src/models.rs`     |
-| `#[belongs_to(key, references)]` | `Todo::user: BelongsTo<User>`            | `src/models.rs`     |
-| `#[index]`                       | `Todo::user_id`                          | `src/models.rs`     |
-| `#[derive(toasty::Embed)]`       | `Address`                                | `src/embedded.rs`   |
+| Primitive                        | Example                                    | File              |
+| -------------------------------- | ------------------------------------------ | ----------------- |
+| `#[key] #[auto]`                 | `User::id: uuid::Uuid`                     | `src/models.rs`   |
+| `#[unique]`                      | `User::email`                              | `src/models.rs`   |
+| `Option<T>` field                | `User::motto`                              | `src/models.rs`   |
+| `Vec<scalar>` field              | `User::tags: Vec<String>`                  | `src/models.rs`   |
+| `#[has_many]` (lazy)             | `User::todos: Deferred<Vec<Todo>>`         | `src/models.rs`   |
+| `#[has_one]` (optional, lazy)    | `User::profile: Deferred<Option<Profile>>` | `src/models.rs`   |
+| `#[belongs_to(key, references)]` | `Todo::user: Deferred<User>`               | `src/models.rs`   |
+| `#[index]`                       | `Todo::user_id`                            | `src/models.rs`   |
+| `#[derive(toasty::Embed)]`       | `Address`                                  | `src/embedded.rs` |
 
 It also ships a binary that walks every primitive end-to-end:
 
@@ -81,9 +81,9 @@ DynamoDB is intentionally not wired up here. Toasty's DynamoDB tests
 require `--test-threads=1` and a running local DynamoDB instance; see the
 upstream `submodules/toasty/CLAUDE.md` for the canonical command.
 
-## Known limitations on toasty 0.6
+## Known limitations
 
-- `toasty-sql 0.6` does not yet implement batch-insert lowering for
+- `toasty-sql` does not yet implement batch-insert lowering for
   embedded fields, so `create!(User::[...])` cannot be combined with a
   model that has a `#[derive(toasty::Embed)]` field. The batch tests in
   this crate use the embed-less `User` model; the embed test uses

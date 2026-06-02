@@ -2,7 +2,7 @@
 //! multi-row insert.
 //!
 //! Anchors `references/guide/batch-operations.md`. The model used here has
-//! no embedded fields because `toasty-sql 0.6` does not yet implement the
+//! no embedded fields because `toasty-sql` does not yet implement the
 //! lowering needed to combine batch inserts with embeds (see the note in
 //! `src/demo.rs`).
 

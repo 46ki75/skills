@@ -25,14 +25,14 @@ async fn include_eagerly_loads_has_many() -> toasty::Result<()> {
     .exec(&mut db)
     .await?;
 
-    let preloaded = User::filter_by_id(&user.id)
+    let preloaded = User::filter_by_id(user.id)
         .include(User::fields().todos())
         .get(&mut db)
         .await?;
 
     // `.include()` populates the relation on the parent record. The
-    // collection lives behind `HasMany::get()` after preload so iterating
-    // it does not issue another query.
+    // collection lives behind the `Deferred` field's `.get()` after preload
+    // so iterating it does not issue another query.
     let todos: Vec<_> = preloaded.todos.get().iter().collect();
     assert_eq!(todos.len(), 2);
     Ok(())
