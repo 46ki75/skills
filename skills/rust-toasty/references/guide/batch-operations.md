@@ -150,6 +150,24 @@ create.
 See [Creating Records](./creating-records.md) for the full `create!` macro
 syntax.
 
+### Limitation: batch creates with embedded fields
+
+A batch create of a model that has an [embedded field](./embedded-types.md)
+(`#[derive(toasty::Embed)]`) is **not implemented** on the SQL backends as of
+0.7, and it fails at runtime rather than at compile time. `toasty-sql`'s
+statement serializer hits an unimplemented `ExprProject` path
+(`not yet implemented: expr=ExprProject { … }` from
+`toasty-sql/src/serializer/expr.rs`), which surfaces to the caller as a
+panic / `RecvError` from `.exec()`. This applies to the batch forms
+(`create!(Type::[ … ])`, the tuple form, and `Model::create_many()`) — a
+single `create!(Type { … })` of the same model works fine.
+
+So don't reach for a batch insert when the model carries an embed; insert
+those rows one at a time. This is why the skill's companion crate keeps its
+embed-carrying model (`Article`) out of the batch tests and exercises batch
+creates only on the embed-free `User`. If you need both, model the embed as a
+separate related table instead of an embedded struct.
+
 ## Batching creates with `toasty::batch()`
 
 `toasty::batch()` also accepts create builders directly. This is useful when

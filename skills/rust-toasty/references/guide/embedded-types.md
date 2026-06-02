@@ -186,6 +186,13 @@ let user = toasty::create!(User {
 .await?;
 ```
 
+Create one record at a time. As of 0.7 the SQL backends do **not** implement
+*batch* creates for models with embedded fields — `create!(User::[ … ])`,
+the tuple batch form, and `create_many()` panic at runtime instead of
+compiling cleanly. See
+[Batch Operations](./batch-operations.md#limitation-batch-creates-with-embedded-fields)
+for the details and the workaround.
+
 ### Updating embedded fields
 
 You can replace the entire embedded struct:
