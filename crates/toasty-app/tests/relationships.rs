@@ -1,5 +1,5 @@
-//! Relationship coverage: `HasMany`, `BelongsTo`, `HasOne`, plus
-//! `HasMany::remove` and nested `create!`.
+//! Relationship coverage: `#[has_many]`, `#[belongs_to]`, `#[has_one]`,
+//! plus relation `.remove()` and nested `create!`.
 //!
 //! Anchors `references/guide/relationships.md`, `belongs-to.md`,
 //! `has-many.md`, and `has-one.md`.

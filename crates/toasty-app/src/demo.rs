@@ -35,7 +35,7 @@ pub async fn run(db: &mut toasty::Db) -> toasty::Result<()> {
     ada.update().name("Augusta Ada King").exec(db).await?;
     assert_eq!(ada.name, "Augusta Ada King");
 
-    println!("==> traverse HasMany");
+    println!("==> traverse has_many relation");
     let todos = ada.todos().exec(db).await?;
     assert_eq!(todos.len(), 2);
     for todo in &todos {

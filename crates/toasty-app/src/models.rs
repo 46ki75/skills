@@ -3,21 +3,21 @@
 //! Four models drive every test:
 //!
 //! - [`User`] — keyed by `uuid::Uuid` (`#[key] #[auto]`), with `#[unique]`,
-//!   `Option<String>`, a `Vec<String>` scalar collection, a `HasMany<Todo>`,
-//!   and a `HasOne<Option<Profile>>`. Covers the keys / unique / vec-fields
-//!   / has-many / has-one slices of the skill.
-//! - [`Todo`] — the `BelongsTo<User>` partner of `User`, plus a `priority`
-//!   field used to demonstrate filtering, ordering, and pagination. Carries
-//!   an `#[index]` on the foreign-key column so traversal queries hit the
-//!   index.
-//! - [`Profile`] — the optional `HasOne` partner of `User`. The
+//!   `Option<String>`, a `Vec<String>` scalar collection, a lazy
+//!   `#[has_many]` to [`Todo`] (`Deferred<Vec<Todo>>`), and a lazy
+//!   `#[has_one]` to [`Profile`] (`Deferred<Option<Profile>>`). Covers the
+//!   keys / unique / vec-fields / has-many / has-one slices of the skill.
+//! - [`Todo`] — the `#[belongs_to]` partner of `User` (`Deferred<User>`),
+//!   plus a `priority` field used to demonstrate filtering, ordering, and
+//!   pagination. Carries an `#[index]` on the foreign-key column so traversal
+//!   queries hit the index.
+//! - [`Profile`] — the optional `#[has_one]` partner of `User`. The
 //!   `Option<User>` / `Option<Uuid>` shapes mirror the upstream
 //!   `user-has-one-profile` example.
 //! - [`Article`] — a stand-alone model that carries the embedded
 //!   [`Address`](crate::embedded::Address). Kept separate from `User` so
 //!   the batch-create tests can exercise `User::[...]` without tripping
-//!   `toasty-sql 0.6`'s yet-to-be-implemented batch lowering for embedded
-//!   fields.
+//!   `toasty-sql`'s current batch-lowering limitation for embedded fields.
 
 // `#[derive(toasty::Model)]` generates a fair amount of public scaffolding
 // (associated functions like `get_by_id`, `create`, the `fields()` helper,
@@ -55,14 +55,16 @@ pub struct User {
     pub tags: Vec<String>,
 
     /// One-to-many to [`Todo`]. Foreign key lives on the `Todo` side
-    /// (`#[belongs_to]`), not here.
+    /// (`#[belongs_to]`), not here. `Deferred<Vec<Todo>>` makes the
+    /// collection lazy — it loads only on `.todos().exec(&mut db)`.
     #[has_many]
-    pub todos: toasty::HasMany<Todo>,
+    pub todos: toasty::Deferred<Vec<Todo>>,
 
-    /// One-to-one to [`Profile`]. `Option<Profile>` because a user may
-    /// not have a profile yet.
+    /// One-to-one to [`Profile`]. `Deferred<Option<Profile>>` is lazy
+    /// (loads on `.profile().exec(&mut db)`) and optional because a user
+    /// may not have a profile yet.
     #[has_one]
-    pub profile: toasty::HasOne<Option<Profile>>,
+    pub profile: toasty::Deferred<Option<Profile>>,
 }
 
 /// Todo belonging to one [`User`]. Carries a `priority` used by the
@@ -80,9 +82,11 @@ pub struct Todo {
     pub user_id: uuid::Uuid,
 
     /// The owning user. The foreign-key column / referenced column are
-    /// declared on the `BelongsTo` side, **not** the `HasMany` side.
+    /// declared on the `#[belongs_to]` side, **not** the `#[has_many]`
+    /// side. `Deferred<User>` loads the parent lazily on
+    /// `.user().exec(&mut db)`.
     #[belongs_to(key = user_id, references = id)]
-    pub user: toasty::BelongsTo<User>,
+    pub user: toasty::Deferred<User>,
 
     /// Short description of the work.
     pub title: String,
@@ -92,10 +96,10 @@ pub struct Todo {
 }
 
 /// Optional one-to-one partner of [`User`]. The
-/// `BelongsTo<Option<User>>` shape mirrors the upstream
+/// `Deferred<Option<User>>` shape mirrors the upstream
 /// `user-has-one-profile` example — Toasty's one-to-one is implemented as a
-/// `HasOne` on the parent and a `BelongsTo` on the child, with both sides
-/// nullable when the relationship is optional.
+/// `#[has_one]` on the parent and a `#[belongs_to]` on the child, with both
+/// sides nullable when the relationship is optional.
 #[derive(Debug, Clone, toasty::Model)]
 pub struct Profile {
     /// Primary key.
@@ -108,9 +112,10 @@ pub struct Profile {
     #[unique]
     pub user_id: Option<uuid::Uuid>,
 
-    /// The owning user, if any.
+    /// The owning user, if any. `Deferred<Option<User>>` loads lazily and
+    /// is `Option` because the foreign key is nullable.
     #[belongs_to(key = user_id, references = id)]
-    pub user: toasty::BelongsTo<Option<User>>,
+    pub user: toasty::Deferred<Option<User>>,
 
     /// Public biography string.
     pub bio: String,

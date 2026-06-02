@@ -3,7 +3,8 @@
 //! The crate exists to anchor the `rust-toasty` skill's claims to compiling,
 //! tested code. The model set in [`models`] exercises every primitive the
 //! skill talks about most: keys + auto-generation, `#[unique]`, `#[index]`,
-//! `BelongsTo` / `HasMany` / `HasOne`, embedded types, and `Vec<scalar>`
+//! `#[belongs_to]` / `#[has_many]` / `#[has_one]` relations (lazy via
+//! `Deferred<T>`), embedded types, and `Vec<scalar>`
 //! fields. The companion [`tests`] directory hosts one integration test per
 //! topic, all driven by an in-memory SQLite [`Db`](toasty::Db) from
 //! [`db::connect`].
