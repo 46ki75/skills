@@ -23,6 +23,10 @@ updates:
       - "46ki75"
     reviewers:
       - "46ki75"
+    groups:
+      submodules:
+        patterns:
+          - "*"
 
   - package-ecosystem: "cargo"
     directory: "/"
