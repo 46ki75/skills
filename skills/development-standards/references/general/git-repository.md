@@ -13,6 +13,21 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 ```
 
+## Package manager: pnpm
+
+Use pnpm for anything Node-based — including repos whose primary
+language is not JavaScript but which carry Node tooling (e.g.
+`markdownlint-cli2` in a Rust repo). This is org policy; do not switch
+to npm or yarn because a repo happens to have their artifacts lying
+around.
+
+- Declare `"packageManager": "pnpm@<exact-version>"` in `package.json`.
+- Commit `pnpm-lock.yaml`; never `package-lock.json` or `yarn.lock`.
+- CI installs with `pnpm install --frozen-lockfile`.
+
+Exception: Bun projects (see `references/bun/`), where Bun is both
+runtime and package manager.
+
 ## Markdown linting with `markdownlint-cli2`
 
 Every repository that contains Markdown should lint it with
@@ -74,6 +89,7 @@ Pin `markdownlint-cli2` as a dev dependency and expose a `lint` script:
 
 ```json
 {
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "lint": "markdownlint-cli2 \"**/*.md\""
   },
@@ -83,6 +99,9 @@ Pin `markdownlint-cli2` as a dev dependency and expose a `lint` script:
 }
 ```
 
+(Pin `packageManager` to whatever the current pnpm release is — the
+field requires an exact version.)
+
 The glob in the script is the lint **target**; `ignores` in the YAML
 is the exclusion list. Keep both — narrowing the glob to skip a
 directory hides the file from `--fix` runs too.
@@ -90,12 +109,13 @@ directory hides the file from `--fix` runs too.
 ### Running
 
 ```bash
-npm run lint           # or: bun run lint
-npx markdownlint-cli2 --fix "**/*.md"   # auto-fix where possible
+pnpm lint              # or, in Bun projects: bun run lint
+pnpm exec markdownlint-cli2 --fix "**/*.md"   # auto-fix where possible
 ```
 
-Wire `npm run lint` into CI so Markdown regressions fail the build the
-same way code-lint regressions do.
+Wire `pnpm lint` into CI (after `pnpm install --frozen-lockfile`) so
+Markdown regressions fail the build the same way code-lint regressions
+do.
 
 ### Editor integration
 
