@@ -20,7 +20,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Prompt Evaluation — Claude Code
@@ -85,7 +85,7 @@ user's working directory:
 <workspace>/
 ├── eval-set-v1.jsonl                   ← the test inputs (versioned)
 ├── eval-set-v2.jsonl                   ← bumped when cases change
-├── prompts/
+├── prompt-candidates/
 │   ├── candidate-v1.md                 ← the prompt under test
 │   └── candidate-v2.md                 ← the proposed revision
 ├── iteration-1/
@@ -276,7 +276,7 @@ should:
    - "Hallucinates a category not in the schema"
 3. **Propose one targeted edit per dominant mode.** Don't bundle
    five edits in one revision — you won't know which one caused the
-   change. Save as `prompts/candidate-v2.md`.
+   change. Save as `prompt-candidates/candidate-v2.md`.
 4. **Re-run on the same eval set.** Compare pass rates per failure
    mode, not just overall. Sometimes you fix one mode and regress
    another.

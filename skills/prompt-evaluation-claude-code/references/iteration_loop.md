@@ -79,7 +79,7 @@ A good single edit usually looks like:
 - Adding one example to a few-shot block.
 - Sharpening one ambiguous word in the prompt.
 
-Save the new version as `prompts/candidate-v(N+1).md`. The old
+Save the new version as `prompt-candidates/candidate-v(N+1).md`. The old
 version stays around — you'll re-run both in iteration N+1 if
 you want to confirm the improvement is real.
 
@@ -143,7 +143,7 @@ Two things can cause an unexplained delta:
   different sampled token at temperature > 0 → different output.
   For exploratory iteration, accept this; for ship-grade
   measurement, set temperature = 0 in the prompt under test (and
-  state that constraint in `prompts/candidate-v{V}.md`).
+  state that constraint in `prompt-candidates/candidate-v{V}.md`).
 
 If the delta is within the noise band of these two sources,
 don't celebrate or panic. Run a third iteration and look at the
