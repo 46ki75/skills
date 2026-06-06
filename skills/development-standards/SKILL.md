@@ -3,24 +3,24 @@ name: development-standards
 description: >
   Org-internal engineering standards for this organization's projects.
   Invoke whenever scaffolding a new repo, auditing an existing one,
-  setting up CI, or configuring any of these tooling files: `Cargo.toml`,
+  setting up CI, or configuring tooling files like `Cargo.toml`,
   `rust-toolchain.toml`, `justfile`, `.editorconfig`,
   `.markdownlint-cli2.yaml`, `tsconfig.json`, `package.json`,
-  `pnpm-lock.yaml`, `bunfig.toml`, or `*.tf`. Also invoke for any work
-  involving `axum`, `utoipa`, `utoipa-axum`, `utoipa-swagger-ui`,
-  `markdownlint-cli2`, or Node package-manager setup (pnpm is the org
-  default).
-  Rust is currently the only fully documented language and covers Cargo
-  workspace inheritance, MSRV pinning via `rust-toolchain.toml`, `just`
-  as the task runner, `cargo-llvm-cov` coverage, the hermetic-vs-live
-  integration test split, and the Axum + utoipa code-first OpenAPI
-  layout. TypeScript, Node.js, Bun, Terraform, Rust libraries, and Rust
-  GraphQL sections are stubs — invoke anyway so the user can define the
+  `pnpm-lock.yaml`, `bunfig.toml`, `pyproject.toml`, `uv.lock`,
+  `.python-version`, or `*.tf`. Also invoke for work involving `axum`,
+  `utoipa`, `markdownlint-cli2`, `uv`, `ruff`, `pyright`, `pytest`, or
+  Node package-manager setup (pnpm is the org default).
+  Rust and Python are fully documented: Cargo workspace inheritance,
+  MSRV pinning, `just` as task runner, `cargo-llvm-cov` coverage,
+  hermetic-vs-live test split, Axum + utoipa OpenAPI; uv workspaces,
+  packaged `src` layout, ruff, pyright strict, pytest live-marker
+  tiers. TypeScript, Node.js, Bun, Terraform, Rust libraries, and Rust
+  GraphQL are stubs — invoke anyway so the user can define the
   convention rather than receive an improvised one.
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "0.3.0"
+  version: "0.4.0"
 ---
 
 # Development Standards
@@ -47,6 +47,12 @@ skill — defer there, not here.
 | `web-openapi.md` | HTTP API with `axum` + `utoipa`: `OpenApiRouter`, Controller/UseCase/Repository layering, `ToSchema` DTOs, error mapping, Swagger UI. |
 | `web-graphql.md` | _Stub — not yet documented._                                                                                                          |
 | `library.md`     | _Stub — not yet documented._                                                                                                          |
+
+### Python — `references/python/`
+
+| File         | When to read                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `general.md` | Any Python project: uv workspaces, `.python-version` pinning, packaged `src` layout, ruff, pyright strict, stdlib `logging`, pytest hermetic/live tiers, `just` recipes. |
 
 ### Planned but unwritten
 
