@@ -100,7 +100,7 @@ Read the appropriate reference as needed.
   someone migrate or explaining why v0.9 looks different.
 - **`references/v0.9/custom-functions.md`** — How to define custom
   functions inside a catalog, expose them via `anyFunction`, and have
-  validators recognise them (e.g. `trim`, `getScreenResolution`).
+  validators recognize them (e.g. `trim`, `getScreenResolution`).
 - **`references/v0.9/basic-catalog-guide.md`** — Per-component rendering
   guidance for every Basic Catalog component and function, plus the
   Leaf-Margin spacing strategy and color/contrast inheritance pattern.

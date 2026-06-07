@@ -254,12 +254,12 @@ load.
 
 ---
 
-## Serialisation
+## Serialization
 
 ### `noSerialize<T>(value: T): NoSerialize<T>`
 
 Marks a value as intentionally non-serializable. It will be `undefined` on
-resume. Re-initialise it in `useVisibleTask$`.
+resume. Re-initialize it in `useVisibleTask$`.
 
 ```tsx
 const store = useStore<{ editor: NoSerialize<Monaco> }>({ editor: undefined });

@@ -38,7 +38,7 @@ document.startViewTransition({
 - `updateCallback` — a function (may be async/return a Promise) that performs
   the DOM update. Called after the browser captures the old-state snapshot.
   If it rejects, the transition is abandoned.
-- `types` — array of strings labelling the transition; used by CSS
+- `types` — array of strings labeling the transition; used by CSS
   `:active-view-transition-type()` to select type-specific animations.
 
 Returns a `ViewTransition` object.

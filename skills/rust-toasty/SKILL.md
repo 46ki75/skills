@@ -167,7 +167,7 @@ Several core idioms shifted in 0.7. When porting or quoting code, watch for:
   The same `Deferred<T>` type also powers lazy relation loading.
 - **Multi-step `via` relations.** `#[has_many(via = a.b)]` and
   `#[has_one(via = a.b)]` reach a target through a path of existing
-  relations, modelling many-to-many and through-relationships without a
+  relations, modeling many-to-many and through-relationships without a
   user-written join.
 - **`.ilike()` is PostgreSQL-only.** It is gated by `Capability::native_ilike`
   and rejected on SQLite, MySQL, and DynamoDB rather than emulated. Use
@@ -243,7 +243,7 @@ User-issued statements go through a fixed pipeline inside `toasty/src/engine/`:
 Statement AST → [simplify] → [lower to HIR] → [plan to MIR DAG] → [exec]
 ```
 
-1. **Simplify** (`simplify.rs`) normalises the AST — rewrites relationship
+1. **Simplify** (`simplify.rs`) normalizes the AST — rewrites relationship
    navigation into explicit subqueries, flattens expressions.
 2. **Lower** (`lower.rs`) converts model-level statements to HIR; resolves
    model fields to table columns; expands `INCLUDE` associations into

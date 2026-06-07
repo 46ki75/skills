@@ -6,7 +6,7 @@ or design system — e.g. a string `trim` or a hardware-query helper like
 `getScreenResolution`.
 
 This reference walks through defining custom functions and wiring them in
-so validators recognise them.
+so validators recognize them.
 
 ## 1. Add functions to the catalog JSON Schema
 
