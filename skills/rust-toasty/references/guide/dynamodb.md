@@ -9,7 +9,7 @@ model code still works — [`create!`](./creating-records.md),
 [`#[unique]`](./indexes-and-unique-constraints.md#unique-fields),
 [`#[version]`](./concurrency-control.md),
 [`Vec<scalar>` fields](./field-options.md#scalar-arrays) — but the set
-of queries you can write is narrower, and the chapter below catalogues
+of queries you can write is narrower, and the chapter below catalogs
 the gaps so you can avoid building a model that the driver cannot
 serve.
 

@@ -63,7 +63,7 @@ Practical implications for code you write:
   QRL-wrapped functions all work. Class instances (custom `instanceof`) and
   streams do not.
 - Use `noSerialize()` to wrap non-serializable values (e.g., third-party editor
-  instances). They will be `undefined` on resume and must be re-initialised
+  instances). They will be `undefined` on resume and must be re-initialized
   inside `useVisibleTask$`.
 - Don't think of components as "running on mount" — the lifecycle is
   **server -> pause -> resume on client**, not "mount everything in the browser".
@@ -71,7 +71,7 @@ Practical implications for code you write:
 ### 2 – The `$` suffix and QRLs
 
 Any function ending in `$` (e.g., `component$`, `useTask$`, `onClick$`, `$()`)
-creates a **QRL boundary**. The Qwik optimiser extracts the closure into a
+creates a **QRL boundary**. The Qwik optimizer extracts the closure into a
 separate lazy-loadable chunk. Rules:
 
 - Variables captured inside a `$`-closure must themselves be serializable
@@ -79,7 +79,7 @@ separate lazy-loadable chunk. Rules:
   the listener.
 - Don't import non-serializable values into a `$`-closure and expect them to
   survive resumption.
-- The optimiser runs at build time; you don't call it manually.
+- The optimizer runs at build time; you don't call it manually.
 
 ### 3 – State management at a glance
 
@@ -476,9 +476,9 @@ related `useTask$` cleanup pattern.
 ### `useTask$` cleanup fires on re-run, not only on unmount
 
 A `cleanup()` registered inside a tracking `useTask$` fires **before every
-re-run** as well as on unmount. That's the right behaviour for things that
+re-run** as well as on unmount. That's the right behavior for things that
 should reset on the next write (e.g. a debounce timer). It's the wrong
-behaviour for things that must survive across writes (e.g. a throttle
+behavior for things that must survive across writes (e.g. a throttle
 cooldown timer).
 
 When you need an unmount-only cleanup, register it from a **separate
@@ -594,7 +594,7 @@ loaded by hand. Otherwise interactive UI renders but is **silently dead**:
 - Only `useVisibleTask$` fires — Qwik core notifies visible tasks directly
   through its internal `notifyTask()` path, so they're the one event hook
   that doesn't depend on the loader.
-- No console errors. Checkboxes still toggle (native browser behaviour),
+- No console errors. Checkboxes still toggle (native browser behavior),
   buttons still depress, links still navigate — but the handlers attached
   to them never execute.
 

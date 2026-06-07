@@ -135,5 +135,5 @@ If you build a signal-pair API (`{ signal, throttledSignal }`) on top of a
 `useTask$` that tracks `signal.value` and writes `throttledSignal.value`
 inside a `setTimeout`, see the testing notes in `references/qwik-core.md`
 ("Testing helper") — Qwik's test platform doesn't auto-flush renders queued
-from raw timer callbacks, which makes the behaviour hard to verify in
+from raw timer callbacks, which makes the behavior hard to verify in
 `createDOM` unless you trigger a follow-up `userEvent`.

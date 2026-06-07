@@ -64,7 +64,7 @@ following type symbols are gone in v2 and must be replaced by hand:
 alias, but new code should use `Readonly<Signal<T>>` — that's what
 `useComputed$`'s own return type is declared as in v2.
 
-## Behavioural changes you must know
+## Behavioral changes you must know
 
 ### `useResource$` → `useAsync$` (and `<Resource>` → `<Suspense>`)
 
@@ -258,7 +258,7 @@ strategies.
 
 ### `useStore({ deep: false })`
 
-Explicit shallow tracking on a store. Default behaviour is unchanged (deep).
+Explicit shallow tracking on a store. Default behavior is unchanged (deep).
 
 ### Infrastructure
 
@@ -323,7 +323,7 @@ export default defineConfig({
 
 ## Source
 
-This reference summarises the official v2 docs from the v2 preview site:
+This reference summarizes the official v2 docs from the v2 preview site:
 
 - <https://qwikdev-build-v2.qwik-8nx.pages.dev/llms.txt>
 - <https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade.md>

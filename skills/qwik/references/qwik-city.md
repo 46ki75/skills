@@ -108,7 +108,7 @@ export default component$(() => {
 ### `event.fail(status, data)` — returning errors
 
 ```tsx
-if (!user) return event.fail(401, { message: 'Unauthorised' });
+if (!user) return event.fail(401, { message: 'Unauthorized' });
 ```
 
 The component can check `signal.value.message` to detect a failure.

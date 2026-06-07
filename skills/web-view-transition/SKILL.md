@@ -412,9 +412,9 @@ names after transitions using `finished`.
 from cache. If names were left set, the next `pagereveal` handler sets them
 again → duplicate → skipped. Always remove names after `finished`.
 
-**Hidden page skips transition:** if the page is not visible (minimised, other
+**Hidden page skips transition:** if the page is not visible (minimized, other
 tab), `startViewTransition` skips the animation automatically. This is correct
-behaviour — the DOM update still runs.
+behavior — the DOM update still runs.
 
 **MPA cross-origin:** cross-document transitions only work between same-origin
 pages. A cross-origin redirect in the chain also disables the `activation`

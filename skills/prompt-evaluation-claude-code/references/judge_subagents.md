@@ -15,7 +15,7 @@ calibration step you should run before trusting any judge.
 - **Reasoning before verdict.** Always. CoT-before-scoring
   reliably improves judge accuracy (Anthropic docs:
   *"increases evaluation performance, particularly for tasks
-  requiring complex judgement"*).
+  requiring complex judgment"*).
 - **One isolated judge per criterion** when you have ≥ 2 criteria.
   Compound rubrics produce halo effects (Anthropic Engineering,
   *Demystifying Evals for AI Agents*).

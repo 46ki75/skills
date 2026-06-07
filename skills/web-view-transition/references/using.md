@@ -28,7 +28,7 @@
    cross-fade).
 6. Animation ends → `ViewTransition.finished` fulfills.
 
-If the page is not visible (minimised, different tab), the animation is skipped
+If the page is not visible (minimized, different tab), the animation is skipped
 automatically; the DOM update still runs.
 
 The pseudo-element tree that drives the animation:

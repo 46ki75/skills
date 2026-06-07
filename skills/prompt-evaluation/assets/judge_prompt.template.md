@@ -84,7 +84,7 @@ Why this shape:
 - **Reasoning before verdict** — "reason then collapse to a label"
   is the canonical shape from MT-Bench and Anthropic's own grader
   template; "increases evaluation performance, particularly for
-  tasks requiring complex judgement" (Anthropic docs).
+  tasks requiring complex judgment" (Anthropic docs).
 - **Structured Outputs over prefill** — works on every current
   model, guarantees parseable JSON, no `JSON.parse` errors.
 

@@ -8,7 +8,7 @@ Multiple middleware functions (e.g., connect to DB, load the current user) must 
 
 ## Solution: `combineRequestHandlers`
 
-A utility that chains `RequestHandler` functions, honouring the `next()` call order (wrapping / unwinding like Express middleware):
+A utility that chains `RequestHandler` functions, honoring the `next()` call order (wrapping / unwinding like Express middleware):
 
 ```tsx
 import type { RequestHandler } from '@builder.io/qwik-city';

@@ -34,7 +34,7 @@ listing. Keep it short, action-oriented, and self-contained — a model
 may pick which tool to call based on this string alone.
 
 Tool methods take `&self` and return `Result<CallToolResult, McpError>`.
-The macros take care of marshalling them to JSON-RPC. `CallToolResult`
+The macros take care of marshaling them to JSON-RPC. `CallToolResult`
 shape:
 
 | Field                        | Constructor                                                          |

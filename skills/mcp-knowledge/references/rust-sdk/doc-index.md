@@ -63,7 +63,7 @@ submodule (`submodules/mcp-rust-sdk/`).
 | Path                    | Topic                                                                                                                                   |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `client/sampling.md`    | Overriding `create_message`, `CreateMessageRequestParams` fields, stop-reason constants, forwarding to a real LLM                       |
-| `client/elicitation.md` | Overriding `create_elicitation`, `ElicitationAction` (`Accept` / `Decline` / `Cancel`), form vs URL variants, default-decline behaviour |
+| `client/elicitation.md` | Overriding `create_elicitation`, `ElicitationAction` (`Accept` / `Decline` / `Cancel`), form vs URL variants, default-decline behavior  |
 | `client/roots.md`       | Overriding `list_roots`, `RawRoot::new(...).with_name(...)`, list-changed notifications, static vs dynamic roots                        |
 
 ### Transports and testing
