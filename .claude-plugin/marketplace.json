@@ -9,8 +9,8 @@
     {
       "name": "wsl-notification",
       "source": "./plugins/wsl-notification",
-      "description": "Sends Claude Code Notification events as Windows toast notifications from WSL2 via powershell.exe.",
-      "version": "0.1.0",
+      "description": "Sends Claude Code Notification and Stop events as Windows toast notifications from WSL2 via powershell.exe.",
+      "version": "0.2.0",
       "keywords": ["hook", "notification", "wsl", "wsl2", "windows", "toast"]
     }
   ]

@@ -1,10 +1,17 @@
 # wsl-notification
 
-A Claude Code plugin that surfaces `Notification` hook events as Windows toast
-notifications when Claude Code is running inside **WSL2**.
+A Claude Code plugin that surfaces `Notification` and `Stop` hook events as
+Windows toast notifications when Claude Code is running inside **WSL2**.
 
 The hook reads the JSON payload Claude Code sends on stdin, extracts
 `.message`, and dispatches a toast via `powershell.exe`.
+
+- **`Notification`** fires when Claude needs permission or the prompt has been
+  idle for ~60 seconds. The toast body is the event's `.message`.
+- **`Stop`** fires whenever Claude finishes responding. Its payload carries no
+  `.message`, so a fixed `"Claude finished responding."` body is used. This
+  still works under bypass-permissions mode, where `Notification` permission
+  events never fire.
 
 ## Requirements
 
@@ -25,7 +32,7 @@ This plugin is distributed through the `46ki75-skills` marketplace:
 
 ## What it does
 
-The plugin registers a single `Notification` hook:
+The plugin registers a `Notification` and a `Stop` hook:
 
 ```json
 {
@@ -36,7 +43,18 @@ The plugin registers a single `Notification` hook:
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh Notification"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh Stop"
           }
         ]
       }
