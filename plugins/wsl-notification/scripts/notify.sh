@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-# Claude Code Notification hook: WSL2 -> Windows toast.
+# Claude Code hook: WSL2 -> Windows toast.
 # Reads the hook JSON payload on stdin, extracts `.message`, and dispatches a
 # Windows toast via powershell.exe. No-ops cleanly outside WSL2.
+#
+# Usage: notify.sh [EVENT]
+#   EVENT defaults to "Notification". Pass "Stop" for the Stop hook, whose
+#   payload carries no `.message`, so a fixed fallback message is used.
 
 set -u
+
+event="${1:-Notification}"
 
 if ! grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null; then
   exit 0
@@ -18,12 +24,15 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 0
 fi
 
-title="Claude Code | Notification"
+title="Claude Code | ${event}"
 input="$(cat)"
 message="$(jq -r '.message // empty' <<<"$input")"
 
 if [[ -z "$message" ]]; then
-  exit 0
+  case "$event" in
+    Stop) message="Claude finished responding." ;;
+    *) exit 0 ;;
+  esac
 fi
 
 # Escape single quotes for PowerShell single-quoted strings.

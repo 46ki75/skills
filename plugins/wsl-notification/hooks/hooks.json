@@ -1,5 +1,5 @@
 {
-  "description": "Surfaces Claude Code Notification events as Windows toast notifications from WSL2.",
+  "description": "Surfaces Claude Code Notification and Stop events as Windows toast notifications from WSL2.",
   "hooks": {
     "Notification": [
       {
@@ -7,7 +7,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh Notification"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/notify.sh Stop"
           }
         ]
       }
