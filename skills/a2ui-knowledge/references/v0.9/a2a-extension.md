@@ -81,8 +81,14 @@ messages (e.g. `action`) back.
 
 A2UI v0.9 messages travel as an A2A `DataPart`:
 
-- `metadata.mimeType` = `application/json+a2ui`
+- `metadata.mimeType` = `application/a2ui+json`
 - `data` is an **array of A2UI messages**, not a single message.
+
+> **MIME type note:** v0.9.1 standardized the payload MIME type to
+> `application/a2ui+json` (the form shown throughout this document). Early
+> v0.9 draft material used the legacy `application/json+a2ui`; update any
+> hardcoded references to the current spelling. Message names and structure
+> are otherwise identical between v0.9 and v0.9.1.
 
 ```json
 {
@@ -103,7 +109,7 @@ A2UI v0.9 messages travel as an A2A `DataPart`:
     }
   ],
   "kind": "data",
-  "metadata": { "mimeType": "application/json+a2ui" }
+  "metadata": { "mimeType": "application/a2ui+json" }
 }
 ```
 
@@ -138,7 +144,7 @@ Message List Schema (`client_to_server.json`):
     }
   }],
   "kind": "data",
-  "metadata": { "mimeType": "application/json+a2ui" }
+  "metadata": { "mimeType": "application/a2ui+json" }
 }
 ```
 

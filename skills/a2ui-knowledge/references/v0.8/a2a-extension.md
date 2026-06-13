@@ -88,6 +88,11 @@ mimeType marker identifying it as A2UI content:
 The `data` field holds the A2UI JSON message itself (e.g. `surfaceUpdate`,
 `userAction`).
 
+> **MIME type note:** v0.8 used the legacy `application/json+a2ui` spelling
+> (shown below for historical accuracy). The MIME type was later standardized
+> to `application/a2ui+json` in v0.9.1; use that form for any current
+> (v0.9.1 / v1.0) deployment.
+
 ### Example DataPart
 
 ```json
