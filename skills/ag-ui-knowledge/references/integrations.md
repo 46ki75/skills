@@ -89,18 +89,24 @@ A single agent often uses all three simultaneously.
 | Spec | Status |
 | --- | --- |
 | **A2A Middleware** | Supported partnership — AG-UI can front for A2A-served agents |
-| MCP Apps | Listed under generative UI specs |
 
 ### Generative UI specs
 
-| Spec | Status |
-| --- | --- |
-| **A2UI** | Declarative generative UI spec (Google) — works with AG-UI |
-| **MCP Apps** | Render interactive UI components from MCP servers in chat |
-| **Open JSON UI** | Mentioned as a peer spec |
+AG-UI is **not itself a generative-UI spec**. It is the bidirectional
+event/runtime protocol that provides the two-way connection between the agent
+and the application, and it **natively supports all three** generative-UI specs
+below (plus custom ones). Generative-UI specs define *how* UI components are
+structured and transmitted; AG-UI provides the runtime that carries them.
 
-Don't confuse **A2UI** (generative UI widgets) with **AG-UI** (Agent ↔ User
-interaction protocol) — different scopes, complementary roles.
+| Spec | Author(s) | Notes |
+| --- | --- | --- |
+| **A2UI** | Google | Declarative, LLM-friendly generative-UI spec — JSONL-based, streaming, platform-agnostic rendering |
+| **Open-JSON-UI** | OpenAI | Open standardization of OpenAI's internal declarative generative-UI schema |
+| **MCP-UI** | Microsoft + Shopify | Fully open, iframe-based generative-UI standard that extends MCP for user-facing experiences |
+
+Don't confuse **A2UI** (a generative-UI widget spec) with **AG-UI** (the
+Agent ↔ User interaction protocol) — different scopes, complementary roles.
+See `concepts/generative-ui-specs.md` for the full breakdown.
 
 ### Other standards
 

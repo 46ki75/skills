@@ -19,7 +19,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # AG-UI Knowledge
@@ -190,24 +190,25 @@ Quick start: `npx create-ag-ui-app@latest` scaffolds a project.
 
 ## Routing table — which reference file do I open?
 
-There are 16 reference files in `references/`. Open the ones below based on the
+There are 17 reference files in `references/`. Open the ones below based on the
 question. Always prefer the most specific file.
 
 ### Concepts (`references/concepts/`)
 
-| Question                                                                                                                        | File                        |
-| ------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| Full event schema, properties of every event type, draft/deprecated events                                                      | `concepts/events.md`        |
-| Architecture overview, transport patterns, middleware layer                                                                     | `concepts/architecture.md`  |
-| `AbstractAgent` shape, agent capabilities (high-level), agent lifecycle                                                         | `concepts/agents.md`        |
-| Message schemas (User/Assistant/System/Tool/Activity/Developer/Reasoning), multimodal input, vendor-neutrality                  | `concepts/messages.md`      |
-| `STATE_SNAPSHOT` vs `STATE_DELTA`, RFC 6902 JSON Patch examples, CopilotKit `useCoAgent`                                        | `concepts/state.md`         |
-| Tool schema, frontend-defined tools, tool-call lifecycle, `useCopilotAction`                                                    | `concepts/tools.md`         |
-| Interrupt-aware run lifecycle, `Interrupt` type, `resume` rules, tool-bound interrupts, approve-with-edits, parallel interrupts | `concepts/interrupts.md`    |
-| Reasoning events, encrypted chain-of-thought, ZDR/store:false, migration from `THINKING_*`                                      | `concepts/reasoning.md`     |
-| `AgentCapabilities` and all ten typed sub-objects                                                                               | `concepts/capabilities.md`  |
-| Middleware pipeline mechanics (`use`, `MiddlewareFunction`, `Middleware` class), built-in `FilterToolCallsMiddleware`           | `concepts/middleware.md`    |
-| Stream compaction, branching with `parentRunId`, normalized input                                                               | `concepts/serialization.md` |
+| Question                                                                                                                        | File                              |
+| ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Full event schema, properties of every event type, draft/deprecated events                                                      | `concepts/events.md`              |
+| Architecture overview, transport patterns, middleware layer                                                                     | `concepts/architecture.md`        |
+| `AbstractAgent` shape, agent capabilities (high-level), agent lifecycle                                                         | `concepts/agents.md`              |
+| Message schemas (User/Assistant/System/Tool/Activity/Developer/Reasoning), multimodal input, vendor-neutrality                  | `concepts/messages.md`            |
+| `STATE_SNAPSHOT` vs `STATE_DELTA`, RFC 6902 JSON Patch examples, CopilotKit `useCoAgent`                                        | `concepts/state.md`               |
+| Tool schema, frontend-defined tools, tool-call lifecycle, `useCopilotAction`                                                    | `concepts/tools.md`               |
+| Interrupt-aware run lifecycle, `Interrupt` type, `resume` rules, tool-bound interrupts, approve-with-edits, parallel interrupts | `concepts/interrupts.md`          |
+| Reasoning events, encrypted chain-of-thought, ZDR/store:false, migration from `THINKING_*`                                      | `concepts/reasoning.md`           |
+| `AgentCapabilities` and all ten typed sub-objects                                                                               | `concepts/capabilities.md`        |
+| Middleware pipeline mechanics (`use`, `MiddlewareFunction`, `Middleware` class), built-in `FilterToolCallsMiddleware`           | `concepts/middleware.md`          |
+| Stream compaction, branching with `parentRunId`, normalized input                                                               | `concepts/serialization.md`       |
+| Generative-UI specs (A2UI/Google, Open-JSON-UI/OpenAI, MCP-UI/Microsoft+Shopify); AG-UI is the runtime, not a gen-UI spec       | `concepts/generative-ui-specs.md` |
 
 ### Quickstart (`references/quickstart/`)
 
