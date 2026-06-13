@@ -2,13 +2,14 @@
 name: a2a-knowledge
 description: >
   Expert guidance for the A2A (Agent2Agent) Protocol — an open HTTP-based
-  protocol for independent, opaque AI agents to discover, communicate, and
-  collaborate as peers. Covers the v1.0 spec: data model (Agent Card, Task,
-  Message, Part, Artifact, Extension); operations (`message/send`,
-  `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`,
-  `tasks/pushNotificationConfig/*`); task lifecycle and multi-turn flows;
-  the three protocol bindings (JSON-RPC 2.0, gRPC, HTTP+JSON/REST) and
-  custom bindings; agent discovery (well-known URI, registries, JWS-signed
+  protocol for independent, opaque AI agents to collaborate as peers.
+  Covers v1.0: data model (Agent Card, Task,
+  Message, Part, Artifact, Extension); operations (`SendMessage`,
+  `SendStreamingMessage`, `GetTask`, `ListTasks`, `CancelTask`,
+  `SubscribeToTask`, the `*TaskPushNotificationConfig` family,
+  `GetExtendedAgentCard`); task lifecycle and multi-turn flows;
+  three protocol bindings (JSON-RPC, gRPC, HTTP+JSON/REST) and
+  custom bindings; agent discovery (well-known URI, registries, signed
   Agent Cards); enterprise security (TLS, OAuth 2.0 / OIDC / mTLS,
   in-task authorization); SSE streaming and webhook push notifications;
   the extension framework; A2A↔MCP relationship; and the six SDKs
@@ -19,7 +20,7 @@ description: >
 license: MIT
 metadata:
   author: "Ikuma Yamashita"
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # A2A Skill
@@ -63,14 +64,20 @@ Appendix A of `references/specification.md`.
 
 - **Agent Card** — JSON metadata describing the agent's identity, endpoint URL,
   declared protocol bindings, supported skills, authentication requirements,
-  and any extensions. Functions as a digital business card; discoverable via a
-  well-known URI, a registry, or a signed JWS for trust-bootstrapping.
+  and any extensions. Its `supportedInterfaces` field is a v1.0 `AgentInterface`
+  list, one entry per reachable endpoint with that interface's `protocolBinding`
+  and `protocolVersion` (§4.4.6 / §5.2). Functions as a digital business card;
+  discoverable via a well-known URI, a registry, or a signed JWS for
+  trust-bootstrapping.
 - **Task** — a stateful, server-owned unit of work with a UUID and a lifecycle
-  (submitted → working → input-required → completed / failed / canceled /
-  rejected). Long-running work is modeled as a task; short Q&A is just a message.
+  whose states are `SCREAMING_SNAKE_CASE` (`TASK_STATE_SUBMITTED` →
+  `TASK_STATE_WORKING` → `TASK_STATE_INPUT_REQUIRED` /
+  `TASK_STATE_AUTH_REQUIRED` → `TASK_STATE_COMPLETED` / `TASK_STATE_FAILED` /
+  `TASK_STATE_CANCELED` / `TASK_STATE_REJECTED`). Long-running work is modeled
+  as a task; short Q&A is just a message.
 - **Message** — one turn of communication. Has a `role` (`user` or `agent`), a
-  `messageId`, and one or more `Part` objects. Sent via `message/send` (unary)
-  or `message/stream` (SSE).
+  `messageId`, and one or more `Part` objects. Sent via `SendMessage` (unary)
+  or `SendStreamingMessage` (SSE).
 - **Part** — the content container inside Messages and Artifacts. Holds exactly
   one of: `text` (string), `raw` (inline bytes), `url` (external reference), or
   `data` (structured JSON). Also carries `mediaType`, `filename`, `metadata`.
@@ -123,10 +130,10 @@ The canonical Protobuf schema lives at `submodules/A2A/specification/a2a.proto`.
 | `references/tutorials/python/1-introduction.md`            | Goals and prerequisites.                                            |
 | `references/tutorials/python/2-setup.md`                   | Environment and `a2a-python` installation.                          |
 | `references/tutorials/python/3-agent-skills-and-card.md`   | Authoring the Agent Card and declaring skills.                      |
-| `references/tutorials/python/4-agent-executor.md`          | The executor that handles `message/send` and emits task updates.    |
+| `references/tutorials/python/4-agent-executor.md`          | The executor that handles `SendMessage` and emits task updates.     |
 | `references/tutorials/python/5-start-server.md`            | Wiring the Starlette server and starting it.                        |
 | `references/tutorials/python/6-interact-with-server.md`    | Writing a client; fetching Agent Card; unary send; reading results. |
-| `references/tutorials/python/7-streaming-and-multiturn.md` | `message/stream` with SSE; resuming `input-required` tasks.         |
+| `references/tutorials/python/7-streaming-and-multiturn.md` | `SendStreamingMessage` SSE; resuming `TASK_STATE_INPUT_REQUIRED`.   |
 | `references/tutorials/python/8-next-steps.md`              | Pointers to further samples and framework integrations.             |
 
 ### SDK
@@ -151,6 +158,8 @@ Use this matrix as the first stop. Most questions resolve in one or two files.
 | Agent Card signing (JWS, RFC 8785 canonicalization)         | `specification.md` §8.4                                                |
 | Task lifecycle / state transitions / multi-turn             | `topics/life-of-a-task.md` then `specification.md` §3.3–§3.4           |
 | Streaming with SSE                                          | `topics/streaming-and-async.md` then `specification.md` §3.5           |
+| Resubscribing to a task's event stream (`SubscribeToTask`)  | `specification.md` §3.1 and §9.4.6                                     |
+| Authenticated extended Agent Card (`GetExtendedAgentCard`)  | `specification.md` §9.4.8 and §13.3                                    |
 | Push notifications (webhooks, signing, replay protection)   | `specification.md` §4.3 and §13.2                                      |
 | Authentication / OAuth 2.0 / OIDC / mTLS / API keys         | `topics/enterprise-ready.md` then `specification.md` §7                |
 | In-task authorization, scoped consent                       | `specification.md` §7.6                                                |
