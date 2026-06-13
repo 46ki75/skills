@@ -2,7 +2,7 @@
   "name": "46ki75-skills",
   "owner": {
     "name": "Ikuma Yamashita",
-    "email": "46ki75@gmail.com"
+    "email": "me@ikuma.cloud"
   },
   "description": "Personal collection of Claude Code plugins distributed alongside the skills in this repository.",
   "plugins": [
@@ -11,7 +11,14 @@
       "source": "./plugins/wsl-notification",
       "description": "Sends Claude Code Notification and Stop events as Windows toast notifications from WSL2 via powershell.exe.",
       "version": "0.2.0",
-      "keywords": ["hook", "notification", "wsl", "wsl2", "windows", "toast"]
+      "keywords": [
+        "hook",
+        "notification",
+        "wsl",
+        "wsl2",
+        "windows",
+        "toast"
+      ]
     }
   ]
 }
