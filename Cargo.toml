@@ -47,7 +47,7 @@ clap = { version = "4", features = ["derive"] }
 anyhow = "1"
 serde_json = "1"
 schemars = "1"
-rmcp = { version = "1.7", features = [
+rmcp = { version = "2.0", features = [
     "server",
     "client",
     "macros",
