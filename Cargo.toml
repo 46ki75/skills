@@ -41,7 +41,7 @@ serde = { version = "1", features = ["derive"] }
 thiserror = "2"
 zip = { version = "7", default-features = false, features = ["deflate"] }
 gray_matter = { version = "0.3", default-features = false, features = ["yaml"] }
-octocrab = "0.53"
+octocrab = "0.54"
 walkdir = "2"
 clap = { version = "4", features = ["derive"] }
 anyhow = "1"
